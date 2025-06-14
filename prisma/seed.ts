@@ -51,6 +51,7 @@ async function main() {
       email: 'admin@lachsgolden.com',
       name: 'Admin User',
       role: 'ADMIN',
+      
       companyId: company.id,
       employeeId: employee.id,
     },

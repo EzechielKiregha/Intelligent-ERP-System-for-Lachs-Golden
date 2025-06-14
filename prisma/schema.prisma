@@ -47,7 +47,7 @@ enum TaskStatus {
 model Company {
   id           String        @id @default(cuid())
   name         String
-  contactEmail String
+  contactEmail String?
   timezone     String
   dateFormat   String
 
@@ -72,9 +72,12 @@ model User {
   id         String       @id @default(cuid())
   email      String       @unique
   name       String?
+  password  String
+  firstName String
+  lastName  String
   role       Role         @default(USER)
-  company    Company      @relation(fields: [companyId], references: [id])
-  companyId  String
+  company    Company?      @relation(fields: [companyId], references: [id])
+  companyId  String?
   createdAt  DateTime     @default(now())
 
   // If you treat login users as employees, you can link to Employee:
