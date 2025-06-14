@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:seed": "ts-node -r tsconfig-paths/register ./prisma/seed.ts"
+    "db:seed": "ts-node -r tsconfig-paths/register ./seed/seed.ts"
   },
   "dependencies": {
     "@heroui/react": "^2.8.0-beta.7",
