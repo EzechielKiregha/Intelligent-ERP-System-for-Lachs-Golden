@@ -36,6 +36,9 @@ const handler = NextAuth({
         if (!user) {
           throw new Error("No user found with that email");
         }
+        if (!user.password) {
+          throw new Error("User password is missing");
+        }
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) {
           throw new Error("Invalid password");
