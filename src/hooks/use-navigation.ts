@@ -19,7 +19,7 @@ export const useNavigation = () => {
             router.push(href)
             router.refresh()
         }
-    }, [router, setIsLoading])
+    }, [router, setIsLoading, pathname])
 
     return navigate
 }
