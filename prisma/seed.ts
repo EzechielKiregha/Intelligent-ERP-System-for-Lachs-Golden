@@ -53,7 +53,7 @@ async function main() {
       role: 'ADMIN',
       firstName : 'Admin',
       lastName : 'User',
-      password: '$2a$10$EIXj1z5Zb7F8f5e1Q0k3Uu9Y6Zy5m4z5Zb7F8f5e1Q0k3Uu9Y6Zy5m', // Example hashed password
+      password: 'new password', // Example hashed password
       companyId: company.id,
       employeeId: employee.id,
     },
