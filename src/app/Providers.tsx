@@ -9,8 +9,6 @@ import { NavigationEvents } from '@/components/NavigationEvents';
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { LoadingProvider } from '@/contexts/loadingContext';
-import ToastProvider from '@/components/providers/toaster-provider'
 
 export default function Providers({
   children,
