@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +7,12 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { useLoading } from '@/contexts/loadingContext';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { LeftAuthPanel } from '@/components/LeftAuthPanel';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,11 +45,12 @@ export default function LoginPage() {
     },
     onSuccess: () => {
       setIsLoading(false);
+      toast.success('Login successful!');
       router.push('/dashboard');
     },
     onError: (err: any) => {
       setIsLoading(false);
-      setServerError(err.message || 'Login failed');
+      toast.error(err.message || 'Login failed');
     },
   });
 
@@ -53,65 +59,39 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#F5F5F5]">
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-        <h1 className="text-center text-[20px] font-semibold text-[#333333]">
-          Sign In
-        </h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+    <div className="flex flex-col md:flex-row min-h-screen">
+      <LeftAuthPanel />
+      <div className="flex-1 flex items-center justify-center p-8 bg-white dark:bg-[#121212]">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
+          <h1 className="text-[24px] font-semibold text-[#333333] dark:text-white">Sign In</h1>
+
           {/* Email */}
           <div>
-            <label
-              htmlFor="email"
-              className="block mb-1 text-[14px] text-[#333333]"
-            >
-              Email
-            </label>
-            <input
+            <Label htmlFor="email" className="text-[14px] text-[#333333] dark:text-white">Email</Label>
+            <Input
               id="email"
               type="email"
               {...register('email')}
-              className="
-                w-full
-                px-4 py-3
-                border border-[#CCCCCC]
-                rounded-md
-                focus:outline-none focus:ring-2 focus:ring-[#1E40AF]
-              "
+              className="mt-1"
               placeholder="you@company.com"
             />
             {errors.email && (
-              <p className="mt-1 text-[12px] text-[#E53E3E]">
-                {errors.email.message}
-              </p>
+              <p className="mt-1 text-[12px] text-[#E53E3E]">{errors.email.message}</p>
             )}
           </div>
 
           {/* Password */}
           <div>
-            <label
-              htmlFor="password"
-              className="block mb-1 text-[14px] text-[#333333]"
-            >
-              Password
-            </label>
-            <input
+            <Label htmlFor="password" className="text-[14px] text-[#333333] dark:text-white">Password</Label>
+            <Input
               id="password"
               type="password"
               {...register('password')}
-              className="
-                w-full
-                px-4 py-3
-                border border-[#CCCCCC]
-                rounded-md
-                focus:outline-none focus:ring-2 focus:ring-[#1E40AF]
-              "
+              className="mt-1"
               placeholder="••••••••"
             />
             {errors.password && (
-              <p className="mt-1 text-[12px] text-[#E53E3E]">
-                {errors.password.message}
-              </p>
+              <p className="mt-1 text-[12px] text-[#E53E3E]">{errors.password.message}</p>
             )}
           </div>
 
@@ -121,52 +101,34 @@ export default function LoginPage() {
               id="rememberMe"
               type="checkbox"
               {...register('rememberMe')}
-              className="h-4 w-4 text-[#1E40AF] border-[#CCCCCC] rounded"
+              className="h-4 w-4 text-[#D4AF37] border-[#CCCCCC] rounded"
             />
-            <label
-              htmlFor="rememberMe"
-              className="ml-2 text-[14px] text-[#333333]"
-            >
+            <label htmlFor="rememberMe" className="ml-2 text-[14px] text-[#333333] dark:text-white">
               Remember me
             </label>
           </div>
 
           {serverError && (
-            <p className="text-center mt-1 text-[12px] text-[#E53E3E]">
-              {serverError}
-            </p>
+            <p className="text-center mt-1 text-[12px] text-[#E53E3E]">{serverError}</p>
           )}
 
-          <button
+          <Button
             type="submit"
-            disabled={loginMutation.status === "pending"}
-            className="
-              w-full mt-2 px-4 py-3
-              rounded-md
-              text-white
-              bg-[#1E40AF] hover:bg-[#1C3A9B]
-              disabled:opacity-50 disabled:cursor-not-allowed
-              focus:outline-none focus:ring-2 focus:ring-[#1E40AF]
-            "
+            className="w-full mt-2 px-4 py-3 rounded-md bg-[#D4AF37] hover:bg-[#B8860B] text-white"
+            disabled={loginMutation.status === 'pending'}
           >
             {loginMutation.status === "pending" ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
+          </Button>
 
-        <div className="mt-4 flex justify-between text-[14px]">
-          <a
-            href="/forgot-password"
-            className="text-[#1E40AF] hover:underline"
-          >
-            Forgot password?
-          </a>
-          <a
-            href="/signup"
-            className="text-[#1E40AF] hover:underline"
-          >
-            Create account
-          </a>
-        </div>
+          <div className="mt-4 flex justify-between text-[14px]">
+            <Link href="/forgot-password" className="text-[#D4AF37] hover:underline">
+              Forgot password?
+            </Link>
+            <Link href="/signup" className="text-[#D4AF37] hover:underline">
+              Create account
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   );

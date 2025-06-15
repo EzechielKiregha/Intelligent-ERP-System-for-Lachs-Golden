@@ -1,4 +1,28 @@
 "use client";
+
+/**
+ * Component: HomePage (Landing)
+ * Project: Intelligent ERP System for Modern Business
+ * Purpose: Render the public landing page with:
+ *   - Navbar (logo + links to Dashboard, Features, Solutions, Contact, Get Started)
+ *   - HeroSection: two-column on md+: left text (“Intelligent ERP System for Modern Business” + subtitle), right image (dashboard mock). 
+ *   - Buttons: “Request Demo” (filled gold) and “Learn More” (outlined gold).
+ *   - FeaturesSection: grid of cards, each with lucide-react icon + title + description, white background, golden icon color.
+ *   - StatsSection: grid of metric cards, icon + value + label, gold icon color.
+ *   - Footer: dark/golden-themed or inverted theme if preferred; columns: Solutions, Company, Connect; text links in white or light; social icons.
+ * Theme:
+ *   - Light mode: page bg: very light warm (#FFF8E1) or white; section backgrounds alternate white/#FFF8E1.
+ *   - Accent color: gold #D4AF37; hover/darker #B8860B.
+ *   - Text color: dark (#333333) on light backgrounds; white (#FFFFFF) on dark footer.
+ *   - Rounded corners: use Tailwind `rounded-lg` (8px).
+ *   - Box shadows: use `shadow-md` for cards and navbar.
+ *   - Responsiveness: mobile-first. Navbar collapses to hamburger on small screens.
+ * Tools: use ShadcnUI Button, Card, etc.; import lucide-react icons for features/stats.
+ * 
+ * Instruction to Copilot:
+ *   “Generate a React component for the landing page using Next.js App Router. Use Tailwind CSS classNames only (including arbitrary values) to match the golden theme (#D4AF37). Navbar fixed at top, Hero with responsive layout, Features grid, Stats grid, Footer. Use ShadcnUI Button/Card components and lucide-react icons. Ensure accessibility, semantic HTML, and mobile responsiveness. Do not import inline styles. Use className for all styling. Use `scroll-behavior: smooth` for internal links. Use Next.js <Link> for navigation.”
+ */
+
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

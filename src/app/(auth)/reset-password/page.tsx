@@ -1,5 +1,5 @@
 'use client';
-
+import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import { Suspense } from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -7,13 +7,17 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { resetPasswordSchema, ResetPasswordInput } from '@/lib/validations/reset';
 import { useMutation } from '@tanstack/react-query';
-import AxiosInstance from '@/lib/axios';
+import axiosdb from '@/lib/axios';
 import { useLoading } from '@/contexts/loadingContext';
+import { toast } from 'react-hot-toast';
 
 export default function ResetPasswordPageWrapper() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ResetPasswordPage />
+      <div className="flex flex-col md:flex-row min-h-screen">
+        <LeftAuthPanel />
+        <ResetPasswordPage />
+      </div>
     </Suspense>
   );
 }
@@ -40,7 +44,7 @@ function ResetPasswordPage() {
   // Mutation to reset password
   const resetMutation = useMutation({
     mutationFn: async (data: ResetPasswordInput) => {
-      const res = await AxiosInstance.post('/api/reset-password', data);
+      const res = await axiosdb.post('/api/reset-password', data);
       return res.data;
     },
     onMutate: () => {
@@ -50,6 +54,7 @@ function ResetPasswordPage() {
     },
     onSuccess: (data: any) => {
       setIsLoading(false);
+      toast.success(data.message || 'Password reset successful');
       setServerMsg(data.message || 'Password reset successful');
       // Optionally redirect to login after a delay
       setTimeout(() => {
@@ -60,6 +65,7 @@ function ResetPasswordPage() {
       setIsLoading(false);
       const msg = err.response?.data?.message || 'Reset failed';
       setServerError(msg);
+      toast.error(msg);
     },
   });
 
@@ -72,11 +78,12 @@ function ResetPasswordPage() {
   useEffect(() => {
     if (!token) {
       setServerError('Missing token');
+      toast.error('Missing token');
     }
   }, [token]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#F5F5F5]">
+    <div className="flex-1 flex items-center justify-center min-h-screen bg-[#F5F5F5]">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
         <h1 className="text-center text-[20px] font-semibold text-[#333333]">
           Reset Password

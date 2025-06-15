@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,8 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
 import axiosdb from '@/lib/axios';
+import { LeftAuthPanel } from '@/components/LeftAuthPanel';
+import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 
-// Example: if ShadcnUI has a Form/Field/ErrorMessage component, use those. Otherwise, we’ll show simple text errors.
 export default function SignUpPage() {
   const router = useRouter();
   const {
@@ -22,119 +23,71 @@ export default function SignUpPage() {
     resolver: zodResolver(signUpSchema),
   });
 
-  const [serverError, setServerError] = useState<string | null>(null);
-
-  // TanStack useMutation for signup
   const signUpMutation = useMutation({
     mutationFn: async (data: SignUpInput) => {
       const res = await axiosdb.post('/api/signup', data);
       return res.data;
     },
-    onSuccess: () => router.push('/login'),
+    onSuccess: () => {
+      toast.success('Account created successfully!');
+      router.push('/login');
+    },
     onError: (err: any) => {
-      // Axios error: err.response.data holds server JSON
       const msg = err.response?.data?.message || 'Signup failed';
-      setServerError(msg);
+      toast.error(msg);
     },
   });
 
   const onSubmit = (data: SignUpInput) => {
-    setServerError(null);
     signUpMutation.mutate(data);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white p-6 rounded-2xl shadow-lg">
-        {/* You can adjust padding, colors, and classes per your Figma theme */}
-        <h1 className="text-2xl font-semibold text-center mb-6">Create Account</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* First Name */}
-          <div>
-            <Label htmlFor="firstName">First Name</Label>
-            <Input
-              id="firstName"
-              {...register('firstName')}
-              placeholder="John"
-            />
-            {errors.firstName && (
-              <p className="text-sm text-red-600 mt-1">{errors.firstName.message}</p>
-            )}
+    <div className="flex flex-col md:flex-row min-h-screen">
+      <LeftAuthPanel />
+      <div className="flex-1 flex items-center justify-center p-8 bg-white dark:bg-[#121212]">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
+          <h1 className="text-[24px] font-semibold text-[#333333] dark:text-white">Create Account</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="firstName" className="text-[14px] text-[#333333] dark:text-white">First Name</Label>
+              <Input id="firstName" {...register('firstName')} className="mt-1" placeholder="John" />
+              {errors.firstName && <p className="mt-1 text-[12px] text-[#E53E3E]">{errors.firstName.message}</p>}
+            </div>
+            <div>
+              <Label htmlFor="lastName" className="text-[14px] text-[#333333] dark:text-white">Last Name</Label>
+              <Input id="lastName" {...register('lastName')} className="mt-1" placeholder="Doe" />
+              {errors.lastName && <p className="mt-1 text-[12px] text-[#E53E3E]">{errors.lastName.message}</p>}
+            </div>
           </div>
-
-          {/* Last Name */}
           <div>
-            <Label htmlFor="lastName">Last Name</Label>
-            <Input
-              id="lastName"
-              {...register('lastName')}
-              placeholder="Doe"
-            />
-            {errors.lastName && (
-              <p className="text-sm text-red-600 mt-1">{errors.lastName.message}</p>
-            )}
+            <Label htmlFor="company" className="text-[14px] text-[#333333] dark:text-white">Company Name</Label>
+            <Input id="company" {...register('company')} className="mt-1" placeholder="Your Company" />
+            {errors.company && <p className="mt-1 text-[12px] text-[#E53E3E]">{errors.company.message}</p>}
           </div>
-
-          {/* Company */}
           <div>
-            <Label htmlFor="company">Company Name</Label>
-            <Input
-              id="company"
-              {...register('company')}
-              placeholder="Your Company"
-            />
-            {errors.company && (
-              <p className="text-sm text-red-600 mt-1">{errors.company.message}</p>
-            )}
+            <Label htmlFor="email" className="text-[14px] text-[#333333] dark:text-white">Work Email</Label>
+            <Input id="email" type="email" {...register('email')} className="mt-1" placeholder="you@company.com" />
+            {errors.email && <p className="mt-1 text-[12px] text-[#E53E3E]">{errors.email.message}</p>}
           </div>
-
-          {/* Email */}
           <div>
-            <Label htmlFor="email">Work Email</Label>
-            <Input
-              id="email"
-              type="email"
-              {...register('email')}
-              placeholder="you@company.com"
-            />
-            {errors.email && (
-              <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
-            )}
+            <Label htmlFor="password" className="text-[14px] text-[#333333] dark:text-white">Password</Label>
+            <Input id="password" type="password" {...register('password')} className="mt-1" placeholder="••••••••" />
+            {errors.password && <p className="mt-1 text-[12px] text-[#E53E3E]">{errors.password.message}</p>}
           </div>
-
-          {/* Password */}
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register('password')}
-              placeholder="••••••••"
-            />
-            {errors.password && (
-              <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
-            )}
+          <div className="flex items-center">
+            <input id="terms" type="checkbox" className="h-4 w-4 text-[#D4AF37] border-[#CCCCCC] rounded" />
+            <label htmlFor="terms" className="ml-2 text-[14px] text-[#333333] dark:text-white">
+              I agree to the <a href="/terms" className="text-[#D4AF37] hover:underline">Terms of Service</a> and <a href="/privacy" className="text-[#D4AF37] hover:underline">Privacy Policy</a>
+            </label>
           </div>
-
-          {serverError && (
-            <p className="text-sm text-red-700 text-center">{serverError}</p>
-          )}
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={signUpMutation.status === 'pending'}
-          >
-            {signUpMutation.status === 'pending' ? 'Creating...' : 'Create Account'}
+          <Button type="submit" className="w-full bg-[#D4AF37] hover:bg-[#B8860B] text-white mt-4">
+            Create Account
           </Button>
+          <p className="text-center text-[14px] text-[#333333] dark:text-white">
+            Already have an account? <Link href="/login" className="text-[#D4AF37] hover:underline">Sign in</Link>
+          </p>
         </form>
-
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <a href="/login" className="text-indigo-600 hover:underline">
-            Sign in
-          </a>
-        </p>
       </div>
     </div>
   );
