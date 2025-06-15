@@ -209,7 +209,7 @@ export function Footer() {
   ];
 
   return (
-    <footer id="contact" className="bg-[#1E40AF] text-white py-10">
+    <footer id="contact" className="bg-[#030300] text-white py-10">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8">
         <div>
           <h3 className="text-[18px] font-semibold mb-4">Solutions</h3>
