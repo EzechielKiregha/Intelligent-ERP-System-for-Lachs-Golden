@@ -5,7 +5,7 @@ import { HeroUIProvider } from '@heroui/react'
 import { ThemeProvider } from "@/components/theme-provider"
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { useLoading } from '@/contexts/loadingContext'
-import { NavigationEvents } from '@/components/NavigationEvents';
+import { NavigationEventsWrapper } from '@/components/NavigationEvents';
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -40,7 +40,7 @@ export default function Providers({
           {children}
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
-        <NavigationEvents />
+        <NavigationEventsWrapper />
       </ThemeProvider>
 
     </HeroUIProvider>
