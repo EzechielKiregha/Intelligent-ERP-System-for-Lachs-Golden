@@ -30,8 +30,8 @@ export function LeftAuthPanel({
     <div
       className={`hidden md:flex flex-col justify-center items-start flex-1 p-8 
         bg-gradient-to-b from-[#D4AF37] to-[#FFD700] 
-        dark:${darkModeBg ?? 'bg-[#333333]'} 
-        text-white`}
+        dark:${darkModeBg ?? 'bg-[#121212]'} 
+        text-white rounded-lg shadow-md`}
     >
       <h2 className="text-[24px] font-bold mb-2">Lachs Golden</h2>
       <p className="text-[16px] mb-6">Enterprise Resource Planning Solution</p>
