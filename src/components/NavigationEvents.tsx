@@ -4,8 +4,17 @@
 import { useEffect } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useLoading } from '@/contexts/loadingContext'
+import { Suspense } from 'react'
 
-export function NavigationEvents() {
+export function NavigationEventsWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <NavigationEvents />
+    </Suspense>
+  )
+}
+
+function NavigationEvents() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { setIsLoading } = useLoading()
