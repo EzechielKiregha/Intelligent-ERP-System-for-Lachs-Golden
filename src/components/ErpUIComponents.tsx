@@ -14,7 +14,6 @@ import {
   Smile,
   Menu,
   X,
-  Lock,
 } from 'lucide-react';
 import { useNavigation } from '@/hooks/use-navigation';
 import { ModeToggle } from './toggleTheme';

@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axiosdb from '@/lib/axios';
-import { useRouter } from 'next/navigation';
 import { useLoading } from '@/contexts/loadingContext';
 
 const forgotSchema = z.object({
@@ -16,7 +15,6 @@ const forgotSchema = z.object({
 type ForgotInput = z.infer<typeof forgotSchema>;
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
   const { setIsLoading } = useLoading();
   const [serverMsg, setServerMsg] = useState<string | null>(null);
 
