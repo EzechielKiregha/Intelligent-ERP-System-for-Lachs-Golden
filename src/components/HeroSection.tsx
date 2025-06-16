@@ -1,0 +1,46 @@
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import {
+  Server,
+  Cpu,
+  DollarSign,
+  Users,
+  Cloud,
+  Plug,
+  LifeBuoy,
+  Smile,
+  CheckCircle,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+} from 'lucide-react';
+import { useNavigation } from '@/hooks/use-navigation';
+import Link from 'next/link';
+
+export function HeroSection() {
+  const nav = useNavigation();
+  return (
+    <section className="pt-16 bg-white dark:bg-[#111827]">
+      <div className="h-[548px] max-w-7xl mx-auto flex flex-col justify-center items-center px-4 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+          Intelligent ERP System for Modern Business
+        </h1>
+        <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 mb-6">
+          Streamline your operations with AI-powered insights and automation at Lachs Golden & Co Holdings Inc.
+        </p>
+        <div className="flex space-x-4">
+          <Button onClick={() => nav('/signup')} className="bg-[#A17E25] hover:bg-[#8C6A1A] text-white rounded-lg px-6 py-3">
+            Request Demo
+          </Button>
+          <Link href="#features">
+            <Button className="border border-[#A17E25] text-[#A17E25] hover:bg-[#FEF3C7] rounded-lg px-6 py-3">
+              Learn More
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,6 +1,10 @@
 // src/app/page.tsx
+import { FeaturesSection } from '@/components/FeaturesSection';
+import { Footer } from '@/components/Footer';
+import { HeroSection } from '@/components/HeroSection';
+import { Navbar } from '@/components/Navbar';
+import { StatsSection } from '@/components/StatsSection';
 import React from 'react';
-import { Navbar, HeroSection, FeaturesSection, StatsSection, Footer } from '@/components/ErpUIComponents';
 
 export default function Home() {
   return (
