@@ -49,8 +49,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#111827] px-4">
-      <div className="bg-white dark:bg-[#1E1E1E] shadow-lg rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[635px] overflow-hidden">
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#0f1522] px-4">
+      <div className="bg-white dark:bg-[#111827] shadow-lg rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[635px] overflow-hidden">
         <LeftAuthPanel />
         <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={mutation.status === "pending"}
-              className="w-full bg-[#A17E25] hover:bg-[#8C6A1A] dark:bg-[#D4AF37] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+              className="w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
             >
               {mutation.status === "pending" ? 'Submitting...' : 'Send Reset Link'}
             </button>

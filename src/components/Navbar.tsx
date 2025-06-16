@@ -19,22 +19,22 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full h-16 bg-white dark:bg-[#1E293B] shadow flex items-center px-6 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-full w-full">
-        <Link href="/" className="text-[20px] font-bold text-[#A17E25] dark:text-[#D4AF37] flex-shrink-0">
+        <Link href="/" className="text-[20px] font-bold text-[#80410e] dark:text-[#c56a03] ">
           Lachs Golden ERP
         </Link>
         {/* Desktop menu */}
-        <div className="hidden md:flex md:items-center md:space-x-6 flex-grow">
+        <div className="hidden md:flex md:items-center md:space-x-6">
           {navItems.map(item => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-gray-800 dark:text-gray-200 hover:text-[#A17E25] dark:hover:text-[#D4AF37]"
+              className="text-gray-800 dark:text-gray-200 hover:text-[#80410e] dark:hover:text-[#D4AF37]"
             >
               {item.label}
             </Link>
           ))}
           <ModeToggle />
-          <Button onClick={() => nav('/signup')} className="bg-[#A17E25] hover:bg-[#8C6A1A] text-white">
+          <Button onClick={() => nav('/signup')} className="bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] text-white">
             Get Started
           </Button>
         </div>
@@ -62,7 +62,7 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <Button onClick={() => nav('/signup')} className="w-full bg-[#A17E25] hover:bg-[#8C6A1A] text-white">
+            <Button onClick={() => nav('/signup')} className="w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] text-white">
               Get Started
             </Button>
           </div>

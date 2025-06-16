@@ -5,13 +5,15 @@ import { SignUpInput, signUpSchema } from '@/lib/validations/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => null); // Handle invalid JSON input
+    if (!body) {
+      return NextResponse.json({ message: 'Request body is required' }, { status: 400 });
+    }
 
     // Validate request body
     const parseResult = signUpSchema.safeParse(body);
     if (!parseResult.success) {
       const formatted = parseResult.error.format();
-      // You can return the errors in a shape your client expects
       return NextResponse.json(
         { message: "Validation error", errors: formatted },
         { status: 400 }

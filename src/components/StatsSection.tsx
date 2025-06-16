@@ -7,10 +7,10 @@ import {
 
 export function StatsSection() {
   const stats = [
-    { icon: <LifeBuoy className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />, value: '24/7', label: 'Support Available' },
-    { icon: <Smile className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />, value: '500+', label: 'Happy Clients' },
-    { icon: <Server className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />, value: '99.9%', label: 'Uptime Guarantee' },
-    { icon: <Plug className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />, value: '50+', label: 'Integration Partners' },
+    { icon: <LifeBuoy className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />, value: '24/7', label: 'Support Available' },
+    { icon: <Smile className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />, value: '500+', label: 'Happy Clients' },
+    { icon: <Server className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />, value: '99.9%', label: 'Uptime Guarantee' },
+    { icon: <Plug className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />, value: '50+', label: 'Integration Partners' },
   ];
 
   return (

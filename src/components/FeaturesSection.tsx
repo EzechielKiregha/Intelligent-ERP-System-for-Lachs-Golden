@@ -12,32 +12,32 @@ import {
 export function FeaturesSection() {
   const features = [
     {
-      icon: <Server className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />,
+      icon: <Server className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />,
       title: 'Centralized Data',
       description: 'Unified dashboard with real-time synchronization across all departments.',
     },
     {
-      icon: <Cpu className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />,
+      icon: <Cpu className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />,
       title: 'AI-Driven Insights',
       description: 'Advanced analytics and predictive modeling for informed decision-making.',
     },
     {
-      icon: <DollarSign className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />,
+      icon: <DollarSign className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />,
       title: 'Financial Management',
       description: 'Comprehensive financial tracking and automated reporting systems.',
     },
     {
-      icon: <Users className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />,
+      icon: <Users className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />,
       title: 'HR Management',
       description: 'Streamlined employee management and automated payroll processing.',
     },
     {
-      icon: <Plug className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />,
+      icon: <Plug className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />,
       title: 'CRM Integration',
       description: 'Enhanced customer relationship management with AI-powered insights.',
     },
     {
-      icon: <Cloud className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />,
+      icon: <Cloud className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />,
       title: 'Cloud Architecture',
       description: 'Secure, scalable cloud-based solution for seamless access.',
     },
@@ -51,7 +51,7 @@ export function FeaturesSection() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((f, idx) => (
-            <Card key={idx} className="p-6 rounded-lg shadow-md bg-[#FEF3C7] dark:bg-[#3e3e3e]">
+            <Card key={idx} className="p-6 rounded-lg shadow-md bg-[#feefc7] bg-gradient-to-l dark:from-[#b47807] dark:to-[#5a3b02] ">
               <CardHeader>
                 <div className="flex items-center space-x-2">
                   {f.icon}
@@ -61,7 +61,7 @@ export function FeaturesSection() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="mt-2 text-[14px] text-gray-500 dark:text-gray-400">{f.description}</p>
+                <p className="mt-2 text-[14px] text-gray-500 dark:text-gray-200">{f.description}</p>
               </CardContent>
             </Card>
           ))}

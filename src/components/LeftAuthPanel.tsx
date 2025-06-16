@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Crown, CrownIcon } from 'lucide-react';
+import Link from 'next/link';
 
 export function LeftAuthPanel({ bullets }: { bullets?: string[] }) {
   const defaultBullets = [
@@ -12,19 +13,24 @@ export function LeftAuthPanel({ bullets }: { bullets?: string[] }) {
   const items = bullets || defaultBullets;
 
   return (
-    <div className="hidden md:flex flex-col justify-between h-full w-1/2 bg-gradient-to-b from-[#A17E25] to-[#8C6A1A] dark:bg-[#1F1F1F] text-white p-6">
+    <div className="hidden md:flex flex-col justify-between h-full w-1/2 bg-gradient-to-l from-[#80410e] to-[#c56a03] dark:bg-[#1F1F1F] text-white p-6">
       <div>
-        <h2 className="text-[24px] font-bold">Lachs Golden ERP</h2>
-        <p className="mt-2 text-[16px]">Enterprise Resource Planning Solution</p>
+        <Link href="/" className="flex flex-row text-[24px] font-bold text-[#eee7d4] dark:text-[#fffaec] ">
+          <Crown className='w-10 h-10' /> Lachs Golden
+        </Link>
+        <p className="mt-2 text-[16px] text-[#ebb70f] ">Enterprise Resource Planning Solution</p>
       </div>
-      <ul className="space-y-2">
-        {items.map((text, idx) => (
-          <li key={idx} className="flex items-center">
-            <CheckCircle className="w-5 h-5 mr-2 text-white" />
-            <span className="text-[14px]">{text}</span>
-          </li>
-        ))}
-      </ul>
+      <div className="">
+        <h2 className="text-[24px] font-semibold mb-4">Transform You Business Operations</h2>
+        <ul className="space-y-2">
+          {items.map((text, idx) => (
+            <li key={idx} className="flex items-center">
+              <CheckCircle className="w-5 h-5 mr-2 text-[#ffcc23] " />
+              <span className="text-[14px]">{text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

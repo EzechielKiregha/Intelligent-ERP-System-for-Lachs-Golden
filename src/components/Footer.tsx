@@ -20,15 +20,15 @@ export function Footer() {
     { label: 'Contact', href: '#' },
   ];
   const social = [
-    { icon: <LifeBuoy className="w-5 h-5 text-[#A17E25] dark:text-[#D4AF37]" />, href: '#' },
-    { icon: <Facebook className="w-5 h-5 text-[#A17E25] dark:text-[#D4AF37]" />, href: '#' },
-    { icon: <Twitter className="w-5 h-5 text-[#A17E25] dark:text-[#D4AF37]" />, href: '#' },
-    { icon: <Linkedin className="w-5 h-5 text-[#A17E25] dark:text-[#D4AF37]" />, href: '#' },
-    { icon: <Instagram className="w-5 h-5 text-[#A17E25] dark:text-[#D4AF37]" />, href: '#' },
+    { icon: <LifeBuoy className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
+    { icon: <Facebook className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
+    { icon: <Twitter className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
+    { icon: <Linkedin className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
+    { icon: <Instagram className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
   ];
 
   return (
-    <footer id="contact" className="bg-[#030300] dark:bg-[#111827] text-white py-10">
+    <footer id="contact" className="bg-[#441f00] dark:bg-[#1E293B] text-white py-10">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8">
         <div>
           <h3 className="text-[18px] font-semibold mb-4 text-gray-200">Solutions</h3>
