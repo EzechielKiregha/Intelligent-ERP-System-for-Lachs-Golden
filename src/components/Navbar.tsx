@@ -16,8 +16,8 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 w-full h-16 bg-white dark:bg-[#1E293B] shadow flex items-center z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-full px-6">
+    <nav className="fixed top-0 left-0 w-full h-16 bg-white dark:bg-[#1E293B] shadow flex items-center px-6 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between h-full">
         <Link href="/" className="text-[20px] font-bold text-[#A17E25] dark:text-[#D4AF37]">
           Lachs Golden ERP
         </Link>

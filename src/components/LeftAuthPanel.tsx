@@ -10,6 +10,7 @@ export function LeftAuthPanel({ bullets }: { bullets?: string[] }) {
     'Integrated Resource Planning',
   ];
   const items = bullets || defaultBullets;
+
   return (
     <div className="hidden md:flex flex-col justify-between h-full w-1/2 bg-gradient-to-b from-[#A17E25] to-[#8C6A1A] dark:bg-[#1F1F1F] text-white p-6">
       <div>

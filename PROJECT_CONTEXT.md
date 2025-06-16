@@ -3,18 +3,15 @@
 ## 1. Project Overview
 **Intelligent ERP System for Modern Business** (Lachs Golden & Co Holdings Inc.)
 
-- Centralized ERP platform with modules: Finance, Inventory, CRM, HR, Settings, Analytics, etc.
-- Premium “dark gold” theme: rich gold accents on neutral backgrounds; avoid blues.
-- Support light mode and dark mode using Tailwind utility classes (`dark:` variants).
-- Fully responsive: mobile-first; two-panel layouts on larger screens; adaptive grids.
-- Consistent typography, spacing, and motion across components.
-- Use Next.js App Router (`app/`), ShadcnUI components or plain elements with Tailwind utility classes, lucide-react icons, React Hook Form + Zod, TanStack Query + AxiosInstance, NextAuth for auth, LoadingContext for spinners.
+- A cutting-edge ERP platform designed to streamline business operations across Finance, Inventory, CRM, HR, Settings, Analytics, and more.
+- Modular architecture ensures scalability and flexibility for diverse business needs.
+- Premium “dark gold” theme: rich gold accents on neutral backgrounds; avoid blues for a sophisticated aesthetic.
+- Fully responsive design: mobile-first approach with adaptive grids and two-panel layouts for larger screens.
+- Supports light mode and dark mode using Tailwind utility classes (`dark:` variants) for accessibility and user preference.
+- Consistent typography, spacing, and motion across all components for a polished user experience.
+- Built with Next.js App Router (`app/`), ShadcnUI components, Tailwind utility classes, lucide-react icons, React Hook Form + Zod for validation, TanStack Query + AxiosInstance for data fetching, NextAuth for authentication, and LoadingContext for managing spinners.
 
-> **Using with Copilot**: Keep this file open. At the top of each new file, insert:
-> ```ts
 > // Apply PROJECT_CONTEXT.md: dark-gold theme, Tailwind utility classes only, responsive, dark/light mode, ShadcnUI or utility-based components, Zod+RHF, TanStack+Axios, NextAuth, LoadingContext.
-> ```
-> Use this prompt so Copilot follows these guidelines without needing explicit config files.
 
 ---
 

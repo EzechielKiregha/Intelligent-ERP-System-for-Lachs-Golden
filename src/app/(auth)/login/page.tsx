@@ -60,66 +60,68 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-[#111827]">
-      <LeftAuthPanel />
-      <div className="flex-1 flex items-center justify-center p-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
-          <h1 className="text-[24px] font-semibold text-gray-800 dark:text-gray-200">Sign In</h1>
-          <div>
-            <Label htmlFor="email" className="text-sm text-gray-800 dark:text-gray-200">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              {...register('email')}
-              className="mt-1"
-              placeholder="you@company.com"
-            />
-            {errors.email && (
-              <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.email.message}</p>
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#111827] px-4">
+      <div className="bg-white dark:bg-[#1E1E1E] shadow-lg rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[635px] overflow-hidden">
+        <LeftAuthPanel />
+        <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
+            <h1 className="text-[24px] font-semibold text-gray-800 dark:text-gray-200">Sign In</h1>
+            <div>
+              <Label htmlFor="email" className="text-sm text-gray-800 dark:text-gray-200">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                {...register('email')}
+                className="mt-1"
+                placeholder="you@company.com"
+              />
+              {errors.email && (
+                <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.email.message}</p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="password" className="text-sm text-gray-800 dark:text-gray-200">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                {...register('password')}
+                className="mt-1"
+                placeholder="••••••••"
+              />
+              {errors.password && (
+                <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.password.message}</p>
+              )}
+            </div>
+            <div className="flex items-center">
+              <input
+                id="rememberMe"
+                type="checkbox"
+                {...register('rememberMe')}
+                className="h-4 w-4 text-[#A17E25] dark:text-[#D4AF37] border-gray-300 dark:border-[#374151] rounded"
+              />
+              <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-800 dark:text-gray-200">
+                Remember me
+              </label>
+            </div>
+            {serverError && (
+              <p className="text-center mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{serverError}</p>
             )}
-          </div>
-          <div>
-            <Label htmlFor="password" className="text-sm text-gray-800 dark:text-gray-200">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register('password')}
-              className="mt-1"
-              placeholder="••••••••"
-            />
-            {errors.password && (
-              <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.password.message}</p>
-            )}
-          </div>
-          <div className="flex items-center">
-            <input
-              id="rememberMe"
-              type="checkbox"
-              {...register('rememberMe')}
-              className="h-4 w-4 text-[#A17E25] dark:text-[#D4AF37] border-gray-300 dark:border-[#374151] rounded"
-            />
-            <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-800 dark:text-gray-200">
-              Remember me
-            </label>
-          </div>
-          {serverError && (
-            <p className="text-center mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{serverError}</p>
-          )}
-          <Button
-            type="submit"
-            className="w-full bg-[#A17E25] hover:bg-[#8C6A1A] dark:bg-[#D4AF37] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
-          >
-            {loginMutation.status === "pending" ? 'Signing in...' : 'Sign In'}
-          </Button>
-          <div className="mt-4 flex justify-between text-sm text-gray-800 dark:text-gray-200">
-            <Link href="/forgot-password" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
-              Forgot password?
-            </Link>
-            <Link href="/signup" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
-              Create account
-            </Link>
-          </div>
-        </form>
+            <Button
+              type="submit"
+              className="w-full bg-[#A17E25] hover:bg-[#8C6A1A] dark:bg-[#D4AF37] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+            >
+              {loginMutation.status === "pending" ? 'Signing in...' : 'Sign In'}
+            </Button>
+            <div className="mt-4 flex justify-between text-sm text-gray-800 dark:text-gray-200">
+              <Link href="/forgot-password" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+                Forgot password?
+              </Link>
+              <Link href="/signup" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+                Create account
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

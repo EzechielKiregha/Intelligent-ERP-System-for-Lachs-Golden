@@ -23,7 +23,7 @@ export function HeroSection() {
   const nav = useNavigation();
   return (
     <section className="pt-16 bg-white dark:bg-[#111827]">
-      <div className="h-[548px] max-w-7xl mx-auto flex flex-col justify-center items-center px-4 text-center">
+      <div className="min-h-[calc(100vh-4rem)] max-w-screen-xl mx-auto flex flex-col justify-center items-center px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-200 mb-4">
           Intelligent ERP System for Modern Business
         </h1>
@@ -31,7 +31,7 @@ export function HeroSection() {
           Streamline your operations with AI-powered insights and automation at Lachs Golden & Co Holdings Inc.
         </p>
         <div className="flex space-x-4">
-          <Button onClick={() => nav('/signup')} className="bg-[#A17E25] hover:bg-[#8C6A1A] text-white rounded-lg px-6 py-3">
+          <Button onClick={() => nav('/signup')} className="bg-[#A17E25] hover:bg-[#8C6A1A] text-white rounded-lg px-6 py-3 shadow transition">
             Request Demo
           </Button>
           <Link href="#features">
