@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,7 +17,6 @@ type ForgotInput = z.infer<typeof forgotSchema>;
 
 export default function ForgotPasswordPage() {
   const { setIsLoading } = useLoading();
-  const [serverMsg, setServerMsg] = useState<string | null>(null);
 
   const {
     register,
@@ -34,7 +32,6 @@ export default function ForgotPasswordPage() {
       return res.data;
     },
     onMutate: () => {
-      setServerMsg(null);
       setIsLoading(true);
     },
     onSuccess: () => {
@@ -73,9 +70,7 @@ export default function ForgotPasswordPage() {
                 <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.email.message}</p>
               )}
             </div>
-            {serverMsg && (
-              <p className="text-center mt-1 text-xs text-gray-800 dark:text-gray-200">{serverMsg}</p>
-            )}
+
             <button
               type="submit"
               disabled={mutation.status === "pending"}

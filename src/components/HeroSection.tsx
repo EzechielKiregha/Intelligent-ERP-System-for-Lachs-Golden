@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigation } from '@/hooks/use-navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function HeroSection() {
   const nav = useNavigation();
@@ -27,7 +28,7 @@ export function HeroSection() {
           </div>
         </div>
         <div className="flex-1 hidden md:flex justify-center items-center">
-          <img
+          <Image
             src="/images/dashboard-hero.png"
             alt="Dashboard Preview"
             className="rounded-lg shadow-lg w-full max-w-md"

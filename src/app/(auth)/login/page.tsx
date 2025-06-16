@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginInput } from '@/lib/validations/login';
@@ -18,7 +17,6 @@ import { toast } from 'react-hot-toast';
 export default function LoginPage() {
   const router = useRouter();
   const { setIsLoading } = useLoading();
-  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -41,7 +39,6 @@ export default function LoginPage() {
       return res;
     },
     onMutate: () => {
-      setServerError(null);
       setIsLoading(true);
     },
     onSuccess: () => {
@@ -103,9 +100,7 @@ export default function LoginPage() {
                 Remember me
               </label>
             </div>
-            {serverError && (
-              <p className="text-center mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{serverError}</p>
-            )}
+
             <Button
               type="submit"
               className="w-full bg-[#A17E25] hover:bg-[#8C6A1A] dark:bg-[#D4AF37] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
