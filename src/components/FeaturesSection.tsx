@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import {
   Server,
@@ -7,13 +6,7 @@ import {
   Users,
   Cloud,
   Plug,
-  LifeBuoy,
-  Smile,
-  CheckCircle,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Instagram,
+
 } from 'lucide-react';
 
 export function FeaturesSection() {

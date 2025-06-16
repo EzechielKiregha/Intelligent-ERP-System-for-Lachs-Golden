@@ -16,9 +16,11 @@ export default function ResetPasswordPageWrapper() {
     <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#111827] px-4">
       <div className="bg-white dark:bg-[#1E1E1E] shadow-lg rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[635px] overflow-hidden">
         <LeftAuthPanel />
-        <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
-          <ResetPasswordPage />
-        </div>
+        <Suspense fallback={<div>Loading...</div>}>
+          <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
+            <ResetPasswordPage />
+          </div>
+        </Suspense>
       </div>
     </div>
   );

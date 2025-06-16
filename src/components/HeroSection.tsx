@@ -1,21 +1,5 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import {
-  Server,
-  Cpu,
-  DollarSign,
-  Users,
-  Cloud,
-  Plug,
-  LifeBuoy,
-  Smile,
-  CheckCircle,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Instagram,
-} from 'lucide-react';
 import { useNavigation } from '@/hooks/use-navigation';
 import Link from 'next/link';
 
