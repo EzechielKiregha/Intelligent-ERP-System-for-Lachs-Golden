@@ -13,7 +13,6 @@ import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { sendWelcomeEmail } from '@/components/mailler-send/Otp';
-import { generateOtp } from '@/components/mailler-send/Otp';
 import { useState } from 'react';
 import BasePopover from '@/components/BasePopover';
 
@@ -34,13 +33,12 @@ export default function SignUpPage() {
 
   const signUpMutation = useMutation({
     mutationFn: async (data: SignUpInput) => {
-      const otp = generateOtp(); // Generate OTP
-      const res = await axiosdb.post('/api/signup', { ...data, otp }); // Store OTP alongside user data
-      await sendWelcomeEmail(data.email, "http://localhost.com/login", otp); // Send WelcomeEmail
+      const res = await axiosdb.post('/api/signup', data); // Store OTP alongside user data
+      await sendWelcomeEmail(data.email); // Send WelcomeEmail
       return res.data;
     },
     onSuccess: () => {
-      toast.success('Account created successfully!');
+      toast.success('Account created successfully! Please check your email for the OTP.');
       setOtpPopoverOpen(true); // Open OTP popover
     },
     onError: (err: any) => {

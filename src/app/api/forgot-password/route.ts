@@ -23,8 +23,8 @@ export async function POST(req: Request) {
     });
 
     // Send the forgot password email
-    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`;
-    await sendForgotPasswordEmail(email, resetUrl, token);
+    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}}`;
+    await sendForgotPasswordEmail( user.firstName, email, resetUrl);
 
     return NextResponse.json({ message: 'Forgot password email sent successfully' });
   } catch (err) {

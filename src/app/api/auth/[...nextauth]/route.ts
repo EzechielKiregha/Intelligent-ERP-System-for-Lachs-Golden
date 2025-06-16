@@ -3,6 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { sendOtp } from "@/components/mailler-send/Otp";
+import { randomBytes } from "crypto";
 
 declare module "next-auth" {
   interface Session {
@@ -16,6 +18,10 @@ declare module "next-auth" {
   }
 }
 
+const generateOtp = (): string => {
+  return randomBytes(3).toString('hex').toUpperCase(); // Generates a 6-character OTP
+};
+
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -25,7 +31,6 @@ const handler = NextAuth({
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
-        otp: { label: "OTP", type: "text" }, // Optional for OTP
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
@@ -47,9 +52,16 @@ const handler = NextAuth({
           throw new Error("Invalid password");
         }
 
+        const otp = generateOtp();
+
+        const otpRes = await sendOtp(user.email, otp);
+        if (!otpRes) {
+          throw new Error("Failed to send OTP or invalid OTP");
+        }
+
         const updatedUser = await prisma.user.update({
           where: { email: credentials.email },
-          data: { otpSecret: credentials.otp }, // Update OTP if provided
+          data: { otpSecret: otp }, // Update OTP if provided
         });
         // Return an object representing the user; NextAuth stores minimal info in token/session
         return {

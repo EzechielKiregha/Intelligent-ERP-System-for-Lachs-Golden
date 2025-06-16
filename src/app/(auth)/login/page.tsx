@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import BasePopover from '@/components/BasePopover';
-import { generateOtp, sendOtp } from '@/components/mailler-send/Otp';
 import axiosdb from '@/lib/axios';
 
 export default function LoginPage() {
@@ -36,12 +35,10 @@ export default function LoginPage() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginInput) => {
-      const otp = generateOtp();
       const res = await signIn('credentials', {
         redirect: false,
         email: data.email,
         password: data.password,
-        otp,
       });
       if (!res) throw new Error("No response from signIn");
       if (res.error) throw new Error(res.error);
@@ -53,11 +50,8 @@ export default function LoginPage() {
     onSuccess: async (res, data) => {
       setIsLoading(false);
       if (res.ok) {
-
-
         // Send OTP to user's email
-        const otpRes = await sendOtp(data.email, otp)
-        toast.success(otpRes.message + " Please verify to continue.");
+        toast.success(" Please verify to continue.");
 
         setEmail(data.email || ""); // Store email for OTP verification
         setOtpPopoverOpen(true); // Open OTP popover

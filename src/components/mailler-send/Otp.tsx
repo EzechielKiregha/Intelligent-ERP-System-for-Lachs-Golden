@@ -1,20 +1,17 @@
 import { render } from '@react-email/render';
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
-import { OtpEmail, ForgotPasswordEmail, WelcomeEmail } from "./Email";
-import { randomBytes } from "crypto";
+import OtpEmail from 'emails/OtpEmail';
+import ForgotPasswordEmail from 'emails/ForgotPasswordEmail';
+import WelcomeEmail from 'emails/WelcomeEmail';
 
 
 const mailerSend = new MailerSend({
   apiKey: process.env.MAILERSEND_API_KEY || '',
 });
 
-export const generateOtp = (): string => {
-  return randomBytes(3).toString('hex').toUpperCase(); // Generates a 6-character OTP
-};
-
 export const sendOtp = async (toEmail: string, otp: string | undefined): Promise<{ sendTo: string; message: string }> => {
 
-  const emailHtml = await render(<OtpEmail code={otp} />);
+  const emailHtml = await render(<OtpEmail verificationCode={otp} />);
 
   const sentFrom = new Sender("alicebunani5@gmail.com", "Intelligent ERP");
   const recipients = [new Recipient(toEmail, "Dear User")];
@@ -30,9 +27,9 @@ export const sendOtp = async (toEmail: string, otp: string | undefined): Promise
   return { message: "OTP sent successfully", sendTo: toEmail };
 };
 
-export const sendForgotPasswordEmail = async (toEmail: string, url: string, token: string): Promise<{ sendTo: string; message: string }> => {
+export const sendForgotPasswordEmail = async (firstname: string | null, toEmail: string, url: string): Promise<{ sendTo: string; message: string }> => {
 
-  const emailHtml = await render(<ForgotPasswordEmail url={url} token={token} />);
+  const emailHtml = await render(<ForgotPasswordEmail userFirstname={firstname} resetPasswordLink={url} />);
 
   const sentFrom = new Sender("alicebunani5@gmail.com", "Intelligent ERP");
   const recipients = [new Recipient(toEmail, "Dear User")];
@@ -48,9 +45,9 @@ export const sendForgotPasswordEmail = async (toEmail: string, url: string, toke
   return { message: "Forgot password email sent successfully", sendTo: toEmail };
 };
 
-export const sendWelcomeEmail = async (toEmail: string, url: string, otp: string | undefined): Promise<{ sendTo: string; message: string }> => {
+export const sendWelcomeEmail = async (toEmail: string): Promise<{ sendTo: string; message: string }> => {
 
-  const emailHtml = await render(<WelcomeEmail url={url} code={otp} />);
+  const emailHtml = await render(<WelcomeEmail />);
 
   const sentFrom = new Sender("alicebunani5@gmail.com", "Intelligent ERP");
   const recipients = [new Recipient(toEmail, "Dear User")];
