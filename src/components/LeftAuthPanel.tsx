@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle, Crown, CrownIcon } from 'lucide-react';
+import { CheckCircle, Crown } from 'lucide-react';
 import Link from 'next/link';
 
 export function LeftAuthPanel({ bullets }: { bullets?: string[] }) {

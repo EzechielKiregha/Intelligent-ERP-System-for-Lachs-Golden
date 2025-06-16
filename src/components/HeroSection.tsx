@@ -33,8 +33,8 @@ export function HeroSection() {
           <Image
             src="/images/dashboard-hero.jpg"
             alt="Dashboard Preview"
-            width={600}
-            height={400}
+            width={800}
+            height={600}
             className="rounded-lg shadow-lg w-full max-w-md"
           />
         </div>
