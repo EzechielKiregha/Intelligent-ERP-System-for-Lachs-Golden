@@ -1,7 +1,7 @@
 'use client';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import { Suspense } from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
