@@ -8,10 +8,9 @@ import React from 'react';
 
 export default function Home() {
   return (
-    <main className="flex flex-col bg-[#FFF8E1] text-[#333333] font-sans">
-      {/* Navbar is fixed; to avoid content hiding behind it, add top padding equal to navbar height */}
+    <main className="flex flex-col bg-white dark:bg-[#111827] text-gray-800 dark:text-gray-200 font-sans">
       <Navbar />
-      <div className="pt-16"> {/* if Navbar height is 4rem (h-16), adjust accordingly */}
+      <div className="pt-16">
         <HeroSection />
         <FeaturesSection />
         <StatsSection />
