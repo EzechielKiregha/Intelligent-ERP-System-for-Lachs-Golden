@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginInput } from '@/lib/validations/login';
@@ -13,10 +14,16 @@ import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
+import BasePopover from '@/components/BasePopover';
+import { generateOtp, sendOtp } from '@/components/mailler-send/Otp';
+import axiosdb from '@/lib/axios';
 
 export default function LoginPage() {
   const router = useRouter();
   const { setIsLoading } = useLoading();
+  const [otpPopoverOpen, setOtpPopoverOpen] = useState(false);
+  const [otp, setOtp] = useState<string>("");
+  const [toEmail, setEmail] = useState<string>("");
 
   const {
     register,
@@ -29,10 +36,12 @@ export default function LoginPage() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginInput) => {
+      const otp = generateOtp();
       const res = await signIn('credentials', {
         redirect: false,
         email: data.email,
         password: data.password,
+        otp,
       });
       if (!res) throw new Error("No response from signIn");
       if (res.error) throw new Error(res.error);
@@ -41,16 +50,41 @@ export default function LoginPage() {
     onMutate: () => {
       setIsLoading(true);
     },
-    onSuccess: () => {
+    onSuccess: async (res, data) => {
       setIsLoading(false);
-      toast.success('Login successful!');
-      router.push('/dashboard');
+      if (res.ok) {
+
+
+        // Send OTP to user's email
+        const otpRes = await sendOtp(data.email, otp)
+        toast.success(otpRes.message + " Please verify to continue.");
+
+        setEmail(data.email || ""); // Store email for OTP verification
+        setOtpPopoverOpen(true); // Open OTP popover
+      }
     },
     onError: (err: any) => {
       setIsLoading(false);
       toast.error(err.message || 'Login failed');
     },
   });
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await axiosdb.get(`/api/auth/otp?email=${toEmail}&otp=${otp}`);
+      if (res.status === 200) {
+        toast.success("OTP verified successfully!");
+        setOtpPopoverOpen(false);
+        router.push("/dashboard");
+      } else {
+        throw new Error("Invalid OTP");
+      }
+    } catch (err) {
+      console.error("OTP verification error:", err);
+      toast.error("OTP verification failed. Please try again.");
+    }
+  };
 
   const onSubmit = (data: LoginInput) => {
     loginMutation.mutate(data);
@@ -118,6 +152,33 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
+      {/* OTP Popover */}
+      <BasePopover
+        title="Two-Factor Authentication"
+        buttonLabel=""
+        isOpen={otpPopoverOpen}
+        onClose={() => setOtpPopoverOpen(false)}
+      >
+        <div className="text-center">
+          <p className="text-gray-800 mb-4">
+            Enter the 6-digit code sent to your email.
+          </p>
+          <input
+            title='OTP Input'
+            type="text"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            maxLength={6}
+          />
+          <Button
+            onClick={handleVerifyOtp}
+            className="w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+          >
+            Verify OTP
+          </Button>
+        </div>
+      </BasePopover>
     </div>
   );
 }

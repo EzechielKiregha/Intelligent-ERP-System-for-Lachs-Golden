@@ -25,14 +25,17 @@ const handler = NextAuth({
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        otp: { label: "OTP", type: "text" }, // Optional for OTP
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
           throw new Error("Email and password required");
         }
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
+
         if (!user) {
           throw new Error("No user found with that email");
         }
@@ -43,12 +46,17 @@ const handler = NextAuth({
         if (!isValid) {
           throw new Error("Invalid password");
         }
+
+        const updatedUser = await prisma.user.update({
+          where: { email: credentials.email },
+          data: { otpSecret: credentials.otp }, // Update OTP if provided
+        });
         // Return an object representing the user; NextAuth stores minimal info in token/session
         return {
-          id: user.id,
-          email: user.email,
-          name: `${user.firstName} ${user.lastName}`,
-          role: user.role,
+          id: updatedUser.id,
+          email: updatedUser.email,
+          name: `${updatedUser.firstName} ${updatedUser.lastName}`,
+          role: updatedUser.role,
         };
       },
     }),

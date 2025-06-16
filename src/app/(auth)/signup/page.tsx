@@ -12,9 +12,18 @@ import axiosdb from '@/lib/axios';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
+import { sendWelcomeEmail } from '@/components/mailler-send/Otp';
+import { generateOtp } from '@/components/mailler-send/Otp';
+import { useState } from 'react';
+import BasePopover from '@/components/BasePopover';
 
 export default function SignUpPage() {
   const router = useRouter();
+
+  const [otpPopoverOpen, setOtpPopoverOpen] = useState(false);
+  const [otp, setOtp] = useState<string>("");
+  const [toEmail, setEmail] = useState<string>("");
+
   const {
     register,
     handleSubmit,
@@ -25,13 +34,14 @@ export default function SignUpPage() {
 
   const signUpMutation = useMutation({
     mutationFn: async (data: SignUpInput) => {
-      console.log('Submitting signup data:', data);
-      const res = await axiosdb.post('/api/signup', data);
+      const otp = generateOtp(); // Generate OTP
+      const res = await axiosdb.post('/api/signup', { ...data, otp }); // Store OTP alongside user data
+      await sendWelcomeEmail(data.email, "http://localhost.com/login", otp); // Send WelcomeEmail
       return res.data;
     },
     onSuccess: () => {
       toast.success('Account created successfully!');
-      router.push('/login');
+      setOtpPopoverOpen(true); // Open OTP popover
     },
     onError: (err: any) => {
       const msg = err.response?.data?.message;
@@ -39,7 +49,25 @@ export default function SignUpPage() {
     },
   });
 
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await axiosdb.get(`/api/auth/otp?email=${toEmail}&otp=${otp}`);
+      if (res.status === 200) {
+        toast.success("OTP verified successfully!");
+        setOtpPopoverOpen(false);
+        router.push("/dashboard");
+      } else {
+        throw new Error("Invalid OTP");
+      }
+    } catch (err) {
+      console.error("OTP verification error:", err);
+      toast.error("OTP verification failed. Please try again.");
+    }
+  };
+
   const onSubmit = (data: SignUpInput) => {
+    setEmail(data.email); // Store email for OTP verification
     signUpMutation.mutate(data);
   };
 
@@ -149,6 +177,33 @@ export default function SignUpPage() {
           </form>
         </div>
       </div>
+      {/* OTP Popover */}
+      <BasePopover
+        title="Two-Factor Authentication"
+        buttonLabel=""
+        isOpen={otpPopoverOpen}
+        onClose={() => setOtpPopoverOpen(false)}
+      >
+        <div className="text-center">
+          <p className="text-gray-800 mb-4">
+            Enter the 6-digit code sent to your email.
+          </p>
+          <input
+            title='OTP Input'
+            type="text"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            maxLength={6}
+          />
+          <Button
+            onClick={handleVerifyOtp}
+            className="w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+          >
+            Verify OTP
+          </Button>
+        </div>
+      </BasePopover>
     </div>
   );
 }

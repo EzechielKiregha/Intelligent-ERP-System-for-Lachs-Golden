@@ -78,6 +78,10 @@ model User {
   role       Role         @default(USER)
   company    Company?      @relation(fields: [companyId], references: [id])
   companyId  String?
+
+  otpSecret String?    @unique
+  resetToken String? @unique
+
   createdAt  DateTime     @default(now())
 
   // If you treat login users as employees, you can link to Employee:
