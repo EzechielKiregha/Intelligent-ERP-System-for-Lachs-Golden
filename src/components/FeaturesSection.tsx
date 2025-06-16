@@ -51,7 +51,7 @@ export function FeaturesSection() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((f, idx) => (
-            <Card key={idx} className="p-6 rounded-lg shadow-md bg-white dark:bg-[#1E293B]">
+            <Card key={idx} className="p-6 rounded-lg shadow-md bg-[#FEF3C7] dark:bg-[#3e3e3e]">
               <CardHeader>
                 <div className="flex items-center space-x-2">
                   {f.icon}
