@@ -2,7 +2,6 @@ import { render } from '@react-email/render';
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { OtpEmail, ForgotPasswordEmail, WelcomeEmail } from "./Email";
 import { randomBytes } from "crypto";
-import cuid2 from "@paralleldrive/cuid2";
 
 
 const mailerSend = new MailerSend({
@@ -31,8 +30,8 @@ export const sendOtp = async (toEmail: string, otp: string | undefined): Promise
   return { message: "OTP sent successfully", sendTo: toEmail };
 };
 
-export const sendForgotPasswordEmail = async (toEmail: string, url: string): Promise<{ sendTo: string; message: string }> => {
-  const token = cuid2.createId(); // Generate a unique token for the reset link
+export const sendForgotPasswordEmail = async (toEmail: string, url: string, token: string): Promise<{ sendTo: string; message: string }> => {
+
   const emailHtml = await render(<ForgotPasswordEmail url={url} token={token} />);
 
   const sentFrom = new Sender("alicebunani5@gmail.com", "Intelligent ERP");

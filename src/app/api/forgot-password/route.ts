@@ -1,22 +1,34 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { sendForgotPasswordEmail } from '@/components/mailler-send/Otp';
 
 export async function POST(req: Request) {
-  // For MVP, we do not send actual emails.
-  // You could log the email or integrate a mail service later.
   try {
-    const { email } = await req.json();
-    // Optionally, check if user exists: prisma.user.findUnique({ where: { email } })
+    const { email, token } = await req.json();
 
-    if (!email) {
-      return NextResponse.json({ message: 'Email is required' }, { status: 400 });
+    if (!email || !token) {
+      return NextResponse.json({ message: 'Email and token are required' }, { status: 400 });
     }
 
-    // Simulate sending a reset link
+    // Check if user exists
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return NextResponse.json({ message: 'If this email exists, a reset link has been sent.' });
+    }
 
-    // But regardless, return generic response
-    return NextResponse.json({ message: 'If this email exists, a reset link has been sent.' });
+    // Save the token in the database
+    await prisma.user.update({
+      where: { email },
+      data: { resetToken: token },
+    });
+
+    // Send the forgot password email
+    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`;
+    await sendForgotPasswordEmail(email, resetUrl, token);
+
+    return NextResponse.json({ message: 'Forgot password email sent successfully' });
   } catch (err) {
     console.error('Forgot password error:', err);
-    return NextResponse.json({ message: 'Internal error : '+ err }, { status: 500 });
+    return NextResponse.json({ message: 'Internal error: ' + err }, { status: 500 });
   }
 }

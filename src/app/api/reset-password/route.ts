@@ -14,17 +14,22 @@ export async function POST(req: NextRequest) {
       );
     }
     const { token, password } = parseResult.data;
-    // MVP token handling: either decode token to userId, or assume token is user email/ID
-    // For now, mock: token is user email. In real, token should be secure.
-    const user = await prisma.user.findUnique({ where: { email: token } });
+
+    // Find user by reset token
+    const user = await prisma.user.findUnique({ where: { resetToken: token } });
     if (!user) {
       return NextResponse.json({ message: 'Invalid token or user not found' }, { status: 400 });
     }
-    const hashed = await hash(password, 10);
+
+    // Hash the new password
+    const hashedPassword = await hash(password, 10);
+
+    // Update the user's password and clear the reset token
     await prisma.user.update({
       where: { id: user.id },
-      data: { password: hashed },
+      data: { password: hashedPassword, resetToken: null },
     });
+
     return NextResponse.json({ message: 'Password reset successful' });
   } catch (err) {
     console.error('Reset-password error:', err);

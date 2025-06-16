@@ -1,25 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendForgotPasswordEmail } from "@/components/mailler-send/Otp";
-import cuid2 from '@paralleldrive/cuid2';
 import { prisma } from "@/lib/prisma";
-
-export async function POST(request: NextRequest) {
-  const { email, url } = await request.json();
-
-  if (!email || !url) {
-    return NextResponse.json({ error: "Email and URL are required" }, { status: 400 });
-  }
-
-  try {
-    const token = cuid2.createId(); // Generate a unique token for the reset link
-    await sendForgotPasswordEmail(email, url);
-
-    return NextResponse.json({ message: "Forgot password email sent", token });
-  } catch (error) {
-    console.error("Error sending forgot password email:", error);
-    return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
-  }
-}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

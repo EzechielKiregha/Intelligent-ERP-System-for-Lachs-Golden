@@ -8,6 +8,7 @@ import axiosdb from '@/lib/axios';
 import { useLoading } from '@/contexts/loadingContext';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import { toast } from 'react-hot-toast';
+import cuid2 from '@paralleldrive/cuid2';
 
 const forgotSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -28,7 +29,8 @@ export default function ForgotPasswordPage() {
 
   const mutation = useMutation({
     mutationFn: async (data: ForgotInput) => {
-      const res = await axiosdb.post('/api/forgot-password', data);
+      const token = cuid2.createId(); // Generate token
+      const res = await axiosdb.post('/api/forgot-password', { ...data, token }); // Send email and token
       return res.data;
     },
     onMutate: () => {
