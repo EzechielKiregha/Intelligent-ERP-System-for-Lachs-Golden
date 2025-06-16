@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <main className="flex flex-col bg-white dark:bg-[#111827] text-gray-800 dark:text-gray-200 font-sans">
       <Navbar />
-      <div className="pt-16">
+      <div className="pt-8">
         <HeroSection />
         <FeaturesSection />
         <StatsSection />

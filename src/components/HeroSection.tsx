@@ -29,9 +29,9 @@ export function HeroSection() {
             </Link>
           </div>
         </div>
-        <div className="flex-1 hidden md:flex justify-center items-center">
+        <div className="flex-1 hidden md:flex justify-center items-center rounded-2xl">
           <Image
-            src="/images/dashboard-hero.png"
+            src="/images/dashboard-hero.jpg"
             alt="Dashboard Preview"
             className="rounded-lg shadow-lg w-full max-w-md"
           />
