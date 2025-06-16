@@ -1,15 +1,4 @@
 'use client';
-/**
- * Component: ForgotPasswordPage
- * Project: Intelligent ERP System for Modern Business
- * Purpose: Render “Forgot Password” form:
- *   - Single email field.
- *   - Submit: useMutation to POST /api/forgot-password.
- *   - Show generic “If this email exists...” message.
- *   - Styling: same as login/reset, with gold-themed button and focus rings.
- * Instruction:
- *   “Generate ForgotPasswordPage component using Tailwind classNames and behavior as above.”
- */
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -63,60 +52,42 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-[#111827]">
       <LeftAuthPanel />
-      <div className="flex-1 flex items-center justify-center min-h-screen bg-[#F5F5F5]">
-        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-          <h1 className="text-center text-[20px] font-semibold text-[#333333]">
-            Forgot Password
-          </h1>
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
-            <div>
-              <label htmlFor="email" className="block mb-1 text-[14px] text-[#333333]">
-                Enter your work email
-              </label>
-              <input
-                id="email"
-                type="email"
-                {...register('email')}
-                className="w-full px-4 py-3 border border-[#CCCCCC] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E40AF]"
-                placeholder="you@company.com"
-              />
-              {errors.email && (
-                <p className="mt-1 text-[12px] text-[#E53E3E]">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            {serverMsg && (
-              <p className="text-center mt-1 text-[12px] text-[#333333]">
-                {serverMsg}
-              </p>
+      <div className="flex-1 flex items-center justify-center p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
+          <h1 className="text-[24px] font-semibold text-gray-800 dark:text-gray-200">Forgot Password</h1>
+          <div>
+            <label htmlFor="email" className="block mb-1 text-sm text-gray-800 dark:text-gray-200">
+              Enter your work email
+            </label>
+            <input
+              id="email"
+              type="email"
+              {...register('email')}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-[#374151] rounded-md focus:outline-none focus:ring-2 focus:ring-[#A17E25] dark:focus:ring-[#D4AF37] bg-transparent text-gray-800 dark:text-gray-200 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+              placeholder="you@company.com"
+            />
+            {errors.email && (
+              <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.email.message}</p>
             )}
-
-            <button
-              type="submit"
-              disabled={mutation.status === "pending"}
-              className="
-                w-full mt-2 px-4 py-3
-                rounded-md
-                text-white
-                bg-[#1E40AF] hover:bg-[#1C3A9B]
-                disabled:opacity-50 disabled:cursor-not-allowed
-                focus:outline-none focus:ring-2 focus:ring-[#1E40AF]
-              "
-            >
-              {mutation.status === "pending" ? 'Submitting...' : 'Send Reset Link'}
-            </button>
-          </form>
-
-          <div className="mt-4 text-center text-[14px]">
-            <a href="/login" className="text-[#1E40AF] hover:underline">
+          </div>
+          {serverMsg && (
+            <p className="text-center mt-1 text-xs text-gray-800 dark:text-gray-200">{serverMsg}</p>
+          )}
+          <button
+            type="submit"
+            disabled={mutation.status === "pending"}
+            className="w-full bg-[#A17E25] hover:bg-[#8C6A1A] dark:bg-[#D4AF37] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+          >
+            {mutation.status === "pending" ? 'Submitting...' : 'Send Reset Link'}
+          </button>
+          <div className="mt-4 text-center text-sm text-gray-800 dark:text-gray-200">
+            <a href="/login" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
               Back to Sign In
             </a>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

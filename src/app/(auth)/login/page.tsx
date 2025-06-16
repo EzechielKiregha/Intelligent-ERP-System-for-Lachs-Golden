@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -59,15 +60,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-[#111827]">
       <LeftAuthPanel />
-      <div className="flex-1 flex items-center justify-center p-8 bg-white dark:bg-[#121212]">
+      <div className="flex-1 flex items-center justify-center p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
-          <h1 className="text-[24px] font-semibold text-[#333333] dark:text-white">Sign In</h1>
-
-          {/* Email */}
+          <h1 className="text-[24px] font-semibold text-gray-800 dark:text-gray-200">Sign In</h1>
           <div>
-            <Label htmlFor="email" className="text-[14px] text-[#333333] dark:text-white">Email</Label>
+            <Label htmlFor="email" className="text-sm text-gray-800 dark:text-gray-200">Email</Label>
             <Input
               id="email"
               type="email"
@@ -76,13 +75,11 @@ export default function LoginPage() {
               placeholder="you@company.com"
             />
             {errors.email && (
-              <p className="mt-1 text-[12px] text-[#E53E3E]">{errors.email.message}</p>
+              <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.email.message}</p>
             )}
           </div>
-
-          {/* Password */}
           <div>
-            <Label htmlFor="password" className="text-[14px] text-[#333333] dark:text-white">Password</Label>
+            <Label htmlFor="password" className="text-sm text-gray-800 dark:text-gray-200">Password</Label>
             <Input
               id="password"
               type="password"
@@ -91,40 +88,34 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
             {errors.password && (
-              <p className="mt-1 text-[12px] text-[#E53E3E]">{errors.password.message}</p>
+              <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.password.message}</p>
             )}
           </div>
-
-          {/* Remember Me */}
           <div className="flex items-center">
             <input
               id="rememberMe"
               type="checkbox"
               {...register('rememberMe')}
-              className="h-4 w-4 text-[#D4AF37] border-[#CCCCCC] rounded"
+              className="h-4 w-4 text-[#A17E25] dark:text-[#D4AF37] border-gray-300 dark:border-[#374151] rounded"
             />
-            <label htmlFor="rememberMe" className="ml-2 text-[14px] text-[#333333] dark:text-white">
+            <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-800 dark:text-gray-200">
               Remember me
             </label>
           </div>
-
           {serverError && (
-            <p className="text-center mt-1 text-[12px] text-[#E53E3E]">{serverError}</p>
+            <p className="text-center mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{serverError}</p>
           )}
-
           <Button
             type="submit"
-            className="w-full mt-2 px-4 py-3 rounded-md bg-[#D4AF37] hover:bg-[#B8860B] text-white"
-            disabled={loginMutation.status === 'pending'}
+            className="w-full bg-[#A17E25] hover:bg-[#8C6A1A] dark:bg-[#D4AF37] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
           >
             {loginMutation.status === "pending" ? 'Signing in...' : 'Sign In'}
           </Button>
-
-          <div className="mt-4 flex justify-between text-[14px]">
-            <Link href="/forgot-password" className="text-[#D4AF37] hover:underline">
+          <div className="mt-4 flex justify-between text-sm text-gray-800 dark:text-gray-200">
+            <Link href="/forgot-password" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
               Forgot password?
             </Link>
-            <Link href="/signup" className="text-[#D4AF37] hover:underline">
+            <Link href="/signup" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
               Create account
             </Link>
           </div>
