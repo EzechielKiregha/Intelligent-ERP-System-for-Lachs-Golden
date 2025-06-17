@@ -46,7 +46,8 @@ enum TaskStatus {
 
 model Company {
   id           String        @id @default(cuid())
-  name         String
+  name         String         @unique
+  description  String?
   contactEmail String?
   timezone     String
   dateFormat   String

@@ -5,59 +5,126 @@ import { SignUpInput, signUpSchema } from '@/lib/validations/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json().catch(() => null); // Handle invalid JSON input
+    const body = await req.json();
+
+    console.log('Received data:', body);
+    
     if (!body) {
+      console.error("Invalid JSON input received");
       return NextResponse.json({ message: 'Request body is required' }, { status: 400 });
     }
 
-    // Validate request body
     const parseResult = signUpSchema.safeParse(body);
     if (!parseResult.success) {
-      const formatted = parseResult.error.format();
+      console.error("Validation error:", parseResult.error.format());
       return NextResponse.json(
-        { message: "Validation error", errors: formatted },
+        { message: "Validation error", errors: parseResult.error.format() },
         { status: 400 }
       );
     }
+
     const { firstName, lastName, company, email, password } = parseResult.data as SignUpInput;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
-    
-    if (existingUser) return NextResponse.json({ message: 'Email already used' }, { status: 400 });
-
-    let companyRecord = await prisma.company.findFirst({ where: { name: company } });
-    if (!companyRecord) {
-      companyRecord = await prisma.company.create({
-        data: { 
-          name: 'Lachs Golden & Co',
-          contactEmail: 'contact@lachsgolden.com',
-          timezone: 'UTC-05:00',
-          dateFormat: 'YYYY-MM-DD',
-        },
-      });
+    if (existingUser) {
+      console.error("Duplicate email detected:", email);
+      return NextResponse.json({ message: 'Email already used' }, { status: 400 });
     }
 
-    const hashedPassword = await hash(password, 10);
+    let companyRecord;
+    try {
+      // Check if the company exists
+      companyRecord = await prisma.company.findFirst({ where: { name: company } });
+      if (!companyRecord) {
+        // Create the company if it doesn't exist
+        companyRecord = await prisma.company.create({
+          data: {
+            name: company,
+            contactEmail: `${email}`,
+            timezone: 'UTC-05:00',
+            dateFormat: 'YYYY-MM-DD',
+          },
+        });
 
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        name: `${firstName} ${lastName}`,
-        companyId: companyRecord.id,
-        role: 'USER',
-      },
-    });
+        // Create a default department for the company
+        const department = await prisma.department.create({
+          data: {
+            name: 'General',
+            companyId: companyRecord.id,
+          },
+        });
 
-    if (!user) {
+        // Create an employee record for the user
+        const employee = await prisma.employee.create({
+          data: {
+            firstName,
+            lastName,
+            email,
+            jobTitle: 'Administrator',
+            status: 'ACTIVE',
+            departmentId: department.id,
+            companyId: companyRecord.id,
+            hireDate: new Date(),
+            salary: 0,
+          },
+        });
+
+        // Hash the user's password
+        const hashedPassword = await hash(password, 10);
+
+        // Create the user record
+        const user = await prisma.user.create({
+          data: {
+            email,
+            password: hashedPassword,
+            firstName,
+            lastName,
+            name: `${firstName} ${lastName}`,
+            role: 'ADMIN', // Assign admin role since they are creating the company
+            companyId: companyRecord.id,
+            employeeId: employee.id,
+          },
+        });
+
+        console.log("User created successfully:", user);
+        return NextResponse.json(user, { status: 200 });
+      }
+    } catch (err) {
+      console.error("Error during company, department, or employee creation:", err);
+      return NextResponse.json({ message: 'Failed to create company, department, or employee' }, { status: 500 });
+    }
+
+    // If the company exists, hash the password and create the user
+    let hashedPassword;
+    try {
+      hashedPassword = await hash(password, 10);
+    } catch (err) {
+      console.error("Error hashing password:", err);
+      return NextResponse.json({ message: 'Failed to hash password' }, { status: 500 });
+    }
+
+    let user;
+    try {
+      user = await prisma.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          firstName,
+          lastName,
+          name: `${firstName} ${lastName}`,
+          companyId: companyRecord.id,
+          role: 'USER',
+        },
+      });
+    } catch (err) {
+      console.error("Error creating user record:", err);
       return NextResponse.json({ message: 'Failed to create user' }, { status: 500 });
     }
 
-    return NextResponse.json(user,{ status: 200 });
+    console.log("User created successfully:", user);
+    return NextResponse.json(user, { status: 200 });
   } catch (err) {
-    console.error(err);
+    console.error("Unexpected error during signup:", err);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

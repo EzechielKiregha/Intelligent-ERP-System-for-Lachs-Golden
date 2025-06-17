@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axiosdb from '@/lib/axios';
-import { useLoading } from '@/contexts/loadingContext';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import { toast } from 'react-hot-toast';
 
@@ -16,7 +15,6 @@ const forgotSchema = z.object({
 type ForgotInput = z.infer<typeof forgotSchema>;
 
 export default function ForgotPasswordPage() {
-  const { setIsLoading } = useLoading();
 
   const {
     register,
@@ -31,15 +29,10 @@ export default function ForgotPasswordPage() {
       const res = await axiosdb.post(`/api/mail/forgot-password?email=${data.email}`);
       return res.data;
     },
-    onMutate: () => {
-      setIsLoading(true);
-    },
     onSuccess: () => {
-      setIsLoading(false);
       toast.success("If this email exists, a reset link has been sent.");
     },
     onError: () => {
-      setIsLoading(false);
       toast.error("Something went wrong. Please try again later.");
     },
   });

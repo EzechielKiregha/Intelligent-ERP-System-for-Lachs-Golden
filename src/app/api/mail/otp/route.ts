@@ -8,59 +8,71 @@ import { prisma } from '@/lib/prisma';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
-  const { toEmail } = await req.json().catch(() => null);
+  console.log('[POST] Received request to send OTP');
+  const { toEmail } = await req.json();
+  console.log(`[POST] Parsed request body: toEmail=${toEmail}`);
 
   if (!toEmail) {
     const errorMessage = { error: 'Missing required field: toEmail' };
-    console.log(errorMessage);
+    console.log('[POST] Validation failed:', errorMessage);
     return NextResponse.json(errorMessage, { status: 400 });
   }
 
   const generateOtp = (): string => randomBytes(3).toString('hex').toUpperCase();
-
   const otp = generateOtp();
+  console.log(`[POST] Generated OTP: ${otp}`);
 
-  const user = await prisma.user.findUnique({ where: { email: toEmail } });
+  // Fetch user and company information
+  const userExist = await prisma.user.findUnique({
+    where: { email: toEmail },
+    include: {
+      company: true, // Include company information
+    },
+  });
+  console.log(`[POST] User lookup result: ${userExist ? 'User found' : 'User not found'}`);
 
-  if (!user) {
+  if (!userExist) {
     const errorMessage = { error: 'User with this email does not exist' };
-    console.log(errorMessage);
+    console.log('[POST] Validation failed:', errorMessage);
     return NextResponse.json(errorMessage, { status: 400 });
   }
 
-  await prisma.user.update({
+  const user = await prisma.user.update({
     where: { email: toEmail },
     data: { otpSecret: otp },
   });
+  console.log('[POST] Updated user OTP secret in database');
 
   const emailHtml = render(OtpEmail({ verificationCode: otp }));
+  console.log('[POST] Rendered OTP email HTML');
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Intelligent ERP  <onboarding@resend.dev>',
-      to: [toEmail],
+      from: `${userExist.company?.name}  <noreply@intelligenterp.dpdns.org>`,
+      to: [user.email],
       subject: 'Your OTP Code',
       html: await emailHtml,
     });
 
     if (error) {
-      const errorMessage = "[Error]: " + error;
-      console.log(errorMessage);
+      const errorMessage = "[Error]: " + error.message;
+      console.log('[POST] Email sending failed:', errorMessage);
       return NextResponse.json(errorMessage, { status: 400 });
     }
 
     const successMessage = { message: 'OTP sent successfully', data };
-    console.log(successMessage);
+    console.log('[POST] Email sent successfully:', successMessage);
     return NextResponse.json(successMessage);
   } catch (err) {
     const errorMessage = { error: 'Failed to send OTP email', details: err };
-    console.log(errorMessage);
+    console.log('[POST] Unexpected error occurred:', errorMessage);
     return NextResponse.json(errorMessage, { status: 500 });
   }
 }
 
 export async function GET() {
+  console.log('[GET] Received request to check OTP route readiness');
   const message = { message: 'OTP route is ready to accept POST requests.' };
-  console.log(message);
+  console.log('[GET] Response:', message);
   return NextResponse.json(message);
 }

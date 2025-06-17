@@ -38,38 +38,49 @@ export default function SignUpPage() {
 
   const signUpMutation = useMutation({
     mutationFn: async (data: SignUpInput) => {
+      console.log("Sign up data:", data); // Log the data being sent
       const res = await axiosdb.post('/api/signup', data);
-      if (res.status === 200) {
-
-      } else {
-        toast.error("Failed to create account. Please try again.");
-      }
       return res.data;
     },
-    onSuccess: async (res) => {
-
-      toast.success('Account created successfully! Please check your email for the OTP.');
-
-      const otpSemt = await axiosdb.post('/api/mail/otp', { toEmail: res.email });
-      const welcomeEmail = await axiosdb.post('/api/mail/welcome', { toEmail: res.email });
-      if (otpSemt.status !== 200) {
-        toast.error("Failed to send OTP. Please try again.");
-      } else {
-        toast.success("OTP sent successfully to " + res.email);
-      }
-
+    onSuccess: async () => {
+      toast.success("Account created successfully!"); // Show success message
+      sendOtpAndWelcomeEmail(); // Send OTP and welcome email
       setOtpPopoverOpen(true); // Open OTP popover
     },
-    onError: (err) => {
-      const msg = err.message;
-      toast.error("[Internal Error] : " + msg);
+    onError: (error: any) => {
+      // Handle errors gracefully
+      const errorMessage = error.response?.data?.message || "An error occurred during signup. Please try again.";
+      console.error("Signup error:", errorMessage);
+      toast.error(errorMessage);
     },
   });
 
+  const sendOtpAndWelcomeEmail = async () => {
+    console.log("Sending OTP and welcome email to:", toEmail); // Log the email being sent
+    console.log("Sending OTP email to:", toEmail); // Log the email for OTP
+    const otpResponse = await axiosdb.post('/api/mail/otp', { toEmail: toEmail });
+
+    if (otpResponse.status !== 200) {
+      toast.error("Failed to send OTP. Please try again.");
+    }
+
+    console.log("Sending welcome email to:", toEmail); // Log the email for welcome
+    const welcomeResponse = await axiosdb.post('/api/mail/welcome', { toEmail: toEmail });
+
+    if (welcomeResponse.status !== 200) {
+      toast.error("Failed to send welcome email. Please try again.");
+    }
+
+    toast.success("OTP sent successfully to " + toEmail); // Show success message for OTP
+  }
+
+
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Verifying OTP for email:", toEmail, "with OTP:", otp); // Log OTP verification details
     try {
       const res = await axiosdb.get(`/api/mail/otp?email=${toEmail}&otp=${otp}`);
+      console.log("OTP verification response:", res); // Log the OTP verification response
       if (res.status === 200) {
         toast.success("OTP verified successfully!");
         setOtpPopoverOpen(false);
@@ -78,12 +89,13 @@ export default function SignUpPage() {
         throw new Error("Invalid OTP");
       }
     } catch (err) {
-      console.error("OTP verification error:", err);
+      console.error("OTP verification error:", err); // Log any errors during OTP verification
       toast.error("OTP verification failed. Please try again.");
     }
   };
 
   const onSubmit = (data: SignUpInput) => {
+    console.log("Form submitted with data:", data); // Log the form submission data
     setEmail(data.email); // Store email for OTP verification
     signUpMutation.mutate(data);
   };

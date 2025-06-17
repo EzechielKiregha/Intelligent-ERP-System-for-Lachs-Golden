@@ -17,10 +17,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(errorMessage, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email: toEmail } });
-  if (!user) {
-    const errorMessage = { error: 'If this email exists, a reset link has been sent.' };
-    console.log(errorMessage);
+  // Fetch user and company information
+  const userExist = await prisma.user.findUnique({
+    where: { email: toEmail },
+    include: {
+      company: true, // Include company information
+    },
+  });
+
+  console.log(`[POST] User lookup result: ${userExist ? 'User found' : 'User not found'}`);
+  if (!userExist) {
+    const errorMessage = { error: 'User with this email does not exist' };
+    console.log('[POST] Validation failed:', errorMessage);
     return NextResponse.json(errorMessage, { status: 400 });
   }
 
@@ -33,13 +41,13 @@ export async function POST(req: NextRequest) {
   });
 
   const emailHtml = render(ForgotPasswordEmail({
-    userFirstname: user.firstName,
+    userFirstname: userExist.firstName,
     resetPasswordLink,
   }));
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Intelligent ERP <onboarding@resend.dev>',
+      from: `${userExist.company?.name}  <noreply@intelligenterp.dpdns.org>`,
       to: [toEmail],
       subject: 'Reset Your Password',
       html: await emailHtml,
