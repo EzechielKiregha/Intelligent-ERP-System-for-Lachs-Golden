@@ -51,6 +51,7 @@ export default function SignUpPage() {
       toast.success('Account created successfully! Please check your email for the OTP.');
 
       const otpSemt = await axiosdb.post('/api/mail/otp', { toEmail: res.email });
+      const welcomeEmail = await axiosdb.post('/api/mail/welcome', { toEmail: res.email });
       if (otpSemt.status !== 200) {
         toast.error("Failed to send OTP. Please try again.");
       } else {

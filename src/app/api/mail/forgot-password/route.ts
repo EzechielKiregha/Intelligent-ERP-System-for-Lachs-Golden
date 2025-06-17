@@ -5,7 +5,6 @@ import ForgotPasswordEmail from 'emails/ForgotPasswordEmail';
 import cuid2 from '@paralleldrive/cuid2';
 import { prisma } from '@/lib/prisma';
 
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
@@ -13,12 +12,16 @@ export async function POST(req: NextRequest) {
   const toEmail = searchParams.get("email");
 
   if (!toEmail) {
-    return NextResponse.json({ error: 'Missing required fields: toEmail' }, { status: 400 });
+    const errorMessage = { error: 'Missing required fields: toEmail' };
+    console.log(errorMessage);
+    return NextResponse.json(errorMessage, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({ where: { email: toEmail } });
   if (!user) {
-    return NextResponse.json({ error: 'If this email exists, a reset link has been sent.' }, { status: 400 });
+    const errorMessage = { error: 'If this email exists, a reset link has been sent.' };
+    console.log(errorMessage);
+    return NextResponse.json(errorMessage, { status: 400 });
   }
 
   const token = cuid2.createId();
@@ -43,15 +46,23 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      return NextResponse.json(error, { status: 400 });
+      const errorMessage = "[Error]: " + error;
+      console.log(errorMessage);
+      return NextResponse.json(errorMessage, { status: 400 });
     }
 
-    return NextResponse.json({ message: 'Forgot password email sent successfully', data });
+    const successMessage = { message: 'Forgot password email sent successfully', data };
+    console.log(successMessage);
+    return NextResponse.json(successMessage);
   } catch (err) {
-    return NextResponse.json({ error: 'Failed to send forgot password email', details: err }, { status: 500 });
+    const errorMessage = { error: 'Failed to send forgot password email', details: err };
+    console.log(errorMessage);
+    return NextResponse.json(errorMessage, { status: 500 });
   }
 }
 
 export async function GET() {
-  return NextResponse.json({ message: 'Forgot password route is ready to accept POST requests.' });
+  const message = { message: 'Forgot password route is ready to accept POST requests.' };
+  console.log(message);
+  return NextResponse.json(message);
 }
