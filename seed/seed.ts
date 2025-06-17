@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
   // Upsert the company record using a unique ID
   const company = await prisma.company.upsert({
-    where: { id: 'unique-company-id' }, // Ensure this ID is unique for the company
+    where: { id: 'Lachs Golden & Co' }, // Ensure this ID is unique for the company
     update: {}, // Update logic can be added here if needed
     create: {
       name: 'Lachs Golden & Co',

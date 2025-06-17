@@ -12,9 +12,14 @@ import axiosdb from '@/lib/axios';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
-import { sendWelcomeEmail } from '@/components/mailler-send/Otp';
 import { useState } from 'react';
 import BasePopover from '@/components/BasePopover';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -33,24 +38,37 @@ export default function SignUpPage() {
 
   const signUpMutation = useMutation({
     mutationFn: async (data: SignUpInput) => {
-      const res = await axiosdb.post('/api/signup', data); // Store OTP alongside user data
-      await sendWelcomeEmail(data.email); // Send WelcomeEmail
+      const res = await axiosdb.post('/api/signup', data);
+      if (res.status === 200) {
+
+      } else {
+        toast.error("Failed to create account. Please try again.");
+      }
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: async (res) => {
+
       toast.success('Account created successfully! Please check your email for the OTP.');
+
+      const otpSemt = await axiosdb.post('/api/mail/otp', { toEmail: res.email });
+      if (otpSemt.status !== 200) {
+        toast.error("Failed to send OTP. Please try again.");
+      } else {
+        toast.success("OTP sent successfully to " + res.email);
+      }
+
       setOtpPopoverOpen(true); // Open OTP popover
     },
-    onError: (err: any) => {
-      const msg = err.response?.data?.message;
-      toast.error(msg);
+    onError: (err) => {
+      const msg = err.message;
+      toast.error("[Internal Error] : " + msg);
     },
   });
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axiosdb.get(`/api/auth/otp?email=${toEmail}&otp=${otp}`);
+      const res = await axiosdb.get(`/api/mail/otp?email=${toEmail}&otp=${otp}`);
       if (res.status === 200) {
         toast.success("OTP verified successfully!");
         setOtpPopoverOpen(false);
@@ -186,17 +204,27 @@ export default function SignUpPage() {
           <p className="text-gray-800 mb-4">
             Enter the 6-digit code sent to your email.
           </p>
-          <input
-            title='OTP Input'
-            type="text"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          <InputOTP
             maxLength={6}
-          />
+            value={otp}
+            onChange={(value) => setOtp(value)}
+            className="flex justify-center gap-2 bg-amber-600 dark:bg-amber-700 rounded-lg p-2 shadow-md"
+          >
+            <InputOTPGroup>
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+            </InputOTPGroup>
+            <InputOTPSeparator />
+            <InputOTPGroup>
+              <InputOTPSlot index={3} />
+              <InputOTPSlot index={4} />
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
           <Button
             onClick={handleVerifyOtp}
-            className="w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+            className="bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
           >
             Verify OTP
           </Button>

@@ -16,6 +16,12 @@ import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import BasePopover from '@/components/BasePopover';
 import axiosdb from '@/lib/axios';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -51,6 +57,10 @@ export default function LoginPage() {
       setIsLoading(false);
       if (res.ok) {
         // Send OTP to user's email
+        const otpRes = await axiosdb.post('/api/mail/otp', { toEmail: data.email });
+        if (otpRes.status !== 200) {
+          toast.error("Failed to send OTP. Please try again.");
+        }
         toast.success(" Please verify to continue.");
 
         setEmail(data.email || ""); // Store email for OTP verification
@@ -66,7 +76,7 @@ export default function LoginPage() {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axiosdb.get(`/api/auth/otp?email=${toEmail}&otp=${otp}`);
+      const res = await axiosdb.get(`/api/mail/otp?email=${toEmail}&otp=${otp}`);
       if (res.status === 200) {
         toast.success("OTP verified successfully!");
         setOtpPopoverOpen(false);
@@ -157,17 +167,27 @@ export default function LoginPage() {
           <p className="text-gray-800 mb-4">
             Enter the 6-digit code sent to your email.
           </p>
-          <input
-            title='OTP Input'
-            type="text"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          <InputOTP
             maxLength={6}
-          />
+            value={otp}
+            onChange={(value) => setOtp(value)}
+            className="flex justify-center gap-2"
+          >
+            <InputOTPGroup>
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+            </InputOTPGroup>
+            <InputOTPSeparator />
+            <InputOTPGroup>
+              <InputOTPSlot index={3} />
+              <InputOTPSlot index={4} />
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
           <Button
             onClick={handleVerifyOtp}
-            className="w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+            className="bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
           >
             Verify OTP
           </Button>

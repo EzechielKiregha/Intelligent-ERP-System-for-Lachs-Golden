@@ -26,94 +26,94 @@ interface WelcomeEmailProps {
   }[];
 }
 
-export const WelcomeEmail = ({ steps, links }: WelcomeEmailProps) => {
-  return (
-    <Html>
-      <Head />
-      <Tailwind
-        config={{
-          theme: {
-            extend: {
-              colors: {
-                brand: '#80410e',
-                offwhite: '#FEF3C7',
-              },
-              spacing: {
-                0: '0px',
-                20: '20px',
-                45: '45px',
-              },
+export const WelcomeEmail = ({
+  steps, links
+}: WelcomeEmailProps) => (
+  <Html>
+    <Head />
+    <Tailwind
+      config={{
+        theme: {
+          extend: {
+            colors: {
+              brand: '#80410e',
+              offwhite: '#FEF3C7',
+            },
+            spacing: {
+              0: '0px',
+              20: '20px',
+              45: '45px',
             },
           },
-        }}
-      >
-        <Preview>Welcome to Intelligent ERP</Preview>
-        <Body className="bg-offwhite font-sans text-base">
-          <h1 className='text-center text-2xl font-bold text-[#80410e] mb-8'>
-            Intelligent ERP
-          </h1>
-          <Container className="bg-white p-45 rounded-lg shadow-md">
-            <Heading className="my-0 text-center leading-8 text-[#80410e]">
-              Welcome to Intelligent ERP
-            </Heading>
+        },
+      }}
+    >
+      <Preview>Welcome to Intelligent ERP</Preview>
+      <Body className="bg-offwhite font-sans text-base">
+        <h1 className='text-center text-2xl font-bold text-[#80410e] mb-8'>
+          Intelligent ERP
+        </h1>
+        <Container className="bg-white p-45 rounded-lg shadow-md">
+          <Heading className="my-0 text-center leading-8 text-[#80410e]">
+            Welcome to Intelligent ERP
+          </Heading>
 
-            <Section>
-              <Row>
-                <Text className="text-base text-gray-800">
-                  Congratulations! You're joining businesses worldwide that use Intelligent ERP to streamline operations and drive success.
-                </Text>
+          <Section>
+            <Row>
+              <Text className="text-base text-gray-800">
+                Congratulations! You're joining businesses worldwide that use Intelligent ERP to streamline operations and drive success.
+              </Text>
 
-                <Text className="text-base text-gray-800">Here's how to get started:</Text>
-              </Row>
-            </Section>
+              <Text className="text-base text-gray-800">Here's how to get started:</Text>
+            </Row>
+          </Section>
 
-            <ul>{steps?.map(({ description }) => description)}</ul>
+          <ul>{steps?.map(({ description }) => description)}</ul>
 
-            <Section className="text-center">
-              <Button className="rounded-lg bg-[#80410e] px-[18px] py-3 text-white hover:bg-[#8C6A1A]">
-                You may have already received an email with your email verification code.
-              </Button>
-            </Section>
+          <Section className="text-center">
+            <Button className="rounded-lg bg-[#80410e] px-[18px] py-3 text-white hover:bg-[#8C6A1A]">
+              You may have already received an email with your email verification code.
+            </Button>
+          </Section>
 
-            <Section className="mt-45">
-              <Row>
-                {links?.map((link) => (
-                  <Column key={link.title}>
-                    <Link
-                      className="font-bold text-[#80410e] underline"
-                      href={link.href}
-                    >
-                      {link.title}
-                    </Link>{' '}
-                    <span className="text-[#80410e]">→</span>
-                  </Column>
-                ))}
-              </Row>
-            </Section>
-          </Container>
-
-          <Container className="mt-20">
-            <Section>
-              <Row>
-                <Column className="px-20 text-right">
-                  <Link className="text-gray-500">Unsubscribe</Link>
+          <Section className="mt-45">
+            <Row>
+              {links?.map((link) => (
+                <Column key={link.title}>
+                  <Link
+                    className="font-bold text-[#80410e] underline"
+                    href={link.href}
+                  >
+                    {link.title}
+                  </Link>{' '}
+                  <span className="text-[#80410e]">→</span>
                 </Column>
-                <Column className="text-left">
-                  <Link className="text-gray-500">Manage Preferences</Link>
-                </Column>
-              </Row>
-            </Section>
-            <Text className="mb-45 text-center text-gray-400">
-              Intelligent ERP, 123 Business Street, Suite 300, San Francisco, CA
-            </Text>
-          </Container>
-        </Body>
-      </Tailwind>
-    </Html>
-  );
-};
+              ))}
+            </Row>
+          </Section>
+        </Container>
 
-WelcomeEmail.PreviewProps = {
+        <Container className="mt-20">
+          <Section>
+            <Row>
+              <Column className="px-20 text-right">
+                <Link className="text-gray-500">Unsubscribe</Link>
+              </Column>
+              <Column className="text-left">
+                <Link className="text-gray-500">Manage Preferences</Link>
+              </Column>
+            </Row>
+          </Section>
+          <Text className="mb-45 text-center text-gray-400">
+            Intelligent ERP, 123 Business Street, Suite 300, San Francisco, CA
+          </Text>
+        </Container>
+      </Body>
+    </Tailwind>
+  </Html>
+);
+
+export const PreviewProps = {
   steps: [
     {
       id: 1,
@@ -157,6 +157,6 @@ WelcomeEmail.PreviewProps = {
     { title: 'Read the docs', href: 'https://intelligenterp.com/docs' },
     { title: 'Contact support', href: 'https://intelligenterp.com/support' },
   ],
-} satisfies WelcomeEmailProps;
+}
 
 export default WelcomeEmail;

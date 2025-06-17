@@ -18,6 +18,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     if (res.otpSecret === otp) {
+      // Clear the OTP after successful verification
+      await prisma.user.update({
+        where: { email },
+        data: { otpSecret: null }, // Clear the OTP
+      });
+      
       return NextResponse.json({ message: "OTP verified successfully" });
     } else {
       throw new Error("Invalid OTP");

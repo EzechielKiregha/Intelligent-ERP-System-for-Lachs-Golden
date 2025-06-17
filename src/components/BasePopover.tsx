@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useId, useState } from 'react';
-import { AnimatePresence, MotionConfig, motion, Transition } from 'framer-motion';
+import { AnimatePresence, MotionConfig, Transition, motion } from 'framer-motion';
 import { ArrowLeftIcon } from 'lucide-react';
 
 // Explicitly cast TRANSITION to the correct type
@@ -61,7 +61,7 @@ export default function BasePopover({
         >
           <motion.span
             layoutId={`popover-label-${uniqueId}`}
-            className="hover:text-green-600 dark:hover:text-green-600 text-gray-800 dark:text-gray-200 transition-all duration-300 cursor-pointer"
+            className="hover:text-[#745338] transition-all duration-300 cursor-pointer"
           >
             {buttonLabel}
           </motion.span>
@@ -82,31 +82,25 @@ export default function BasePopover({
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
-                className="w-full max-w-[900px] md:h-[635px] bg-white dark:bg-[#111827] shadow-lg rounded-lg flex flex-col md:flex-row overflow-hidden"
+                className="w-[90%] md:w-[50%] bg-white rounded-lg text-gray-800 shadow-lg overflow-hidden relative flex flex-col"
               >
-                {/* Left Panel */}
-                <div className="hidden md:flex flex-col justify-between h-full w-1/2 bg-gradient-to-b from-[#A17E25] to-[#8C6A1A] dark:bg-[#1F1F1F] text-white p-6">
-                  <div>
-                    <h2 className="text-[24px] font-bold">Lachs Golden ERP</h2>
-                    <p className="mt-2 text-[16px]">Enterprise Resource Planning Solution</p>
-                  </div>
-                  <ul className="space-y-2">
-                    <li className="flex items-center">
-                      <ArrowLeftIcon className="w-5 h-5 mr-2 text-white" />
-                      <span className="text-[14px]">AI-Powered Analytics & Insights</span>
-                    </li>
-                    {/* Add more bullets as needed */}
-                  </ul>
+                {/* Header */}
+                <div className="flex items-center p-4 border-b border-gray-200">
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      if (onClose) onClose();
+                    }}
+                    className="flex items-center text-[#6b3b04] hover:text-[#eebd73]"
+                  >
+                    <ArrowLeftIcon size={20} className="mr-2" /> Back
+                  </button>
+                  <h3 className="text-lg font-semibold ml-auto">{title}</h3>
                 </div>
 
-                {/* Content Panel */}
-                <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
-                  <div className="w-full max-w-md space-y-4">
-                    <h3 className="text-[24px] font-semibold text-gray-800 dark:text-gray-200">{title}</h3>
-                    <div className="flex flex-col items-center justify-center">
-                      {children}
-                    </div>
-                  </div>
+                {/* Content */}
+                <div className="flex-1 flex flex-col items-center justify-center p-6 overflow-y-auto">
+                  {children}
                 </div>
               </motion.div>
             </motion.div>
