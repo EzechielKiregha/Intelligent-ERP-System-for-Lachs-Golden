@@ -5,10 +5,12 @@ import ForgotPasswordEmail from 'emails/ForgotPasswordEmail';
 import cuid2 from '@paralleldrive/cuid2';
 import { prisma } from '@/lib/prisma';
 
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
-  const { toEmail } = await req.json().catch(() => null);
+  const { searchParams } = new URL(req.url);
+  const toEmail = searchParams.get("email");
 
   if (!toEmail) {
     return NextResponse.json({ error: 'Missing required fields: toEmail' }, { status: 400 });

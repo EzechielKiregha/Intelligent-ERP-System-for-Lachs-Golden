@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
 
   const mutation = useMutation({
     mutationFn: async (data: ForgotInput) => {
-      const res = await axiosdb.post('/api/mail/forgot-password', data);
+      const res = await axiosdb.post(`/api/mail/forgot-password?email=${data.email}`);
       return res.data;
     },
     onMutate: () => {
