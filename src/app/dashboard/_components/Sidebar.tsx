@@ -1,8 +1,12 @@
+"use client";
 import React from 'react';
 import { Grid, DollarSign, Box, Users, Briefcase } from 'lucide-react'; // Example icons
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const Sidebar: React.FC = () => {
+
+  const pathname = usePathname();
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: <Grid /> },
     { name: 'Finance', href: '/dashboard/finance', icon: <DollarSign /> },
@@ -28,7 +32,7 @@ const Sidebar: React.FC = () => {
             <Link
               href={item.href}
               className="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-white/10 focus:ring-2 focus:ring-offset-2 focus:ring-[#A17E25] dark:focus:ring-[#D4AF37]"
-              aria-current={item.href === window.location.pathname ? 'page' : undefined}
+              aria-current={item.href === pathname ? 'page' : undefined}
             >
               {item.icon}
               <span>{item.name}</span>
