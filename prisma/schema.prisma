@@ -44,9 +44,22 @@ enum TaskStatus {
   BLOCKED
 }
 
+enum TransactionType {
+  ORDER
+  REFUND
+  PAYMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
 model Company {
-  id           String        @id @default(cuid())
-  name         String         @unique
+  id           String  @id @default(cuid())
+  name         String  @unique
   description  String?
   contactEmail String?
   timezone     String
@@ -59,35 +72,35 @@ model Company {
   customers    Customer[]
 
   // HR models
-  departments  Department[]
-  employees    Employee[]
-  payrolls     Payroll[]
+  departments        Department[]
+  employees          Employee[]
+  payrolls           Payroll[]
   performanceReviews PerformanceReview[]
 
   // Workflow & documents
-  tasks        Task[]
-  documents    Document[]
+  tasks     Task[]
+  documents Document[]
 }
 
 model User {
-  id         String       @id @default(cuid())
-  email      String       @unique
-  name       String?
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
   password  String?
   firstName String?
   lastName  String?
-  role       Role         @default(USER)
-  company    Company?      @relation(fields: [companyId], references: [id])
-  companyId  String?
+  role      Role     @default(USER)
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
 
-  otpSecret String?    @unique
+  otpSecret  String? @unique
   resetToken String? @unique
 
-  createdAt  DateTime     @default(now())
+  createdAt DateTime @default(now())
 
   // If you treat login users as employees, you can link to Employee:
-  employee   Employee?    @relation(fields: [employeeId], references: [id])
-  employeeId String? @unique
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?   @unique
 
   transactions Transaction[]
 
@@ -97,64 +110,65 @@ model User {
 }
 
 model Category {
-  id         String       @id @default(cuid())
-  name       String
-  type       CategoryType
-  company    Company      @relation(fields: [companyId], references: [id])
-  companyId  String
+  id        String       @id @default(cuid())
+  name      String
+  type      CategoryType
+  company   Company      @relation(fields: [companyId], references: [id])
+  companyId String
 
   transactions Transaction[]
 }
 
 model Transaction {
-  id          String    @id @default(cuid())
+  id          String          @id @default(cuid())
   amount      Float
   date        DateTime
   description String?
-  createdAt   DateTime  @default(now())
-
-  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime        @default(now())
+  type        TransactionType
+  user        User            @relation(fields: [userId], references: [id])
   userId      String
+  status     TransactionStatus @default(PENDING)
 
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
 
-  company     Company   @relation(fields: [companyId], references: [id])
-  companyId   String
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
 }
 
 model Product {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
-  sku         String    @unique
+  sku         String   @unique
   quantity    Int
   threshold   Int?
   description String?
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime @default(now())
 
-  company     Company   @relation(fields: [companyId], references: [id])
-  companyId   String
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
 }
 
 model Customer {
-  id             String    @id @default(cuid())
-  name           String
-  email          String?
-  phone          String?
-  lastContacted  DateTime?
-  notes          String?
-  createdAt      DateTime  @default(now())
+  id            String    @id @default(cuid())
+  name          String
+  email         String?
+  phone         String?
+  lastContacted DateTime?
+  notes         String?
+  createdAt     DateTime  @default(now())
 
-  company        Company   @relation(fields: [companyId], references: [id])
-  companyId      String
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
 }
 
 // === HR / Employee Management Models ===
 
 model Department {
-  id        String     @id @default(cuid())
+  id        String  @id @default(cuid())
   name      String
-  company   Company    @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id])
   companyId String
 
   employees Employee[]
@@ -176,18 +190,18 @@ model Employee {
   salary       Float?
   createdAt    DateTime       @default(now())
 
-  company      Company        @relation(fields: [companyId], references: [id])
-  companyId    String
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
 
-  payrolls     Payroll[]
+  payrolls           Payroll[]
   performanceReviews PerformanceReview[]
-  tasks        Task[]         @relation("TaskAssignment")
-  documents    Document[]     @relation("DocumentOwnership")
+  tasks              Task[]              @relation("TaskAssignment")
+  documents          Document[]          @relation("DocumentOwnership")
 }
 
 model Payroll {
   id          String    @id @default(cuid())
-  payPeriod   String    // e.g., "2025-06" or date-range string
+  payPeriod   String // e.g., "2025-06" or date-range string
   grossAmount Float
   taxAmount   Float?
   netAmount   Float?
@@ -198,36 +212,36 @@ model Payroll {
   company     Company   @relation(fields: [companyId], references: [id])
   companyId   String
 
-  createdAt   DateTime  @default(now())
+  createdAt DateTime @default(now())
 }
 
 model PerformanceReview {
-  id           String            @id @default(cuid())
-  reviewDate   DateTime          @default(now())
-  rating       PerformanceRating
-  comments     String?
-  employee     Employee          @relation(fields: [employeeId], references: [id])
-  employeeId   String
-  reviewer     User?             @relation(fields: [reviewerId], references: [id])
-  reviewerId   String?
-  company      Company           @relation(fields: [companyId], references: [id])
-  companyId    String
+  id         String            @id @default(cuid())
+  reviewDate DateTime          @default(now())
+  rating     PerformanceRating
+  comments   String?
+  employee   Employee          @relation(fields: [employeeId], references: [id])
+  employeeId String
+  reviewer   User?             @relation(fields: [reviewerId], references: [id])
+  reviewerId String?
+  company    Company           @relation(fields: [companyId], references: [id])
+  companyId  String
 }
 
 model Task {
-  id          String       @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   description String?
-  status      TaskStatus   @default(PENDING)
-  createdAt   DateTime     @default(now())
+  status      TaskStatus @default(PENDING)
+  createdAt   DateTime   @default(now())
   dueDate     DateTime?
   // Assigned employee(s)
-  assignee    Employee?    @relation("TaskAssignment", fields: [assigneeId], references: [id])
+  assignee    Employee?  @relation("TaskAssignment", fields: [assigneeId], references: [id])
   assigneeId  String?
   // Created by user
-  createdBy   User?        @relation(fields: [createdById], references: [id])
+  createdBy   User?      @relation(fields: [createdById], references: [id])
   createdById String?
-  company     Company      @relation(fields: [companyId], references: [id])
+  company     Company    @relation(fields: [companyId], references: [id])
   companyId   String
 }
 
@@ -244,3 +258,19 @@ model Document {
   companyId   String
 }
 
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String
+  userId    String?
+  timestamp DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  message   String
+  type      String
+  userId    String?
+  createdAt DateTime @default(now())
+}
