@@ -24,12 +24,8 @@ export default function DashboardPage() {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <Sidebar />
-
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        <Topbar />
         <main className="flex-1 overflow-auto bg-white dark:bg-[#111827] p-6 pt-4">
           {/* Show Skeleton Loader if loading */}
           {loading && <SkeletonLoader type="card" count={4} />}

@@ -17,7 +17,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <nav
-      className="h-screen w-64 bg-gradient-to-b from-[#A17E25] to-[#D4AF37] text-white flex flex-col"
+      className="h-screen w-64  bg-gradient-to-l from-[#80410e] to-[#c56a03] text-white flex flex-col"
       aria-label="Sidebar"
     >
       {/* Logo */}
