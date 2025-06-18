@@ -28,7 +28,7 @@ export function Footer() {
   ];
 
   return (
-    <footer id="contact" className="bg-[#441f00] dark:bg-[#1E293B] text-white py-10">
+    <footer id="contact" className="bg-gradient-to-l from-[#80410e] to-[#c56a03] dark:bg-[#1E293B] text-white py-10">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8">
         <div>
           <h3 className="text-[18px] font-semibold mb-4 text-gray-200">Solutions</h3>
@@ -66,7 +66,7 @@ export function Footer() {
         </div>
       </div>
       <div className="mt-8 text-center text-[12px] text-gray-400">
-        © {new Date().getFullYear()} Lachs Golden ERP. All rights reserved.
+        © {new Date().getFullYear()} Golden Intelingent ERP. All rights reserved.
       </div>
     </footer>
   );

@@ -16,7 +16,7 @@ export function HeroSection() {
             Intelligent ERP System for Modern Business
           </h1>
           <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 mb-6">
-            Streamline your operations with AI-powered insights and automation at Lachs Golden & Co Holdings Inc.
+            Streamline your operations with AI-powered insights and automation at Golden Intelingent ERP.
           </p>
           <div className="flex space-x-4">
             <Button onClick={() => nav('/signup')} className="bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] text-white rounded-lg px-6 py-3 shadow transition">
