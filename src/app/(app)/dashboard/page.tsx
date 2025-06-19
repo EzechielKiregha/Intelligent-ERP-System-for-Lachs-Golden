@@ -7,8 +7,8 @@ import RevenueAnalytics from './_components/RevenueAnalytics';
 import SalesDistribution from './_components/SalesDistribution';
 import ActivityFeed from './_components/ActivityFeed';
 import AIInsights from './_components/AIInsights';
-import SkeletonLoader from './_components/SkeletonLoader';
 import { DollarSign } from 'react-feather';
+import SkeletonLoader from '../_components/SkeletonLoader';
 
 export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
