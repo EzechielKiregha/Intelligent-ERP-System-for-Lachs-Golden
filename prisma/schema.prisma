@@ -65,6 +65,9 @@ model Company {
   timezone     String
   dateFormat   String
 
+  forecastedRevenue Float?
+  forecastedExpenses Float?
+
   users        User[]
   categories   Category[]
   transactions Transaction[]
@@ -80,6 +83,8 @@ model Company {
   // Workflow & documents
   tasks     Task[]
   documents Document[]
+
+  reports Report[]
 }
 
 model User {
@@ -106,13 +111,15 @@ model User {
 
   PerformanceReview PerformanceReview[]
 
-  Task Task[]
+  tasks Task[]
 }
 
 model Category {
   id        String       @id @default(cuid())
   name      String
   type      CategoryType
+  budgetLimit Float?
+  budgetUsed  Float?
   company   Company      @relation(fields: [companyId], references: [id])
   companyId String
 
@@ -135,6 +142,15 @@ model Transaction {
 
   company   Company @relation(fields: [companyId], references: [id])
   companyId String
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  title       String
+  fileUrl     String
+  createdAt   DateTime @default(now())
+  company     Company  @relation(fields: [companyId], references: [id])
+  companyId   String
 }
 
 model Product {

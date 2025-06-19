@@ -2,8 +2,6 @@
 
 import React from 'react';
 import { useDashboardStats, useRevenueAnalytics, useInventorySummary, useRecentActivities, useAIInsights } from '@/lib/hooks/dashboard';
-import Sidebar from './_components/Sidebar';
-import Topbar from './_components/Topbar';
 import MetricCards from './_components/MetricCards';
 import RevenueAnalytics from './_components/RevenueAnalytics';
 import SalesDistribution from './_components/SalesDistribution';
