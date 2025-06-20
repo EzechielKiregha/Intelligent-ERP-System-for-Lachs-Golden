@@ -7,7 +7,6 @@ import { loginSchema, LoginInput } from '@/lib/validations/login';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
-import { useLoading } from '@/contexts/loadingContext';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
@@ -25,7 +24,6 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setIsLoading } = useLoading();
   const [otpPopoverOpen, setOtpPopoverOpen] = useState(false);
   const [otp, setOtp] = useState<string>("");
   const [toEmail, setEmail] = useState<string>("");
@@ -50,11 +48,7 @@ export default function LoginPage() {
       if (res.error) throw new Error(res.error);
       return res;
     },
-    onMutate: () => {
-      setIsLoading(true);
-    },
     onSuccess: async (res, data) => {
-      setIsLoading(false);
       if (res.ok) {
         // Send OTP to user's email
         const otpRes = await axiosdb.post('/api/mail/otp', { toEmail: data.email });
@@ -68,7 +62,6 @@ export default function LoginPage() {
       }
     },
     onError: (err: any) => {
-      setIsLoading(false);
       toast.error(err.message || 'Login failed');
     },
   });
@@ -76,7 +69,7 @@ export default function LoginPage() {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axiosdb.get(`/api/mail/otp?email=${toEmail}&otp=${otp}`);
+      const res = await axiosdb.get(`/api/mail/verify-otp?email=${toEmail}&otp=${otp}`);
       if (res.status === 200) {
         toast.success("OTP verified successfully!");
         setOtpPopoverOpen(false);
@@ -187,7 +180,7 @@ export default function LoginPage() {
           </InputOTP>
           <Button
             onClick={handleVerifyOtp}
-            className="bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+            className="bg-gradient-to-l mt-3.5 mx-auto from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
           >
             Verify OTP
           </Button>

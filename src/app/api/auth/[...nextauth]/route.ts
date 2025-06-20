@@ -14,14 +14,10 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
+      companyId?: string | null;
     };
   }
 }
-
-const generateOtp = (): string => {
-  console.log("Generating OTP...");
-  return randomBytes(3).toString('hex').toUpperCase(); // Generates a 6-character OTP
-};
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -63,30 +59,13 @@ const handler = NextAuth({
           throw new Error("Invalid password");
         }
 
-        const otp = generateOtp();
-        console.log("Generated OTP:", otp);
-
-        const otpRes = await sendOtp(user.email, otp);
-        console.log("OTP send result:", otpRes);
-
-        if (!otpRes) {
-          console.error("Failed to send OTP to email:", user.email);
-          throw new Error("Failed to send OTP or invalid OTP");
-        }
-
-        const updatedUser = await prisma.user.update({
-          where: { email: credentials.email },
-          data: { otpSecret: otp }, // Update OTP if provided
-        });
-
-        console.log("Updated user with OTP:", updatedUser);
-
         // Return an object representing the user; NextAuth stores minimal info in token/session
         return {
-          id: updatedUser.id,
-          email: updatedUser.email,
-          name: `${updatedUser.firstName} ${updatedUser.lastName}`,
-          role: updatedUser.role,
+          id: user.id,
+          email: user.email,
+          name: `${user.firstName} ${user.lastName}`,
+          role: user.role,
+          companyId: user.companyId,
         };
       },
     }),
@@ -100,6 +79,7 @@ const handler = NextAuth({
         ...session.user,
         id: token.sub!,
         role: token.role as string,
+        companyId: token.companyId as string,
       };
       return session;
     },

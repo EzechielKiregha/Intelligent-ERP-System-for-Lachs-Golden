@@ -9,10 +9,10 @@ const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: <Grid /> },
-    { name: 'Finance', href: '/dashboard/finance', icon: <DollarSign /> },
-    { name: 'Inventory', href: '/dashboard/inventory', icon: <Box /> },
-    { name: 'HR', href: '/dashboard/hr', icon: <Users /> },
-    { name: 'CRM', href: '/dashboard/crm', icon: <Briefcase /> },
+    { name: 'Finance', href: '/finance', icon: <DollarSign /> },
+    { name: 'Inventory', href: '/inventory', icon: <Box /> },
+    { name: 'HR', href: '/hr', icon: <Users /> },
+    { name: 'CRM', href: '/crm', icon: <Briefcase /> },
   ];
 
   return (

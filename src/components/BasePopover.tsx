@@ -51,7 +51,7 @@ export default function BasePopover({
 
   return (
     <MotionConfig transition={TRANSITION}>
-      <div className="relative flex items-center justify-center">
+      <div className="relative flex items-center justify-center bg-white dark:bg-[#1E293B]">
         {/* Trigger Button */}
         <motion.div
           key="button"
@@ -99,7 +99,7 @@ export default function BasePopover({
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 flex flex-col items-center justify-center p-6 overflow-y-auto">
+                <div className="flex-1 bg-white dark:bg-[#1E293B] flex flex-col items-center justify-center p-6 overflow-y-auto">
                   {children}
                 </div>
               </motion.div>

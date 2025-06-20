@@ -1,14 +1,20 @@
 'use client';
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { Bell, Menu } from 'lucide-react';
+import { Bell, BellRingIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/toggleTheme';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
+import { NavUser } from './nav-user';
+import { useAuth } from 'contents/authContext';
 
 const Topbar: React.FC = () => {
   const pathname = usePathname();
+  const user = useAuth().user;
 
   // Determine the active page based on the route
-  const activePage = (pathname.split('/')[2] || 'dashboard') as keyof typeof topbarLinks;
+  const activePage = (pathname.split('/')[1] || 'dashboard') as keyof typeof topbarLinks;
 
   // Define Topbar links based on the active page
   const topbarLinks: Record<'dashboard' | 'finance' | 'inventory' | 'hr' | 'crm', { name: string; href: string; }[]> = {
@@ -35,41 +41,40 @@ const Topbar: React.FC = () => {
   };
 
   return (
-    <header className="flex items-center justify-between px-6 h-16 bg-white dark:bg-[#1E293B] border-b border-gray-200 dark:border-[#374151]">
+    <header className="flex items-center justify-between px-6 h-16 bg-sidebar text-sidebar-foreground  border-b border-gray-200 dark:border-[#374151]">
       {/* Left: Page Title */}
-      <div>
+      <div className="flex items-center gap-2 px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator
+          orientation="vertical"
+          className="mr-2 data-[orientation=vertical]:h-4"
+        />
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 capitalize">
-          {activePage} Dashboard
+          {activePage}
         </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Welcome back, User!</p>
       </div>
 
       {/* Right: Topbar Links and Notifications */}
       <div className="flex items-center space-x-4">
-        {/* Sidebar Toggle (Visible on small screens) */}
-        <button
-          className="lg:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#374151] focus:ring-2 focus:ring-offset-2 focus:ring-[#A17E25] dark:focus:ring-[#D4AF37]"
-          aria-label="Toggle Sidebar"
-        >
-          <Menu className="w-5 h-5 text-gray-800 dark:text-gray-200" />
-        </button>
 
-        {/* Topbar Links */}
-        {topbarLinks[activePage]?.map((link) => (
-          <Link key={link.name} href={link.href}>
-            <button className="px-4 py-2 rounded-lg bg-[#A17E25] text-white hover:bg-[#8C6A1A]">
-              {link.name}
-            </button>
-          </Link>
-        ))}
 
-        {/* Notifications */}
-        <button
-          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#374151] focus:ring-2 focus:ring-offset-2 focus:ring-[#A17E25] dark:focus:ring-[#D4AF37]"
-          aria-label="View Notifications"
-        >
-          <Bell className="w-5 h-5 text-gray-800 dark:text-gray-200" />
-        </button>
+        {/* Notifications Toggle theme*/}
+        <ModeToggle />
+
+        <Button variant="outline" size="icon" className="transition ease-in-out duration-150 hover:shadow-lg hover:scale-105 motion-safe:transform">
+          <Bell className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90 text-[#A17E25] dark:text-[#D4AF37]" />
+          <BellRingIcon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0 text-[#A17E25] dark:text-[#D4AF37]" />
+          <span className="sr-only">Notifications</span>
+        </Button>
+        {/* User Profile (Placeholder) */}
+        <NavUser user={
+          {
+            name: user?.name,
+            email: user?.email,
+            avatar: "https://github.com/shadcn.png",
+          }
+        } />
+
       </div>
     </header>
   );

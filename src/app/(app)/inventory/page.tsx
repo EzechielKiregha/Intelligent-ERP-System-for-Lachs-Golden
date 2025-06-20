@@ -1,8 +1,11 @@
 import React from 'react'
+import AuthGuard from '../_components/AuthGuard'
 
 export default function Inventory() {
   return (
-    <div>inventory</div>
+    <AuthGuard>
+      <div>inventory</div>
+    </AuthGuard>
   )
 }
 

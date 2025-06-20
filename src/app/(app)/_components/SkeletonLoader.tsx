@@ -26,7 +26,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type, count = 1 }) => {
   };
 
   return (
-    <div>
+    <div className='p-4'>
       {Array.from({ length: count }).map((_, index) => (
         <div key={index}>{renderSkeleton()}</div>
       ))}
