@@ -221,7 +221,7 @@ export default function SignUpPage() {
             maxLength={6}
             value={otp}
             onChange={(value) => setOtp(value)}
-            className="flex justify-center gap-2 bg-amber-600 dark:bg-amber-700 rounded-lg p-2 shadow-md"
+            className="flex justify-center gap-2  rounded-lg p-2 shadow-md"
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
@@ -237,7 +237,7 @@ export default function SignUpPage() {
           </InputOTP>
           <Button
             onClick={handleVerifyOtp}
-            className="bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+            className="bg-gradient-to-l mt-3.5 from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
           >
             Verify OTP
           </Button>

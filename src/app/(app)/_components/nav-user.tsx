@@ -30,6 +30,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useAuth } from "contents/authContext"
+import { useNavigation } from "@/hooks/use-navigation"
 
 export function NavUser({
   user,
@@ -42,6 +43,9 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const logout = useAuth().logout
+
+  const nav = useNavigation()
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -80,6 +84,13 @@ export function NavUser({
                 </div>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => nav("/")}>
+                <Sparkles />
+                Home
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
