@@ -19,11 +19,14 @@ const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         setCountdown((prev) => {
           if (prev <= 1) {
             clearInterval(interval);
-            router.push('/login');
+            // Defer navigation to the next tick
+            setTimeout(() => router.push('/login'), 0);
           }
           return prev - 1;
         });
       }, 1000);
+
+      return () => clearInterval(interval); // Cleanup interval on unmount
     }
   }, [status, router]);
 
