@@ -25,8 +25,6 @@ export async function GET(request: NextRequest) {
       });
       
       return NextResponse.json({ message: "OTP verified successfully" });
-    } else {
-      throw new Error("Invalid OTP");
     }
   } catch (error) {
     console.error("Error verifying OTP:", error);

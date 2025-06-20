@@ -32,15 +32,18 @@ import {
 import { useAuth } from "contents/authContext"
 import { useNavigation } from "@/hooks/use-navigation"
 
-export function NavUser({
-  user,
-}: {
+interface userDetails {
   user: {
     name: string
     email: string
     avatar: string
   }
-}) {
+
+}
+
+export function NavUser({
+  user
+}: userDetails) {
   const { isMobile } = useSidebar()
   const logout = useAuth().logout
 

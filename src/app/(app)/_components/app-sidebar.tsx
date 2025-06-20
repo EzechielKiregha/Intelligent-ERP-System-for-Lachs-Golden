@@ -37,10 +37,10 @@ const companyData = {
 };
 
 const transactions = [
-  { icon: IconAnalyze, id: 1, date: "2025-06-01", amount: 15000, category: "Marketing", status: "Completed" },
-  { icon: IconAnalyze, id: 2, date: "2025-06-02", amount: 25000, category: "Sales", status: "Completed" },
-  { icon: IconAnalyze, id: 3, date: "2025-06-03", amount: 5000, category: "Office Supplies", status: "Pending" },
-  { icon: IconAnalyze, id: 4, date: "2025-06-04", amount: 12000, category: "HR", status: "Failed" },
+  { id: 1, date: "2025-06-01", amount: 15000, category: "Marketing", status: "Completed", url: "/finance/transactions/1" },
+  { id: 2, date: "2025-06-02", amount: 25000, category: "Sales", status: "Completed", url: "/finance/transactions/1" },
+  { id: 3, date: "2025-06-03", amount: 5000, category: "Office Supplies", status: "Pending", url: "/finance/transactions/1" },
+  { id: 4, date: "2025-06-04", amount: 12000, category: "HR", status: "Failed", url: "/finance/transactions/1" },
 ];
 
 const navMainItems = [
@@ -50,6 +50,7 @@ const navMainItems = [
     icon: GalleryVerticalEnd,
     isActive: true,
     items: [
+      { title: "Dashboard", url: "/dashboard" },
       { title: "Analytics", url: "/dashboard/analytics" },
       { title: "Reports", url: "/dashboard/reports" },
     ],
@@ -59,6 +60,7 @@ const navMainItems = [
     url: "/finance",
     icon: PieChart,
     items: [
+      { title: "Finance", url: "/finance" },
       { title: "Transactions", url: "/finance/transactions" },
       { title: "Budget", url: "/finance/budget" },
     ],
@@ -68,6 +70,7 @@ const navMainItems = [
     url: "/inventory",
     icon: Frame,
     items: [
+      { title: "Inventory", url: "/inventory" },
       { title: "Stock Management", url: "/inventory/stock" },
       { title: "Low Stock Alerts", url: "/inventory/alerts" },
     ],
@@ -77,6 +80,7 @@ const navMainItems = [
     url: "/hr",
     icon: Map,
     items: [
+      { title: "Human Resource", url: "/hr" },
       { title: "Employee Management", url: "/hr/employees" },
       { title: "Payroll", url: "/hr/payroll" },
     ],

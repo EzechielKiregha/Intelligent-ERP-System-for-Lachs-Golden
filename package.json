@@ -10,7 +10,9 @@
     "lint": "next lint",
     "email": "email dev",
     "postinstall": "prisma generate",
-    "db:seed": "ts-node -r tsconfig-paths/register ./seed/seed.ts"
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "ts-node -r tsconfig-paths/register ./seed/seed.ts",
+    "postbuild": "prisma migrate deploy"
   },
   "dependencies": {
     "@heroui/react": "^2.8.0-beta.7",

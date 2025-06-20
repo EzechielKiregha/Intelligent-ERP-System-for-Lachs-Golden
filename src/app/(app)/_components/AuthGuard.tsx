@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import BasePopover from '@/components/BasePopover';
 import { Button } from '@/components/ui/button';
 
@@ -11,6 +11,10 @@ const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
   const [showWarning, setShowWarning] = useState(false);
   const [countdown, setCountdown] = useState(5);
+  const isHome = usePathname().match(/^\/$/);
+  // Check if the current path is the home page
+  // This regex matches the root path (home page) only
+  // If the path is exactly '/', it will return true, otherwise false
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -29,6 +33,10 @@ const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       return () => clearInterval(interval); // Cleanup interval on unmount
     }
   }, [status, router]);
+
+  if (isHome) {
+    return <>{children}</>
+  }
 
   if (status === 'loading') {
     return (

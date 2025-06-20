@@ -56,7 +56,7 @@ const handler = NextAuth({
 
         if (!isValid) {
           console.error("Invalid password for user:", user.email);
-          throw new Error("Invalid password");
+          throw new Error("Wrong Password");
         }
 
         // Return an object representing the user; NextAuth stores minimal info in token/session

@@ -27,9 +27,24 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useRouter } from "next/navigation";
+import { IconAnalyze, TablerIcon } from "@tabler/icons-react";
+import Link from "next/link";
 
-export function NavProjects({ transactions }: { transactions: any[] }) {
+interface Transaction {
+  transactions: {
+    id: number;
+    date: string;
+    amount: number;
+    category: string;
+    status: string;
+    url: string;
+  }[];
+}
+
+export function NavProjects({ transactions }: Transaction) {
   const { isMobile } = useSidebar()
+  const router = useRouter();
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Recent Transactions</SidebarGroupLabel>
@@ -37,10 +52,10 @@ export function NavProjects({ transactions }: { transactions: any[] }) {
         {transactions.slice(0, 4).map((transaction) => (
           <SidebarMenuItem key={transaction.id}>
             <SidebarMenuButton asChild>
-              <a href={transaction.url}>
-                <transaction.icon />
-                <span className="text-sidebar-foreground" >{transaction.name}</span>
-              </a>
+              <Link href={transaction.url} className="flex items-center gap-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                <IconAnalyze />
+                <span className="text-sidebar-foreground" >{transaction.category} {transaction.amount}</span>
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -54,7 +69,7 @@ export function NavProjects({ transactions }: { transactions: any[] }) {
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
               >
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.replace(transaction.url)}>
                   <Folder className="text-muted-foreground" />
                   <span>View Transaction</span>
 

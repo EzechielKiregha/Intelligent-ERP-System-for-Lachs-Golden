@@ -149,7 +149,7 @@ export default function SignUpPage() {
               )}
             </div>
             <div>
-              <Label htmlFor="email" className="text-sm text-gray-800 dark:text-gray-200">Work Email</Label>
+              <Label htmlFor="email" className="text-sm text-gray-800 dark:text-gray-200">Email / Work Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -213,15 +213,16 @@ export default function SignUpPage() {
         isOpen={otpPopoverOpen}
         onClose={() => setOtpPopoverOpen(false)}
       >
-        <div className="text-center">
-          <p className="text-gray-800 mb-4">
+        <div className="text-center text-sidebar-foreground bg-sidebar">
+          <p className="text-gray-800 text-sidebar-foreground mb-4">
             Enter the 6-digit code sent to your email.
           </p>
           <InputOTP
+            type="text"
             maxLength={6}
             value={otp}
             onChange={(value) => setOtp(value)}
-            className="flex justify-center gap-2  rounded-lg p-2 shadow-md"
+            className="flex justify-center gap-2 bg-sidebar rounded-lg p-2 shadow-md"
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />

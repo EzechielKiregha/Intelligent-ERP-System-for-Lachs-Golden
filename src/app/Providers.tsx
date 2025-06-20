@@ -9,6 +9,8 @@ import { NavigationEventsWrapper } from '@/components/NavigationEvents';
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { SessionProvider } from 'next-auth/react'
+import { AuthProvider } from 'contents/authContext'
 
 export default function Providers({
   children,
@@ -28,21 +30,26 @@ export default function Providers({
   }));
 
   return (
-    <HeroUIProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <QueryClientProvider client={queryClient}>
-          {isLoading && <LoadingSpinner />}
-          {children}
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-        <NavigationEventsWrapper />
-      </ThemeProvider>
+    <SessionProvider>
+      <AuthProvider>
+        <HeroUIProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <QueryClientProvider client={queryClient}>
+              {isLoading && <LoadingSpinner />}
 
-    </HeroUIProvider>
+              {children}
+              <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
+            <NavigationEventsWrapper />
+          </ThemeProvider>
+
+        </HeroUIProvider>
+      </AuthProvider>
+    </SessionProvider>
   )
 }

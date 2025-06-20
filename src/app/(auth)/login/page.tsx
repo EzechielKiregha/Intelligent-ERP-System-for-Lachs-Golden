@@ -75,7 +75,8 @@ export default function LoginPage() {
         setOtpPopoverOpen(false);
         router.push("/dashboard");
       } else {
-        throw new Error("Invalid OTP");
+        console.error("OTP verification failed:", res.data);
+        toast.error("Invalid OTP. Please try again.");
       }
     } catch (err) {
       console.error("OTP verification error:", err);
@@ -156,15 +157,16 @@ export default function LoginPage() {
         isOpen={otpPopoverOpen}
         onClose={() => setOtpPopoverOpen(false)}
       >
-        <div className="text-center">
-          <p className="text-gray-800 mb-4">
+        <div className="text-center text-sidebar-foreground bg-sidebar">
+          <p className="text-gray-800 text-sidebar-foreground mb-4">
             Enter the 6-digit code sent to your email.
           </p>
           <InputOTP
+            type="text"
             maxLength={6}
             value={otp}
             onChange={(value) => setOtp(value)}
-            className="flex justify-center gap-2"
+            className="flex justify-center gap-2 bg-sidebar  rounded-lg p-2 shadow-md"
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />

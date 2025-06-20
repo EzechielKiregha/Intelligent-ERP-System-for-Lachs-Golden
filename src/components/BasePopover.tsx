@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useId, useState } from 'react';
 import { AnimatePresence, MotionConfig, Transition, motion } from 'framer-motion';
-import { ArrowLeftIcon } from 'lucide-react';
+import { ArrowLeftIcon, Cross, Minus } from 'lucide-react';
+import { Button } from './ui/button';
 
 // Explicitly cast TRANSITION to the correct type
 const TRANSITION: Transition = { type: 'spring', bounce: 0.1, duration: 0.5 };
@@ -82,24 +83,25 @@ export default function BasePopover({
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
-                className="w-[90%] md:w-[50%] bg-white rounded-lg text-gray-800 shadow-lg overflow-hidden relative flex flex-col"
+                className="w-[90%] md:w-[50%] bg-sidebar rounded-lg text-gray-800 shadow-lg overflow-hidden relative flex flex-col"
               >
                 {/* Header */}
                 <div className="flex items-center p-4 border-b border-gray-200">
-                  <button
+                  <Button
+                    variant={"ghost"}
                     onClick={() => {
                       setIsOpen(false);
                       if (onClose) onClose();
                     }}
-                    className="flex items-center text-[#6b3b04] hover:text-[#eebd73]"
+                    className="flex items-center text-sidebar-foreground hover:text-[#eebd73]"
                   >
-                    <ArrowLeftIcon size={20} className="mr-2" /> Back
-                  </button>
-                  <h3 className="text-lg font-semibold ml-auto">{title}</h3>
+                    <Minus size={20} className="mr-2" />
+                  </Button>
+                  <h3 className="text-lg font-semibold text-sidebar-foreground ml-auto">{title}</h3>
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 bg-white dark:bg-[#1E293B] flex flex-col items-center justify-center p-6 overflow-y-auto">
+                <div className="flex-1 bg-sidebar flex flex-col items-center justify-center p-6 overflow-y-auto">
                   {children}
                 </div>
               </motion.div>
