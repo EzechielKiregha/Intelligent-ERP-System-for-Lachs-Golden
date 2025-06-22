@@ -99,14 +99,19 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest) {
   const session = await getServerSession(authOptions)
     if (!session?.user?.companyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const companyId = session.user.companyId
   try {
-    const categoryId = params.id;
+    // Extract the `id` parameter from the URL
+    const { searchParams } = new URL(req.url);
+    const categoryId = searchParams.get('id');
+    if (!categoryId) {
+      return NextResponse.json({ error: 'Category ID is required' }, { status: 400 });
+    }
     const existing = await prisma.category.findUnique({ where: { id: categoryId } });
     if (!existing || existing.companyId !== companyId) {
       return NextResponse.json({ error: 'Not found or unauthorized' }, { status: 404 });

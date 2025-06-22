@@ -85,9 +85,6 @@ export function useFinanceCategories() {
 }
 
 export function useDeleteCategory() {
-  
-  
-
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
