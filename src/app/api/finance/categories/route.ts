@@ -64,19 +64,25 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const companyId = session.user.companyId;
   try {
+     // Extract the `id` parameter from the URL
+     const { searchParams } = new URL(req.url);
+     const categoryId = searchParams.get('id');
+     if (!categoryId) {
+       return NextResponse.json({ error: 'Category ID is required' }, { status: 400 });
+     }
     const body = await req.json();
     const parse = categorySchema.safeParse(body);
     if (!parse.success) {
       return NextResponse.json({ error: 'Invalid data', details: parse.error.errors }, { status: 400 });
     }
-    const categoryId = params.id;
+    
     // Check ownership
     const existing = await prisma.category.findUnique({ where: { id: categoryId } });
     if (!existing || existing.companyId !== companyId) {
