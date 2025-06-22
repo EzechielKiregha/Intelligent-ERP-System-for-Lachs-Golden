@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 
 // Transaction schema
-export const transactionSchema = z.object({
+const transactionSchema = z.object({
   id: z.string(),
   date: z.string(),
   description: z.string().nullable(),
@@ -30,7 +30,7 @@ export const transactionSchema = z.object({
 });
 
 // Transaction columns
-export const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
+const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
   {
     id: "drag",
     header: () => null,
