@@ -1,34 +1,124 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+"use client"
+import { useMutation,useQueryClient, useQuery } from '@tanstack/react-query';
 import axiosdb from '@/lib/axios';
 
-export function useFinanceSummary() {
-  return useQuery({
-    queryKey: ['finance', 'summary'],
-    queryFn: async () => {
-      const { data } = await axiosdb.get('/api/finance/summary');
+interface SummaryResponse {
+  totalRevenue: number;
+  totalExpenses: number;
+  netProfit: number;
+}
+
+interface SummaryPeriodResponse {
+  totalRevenue: number;
+  prevRevenue: number;
+  totalExpenses: number;
+  prevExpenses: number;
+  netProfit: number;
+  prevNetProfit: number;
+  period: string;
+  ranges: {
+    currStart: string;
+    currEnd: string;
+    prevStart: string;
+    prevEnd: string;
+  };
+}
+
+// period: 'month' | 'week' | 'year' | undefined (defaults to month)
+export function useFinanceSummaryPeriod(period?: 'month'|'week'|'year') {
+
+  return useQuery<SummaryPeriodResponse, Error>(
+    {
+    queryKey : ['finance', 'summary', { period }],
+    queryFn : async () => {
+      const params = new URLSearchParams();
+      if (period) params.set('period', period);
+      const { data } = await axiosdb.get<SummaryPeriodResponse>(`/api/finance/summary?${params.toString()}`);
       return data;
+    },
+    }
+  );
+}
+
+interface Transaction {
+  id: string;
+  date: string;
+  description: string | null;
+  category: { name: string; type: 'INCOME' | 'EXPENSE' };
+  amount: number;
+  status: string;
+  user?: { id: string; name: string; email: string };
+}
+
+interface TransactionsResponse {
+  transactions: Transaction[];
+}
+
+export function useFinanceTransactions() {
+  return useQuery<Transaction[], Error>({
+    queryKey: ['finance', 'transactions'],
+    queryFn: async () => {
+      const { data } = await axiosdb.get<TransactionsResponse>('/api/finance/transactions');
+      return data.transactions;
+    }
+  });
+}
+interface Category {
+  id: string;
+  name: string;
+  type: 'INCOME' | 'EXPENSE';
+  budgetLimit: number;
+  budgetUsed: number;
+}
+
+export function useFinanceCategories() {
+
+  
+
+  return useQuery<Category[], Error>({
+    queryKey: ['finance', 'categories'],
+    queryFn: async () => {
+      const { data } = await axiosdb.get<{ categories: Category[] }>(`/api/finance/categories`);
+      return data.categories;
     },
   });
 }
 
-export function useFinanceTransactions(page = 1) {
-  return useQuery({
-    queryKey: ['finance', 'transactions', page],
-    queryFn: async () => {
-      const { data } = await axiosdb.get(`/api/finance/transactions?page=${page}`);
-      return data;
+export function useDeleteCategory() {
+  
+  
+
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await axiosdb.delete(`/api/finance/categories/${id}`);
+    },
+    onSuccess() {
+      qc.invalidateQueries({ queryKey: ['finance', 'categories'] });
     },
   });
 }
 
-export function useFinanceForecast(range = '6m') {
-  return useQuery({
-    queryKey: ['finance', 'forecast', range],
-    queryFn: async () => {
-      const { data } = await axiosdb.get(`/api/finance/forecast?range=${range}`);
+
+interface ForecastEntry { month: string; revenue: number; expenses: number; }
+interface ForecastResponse {
+  past: ForecastEntry[];
+  forecast: Array<{ month: string; projectedRevenue: number; projectedExpenses: number }>;
+}
+
+export function useFinanceForecast() {
+
+  
+
+  return useQuery<ForecastResponse, Error>(
+    {
+      queryKey: ['finance', 'forecast'],
+      queryFn: async () => {
+      const { data } = await axiosdb.get<ForecastResponse>('/api/finance/forecast');
       return data;
     },
-  });
+    }
+  );
 }
 
 export function useBudgetData() {
@@ -42,19 +132,22 @@ export function useBudgetData() {
 }
 
 export function useFinanceInsights() {
-  return useQuery({
-    queryKey: ['finance', 'insights'],
-    queryFn: async () => {
-      const { data } = await axiosdb.get('/api/finance/insights');
-      return data;
+  return useQuery<string[], Error>(
+    {
+      queryKey: ['finance', 'insights'],
+      queryFn : async () => {
+      const { data } = await axiosdb.get<{ insights: string[] }>('/api/finance/insights')
+      return data.insights
     },
-  });
+    }
+  )
 }
 
 export function useExportFinanceReport() {
+  
   return useMutation({
     mutationFn: async (params: any) => {
-      const { data } = await axiosdb.post('/api/finance/export', params);
+      const { data } = await axiosdb.post(`/api/finance/export`, params);
       return data;
     },
   });

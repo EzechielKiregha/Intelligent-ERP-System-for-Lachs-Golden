@@ -1,62 +1,51 @@
-'use client';
+'use client'
+import React from 'react'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 
-import React from 'react';
-import FinanceCards from './_components/FinanceCards';
-import TransactionList from './_components/TransactionList';
-import ForecastChart from './_components/ForecastChart';
-import BudgetSection from './_components/BudgetSection';
+import AuthGuard from '../_components/AuthGuard'
+import FinanceSummaryCards from './_components/FinanceSummaryCards';
+import FinanceForecastSection from './_components/FinanceForecastSection';
 import FinancialInsights from './_components/FinancialInsights';
-import FilterToolbar from './_components/FilterToolbar';
-import SkeletonLoader from '../_components/SkeletonLoader';
-import {
-  useFinanceForecast,
-  useFinanceInsights,
-  useFinanceTransactions
-} from '@/lib/hooks/finance'; // Custom hook to fetch finance data
-import AuthGuard from '../_components/AuthGuard';
+import { TransactionList } from './_components/TransactionTable';
+import CategoriesList from './_components/CategoryList';
+import ExportReportButton from './_components/ExportReportButton';
+import { useFinanceTransactions } from '@/lib/hooks/finance';
+import BudgetSection from './_components/BudgetSection';
 
 export default function FinancePage() {
 
-  const { data: forecastData, isLoading: forecastLoading, isError: forecastError } = useFinanceForecast();
-  const { data: insightsData, isLoading: insightsLoading, isError: insightsError } = useFinanceInsights();
-  const { data: transactionsData, isLoading: transactionsLoading, isError: transactionsError } = useFinanceTransactions();
-
-  const loading = forecastLoading || insightsLoading || transactionsLoading;
-
+  const { data: transactions, isLoading, error } = useFinanceTransactions();
 
   return (
     <AuthGuard>
-      <div className="flex flex-col bg-white dark:bg-[#111827] min-h-screen">
-        {loading && <SkeletonLoader type="card" count={4} />}
+      <div className="flex flex-col bg-sidebar">
 
-        {/* Filter Toolbar */}
-        <section className="p-6">
-          <FilterToolbar />
-        </section>
-
-        {/* Main Content */}
         <main className="p-6 space-y-6">
           {/* Finance Cards */}
-          <section>
-            <FinanceCards />
-          </section>
+          <div className='"grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6"'>
+            <FinanceSummaryCards />
+            <FinanceForecastSection />
+          </div>
 
           {/* Forecast Chart & Budget Section */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ForecastChart />
-            <BudgetSection />
+
+
           </section>
 
           {/* Transaction List */}
           <section>
-            <TransactionList />
+            <TransactionList data={transactions || []} />
           </section>
 
           {/* Financial Insights */}
           <section>
             <FinancialInsights />
+            <BudgetSection />
           </section>
         </main>
+
+
       </div>
     </AuthGuard>
   );

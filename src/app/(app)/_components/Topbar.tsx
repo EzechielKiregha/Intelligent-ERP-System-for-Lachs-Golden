@@ -14,31 +14,7 @@ const Topbar: React.FC = () => {
   const user = useAuth().user;
 
   // Determine the active page based on the route
-  const activePage = (pathname.split('/')[1] || 'dashboard') as keyof typeof topbarLinks;
-
-  // Define Topbar links based on the active page
-  const topbarLinks: Record<'dashboard' | 'finance' | 'inventory' | 'hr' | 'crm', { name: string; href: string; }[]> = {
-    dashboard: [
-      { name: 'Analytics', href: '/dashboard/analytics' },
-      { name: 'Reports', href: '/dashboard/reports' },
-    ],
-    finance: [
-      { name: 'Finance CRUD', href: '/dashboard/finance/crud' },
-      { name: 'Export Report', href: '/dashboard/finance/export' },
-    ],
-    inventory: [
-      { name: 'Stock Management', href: '/dashboard/inventory/stock' },
-      { name: 'Low Stock Alerts', href: '/dashboard/inventory/alerts' },
-    ],
-    hr: [
-      { name: 'Employee Management', href: '/dashboard/hr/employees' },
-      { name: 'Payroll', href: '/dashboard/hr/payroll' },
-    ],
-    crm: [
-      { name: 'Customer Management', href: '/dashboard/crm/customers' },
-      { name: 'Sales Pipeline', href: '/dashboard/crm/sales' },
-    ],
-  };
+  const activePage = (pathname.split('/')[1] || 'dashboard');
 
   return (
     <header className="flex items-center justify-between px-6 h-16 bg-sidebar text-sidebar-foreground  border-b border-gray-200 dark:border-[#374151]">

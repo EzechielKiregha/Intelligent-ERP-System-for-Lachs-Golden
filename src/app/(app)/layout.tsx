@@ -7,21 +7,22 @@ import { AppSidebar } from '@/app/(app)/_components/app-sidebar';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <SidebarProvider>
-      <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
-        {/* Sidebar */}
+
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+      {/* Sidebar */}
+      <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
           {/* Main Content */}
-          <div className="flex flex-col flex-1 min-h-screen">
+          <div className="">
             <Topbar />
             <main className="overflow-y-auto">
               {children}
             </main>
           </div>
         </SidebarInset>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </div>
   );
 };
 

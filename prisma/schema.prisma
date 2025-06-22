@@ -112,6 +112,8 @@ model User {
   PerformanceReview PerformanceReview[]
 
   tasks Task[]
+
+  reports Report[]
 }
 
 model Category {
@@ -135,7 +137,7 @@ model Transaction {
   type        TransactionType
   user        User            @relation(fields: [userId], references: [id])
   userId      String
-  status     TransactionStatus @default(PENDING)
+  status      TransactionStatus @default(PENDING)
 
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId String
@@ -145,12 +147,16 @@ model Transaction {
 }
 
 model Report {
-  id          String   @id @default(cuid())
+    id          String   @id @default(cuid())
   title       String
-  fileUrl     String
+  fileUrl     String   // if you store file in S3 or similar
+  startDate   DateTime
+  endDate     DateTime
   createdAt   DateTime @default(now())
   company     Company  @relation(fields: [companyId], references: [id])
   companyId   String
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?
 }
 
 model Product {

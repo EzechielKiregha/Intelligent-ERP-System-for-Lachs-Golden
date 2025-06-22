@@ -2,14 +2,15 @@
 
 import React from 'react';
 import { useDashboardStats, useRevenueAnalytics, useInventorySummary, useRecentActivities, useAIInsights } from '@/lib/hooks/dashboard';
-import MetricCards from './_components/MetricCards';
-import RevenueAnalytics from './_components/RevenueAnalytics';
+// import MetricCards from './_components/MetricCards';
+// import RevenueAnalytics from './_components/RevenueAnalytics';
 import SalesDistribution from './_components/SalesDistribution';
 import ActivityFeed from './_components/ActivityFeed';
 import AIInsights from './_components/AIInsights';
-import { DollarSign } from 'react-feather';
+// import { DollarSign } from 'react-feather';
 import SkeletonLoader from '../_components/SkeletonLoader';
 import AuthGuard from '../_components/AuthGuard';
+import FinanceSummaryCards from '../finance/_components/FinanceSummaryCards';
 
 export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
@@ -32,48 +33,28 @@ export default function DashboardPage() {
 
             {/* Metric Cards */}
             {!statsLoading && stats && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <MetricCards
-                  icon={<DollarSign className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
-                  title="Total Revenue"
-                  value={`$${stats.totalRevenue.toLocaleString()}`}
-                  delta={`${stats.revenueChange > 0 ? '+' : ''}${stats.revenueChange}%`}
-                  deltaType={stats.revenueChange >= 0 ? 'increase' : 'decrease'}
-                  subtitle="vs last month"
-                />
-                <MetricCards
-                  icon={<DollarSign className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
-                  title="Total Revenue"
-                  value={`$${stats.totalRevenue.toLocaleString()}`}
-                  delta={`${stats.revenueChange > 0 ? '+' : ''}${stats.revenueChange}%`}
-                  deltaType={stats.revenueChange >= 0 ? 'increase' : 'decrease'}
-                  subtitle="vs last month"
-                />
-                <MetricCards
-                  icon={<DollarSign className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
-                  title="Total Revenue"
-                  value={`$${stats.totalRevenue.toLocaleString()}`}
-                  delta={`${stats.revenueChange > 0 ? '+' : ''}${stats.revenueChange}%`}
-                  deltaType={stats.revenueChange >= 0 ? 'increase' : 'decrease'}
-                  subtitle="vs last month"
-                />
-                <MetricCards
-                  icon={<DollarSign className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
-                  title="Total Revenue"
-                  value={`$${stats.totalRevenue.toLocaleString()}`}
-                  delta={`${stats.revenueChange > 0 ? '+' : ''}${stats.revenueChange}%`}
-                  deltaType={stats.revenueChange >= 0 ? 'increase' : 'decrease'}
-                  subtitle="vs last month"
-                />
-                {/* Add other MetricCards for New Orders, Total Customers, Inventory Status */}
-              </div>
+
+              <FinanceSummaryCards />
+
+              // <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+              //   <MetricCards
+              //     icon={<DollarSign className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
+              //     title="Total Revenue"
+              //     value={`$${stats.totalRevenue.toLocaleString()}`}
+              //     delta={`${stats.revenueChange > 0 ? '+' : ''}${stats.revenueChange}%`}
+              //     deltaType={stats.revenueChange >= 0 ? 'increase' : 'decrease'}
+              //     subtitle="vs last month"
+              //   />
+
+              //   {/* Add other MetricCards for New Orders, Total Customers, Inventory Status */}
+              // </div>
             )}
 
             {/* Revenue Analytics & Sales Distribution */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              {!revenueLoading && revenueData && (
+              {/* {!revenueLoading && revenueData && (
                 <RevenueAnalytics data={revenueData} range={range} onRangeChange={setRange} />
-              )}
+              )} */}
               {!inventoryLoading && inventoryData && (
                 <SalesDistribution data={inventoryData} />
               )}

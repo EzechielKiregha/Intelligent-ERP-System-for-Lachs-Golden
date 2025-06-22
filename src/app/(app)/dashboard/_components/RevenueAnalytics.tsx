@@ -41,7 +41,7 @@ const RevenueAnalytics: React.FC<RevenueAnalyticsProps> = ({ data, range, onRang
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">{item.quarter}</p>
               <p className="text-base font-medium text-gray-800 dark:text-gray-200">
-                ${item.revenue.toLocaleString()}
+                ${item.revenue !== undefined && item.revenue !== null ? item.revenue.toLocaleString() : '0'}
               </p>
             </div>
 
@@ -55,7 +55,9 @@ const RevenueAnalytics: React.FC<RevenueAnalyticsProps> = ({ data, range, onRang
               ) : (
                 <ArrowDown className="w-4 h-4" />
               )}
-              <span className="ml-1">{item.changePercent > 0 ? `+${item.changePercent}%` : `${item.changePercent}%`}</span>
+              <span className="ml-1">
+                {item.changePercent > 0 ? `+${item.changePercent}%` : `${item.changePercent}%`}
+              </span>
             </div>
           </li>
         ))}

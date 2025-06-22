@@ -158,7 +158,7 @@ export default function LoginPage() {
         onClose={() => setOtpPopoverOpen(false)}
       >
         <div className="text-center text-sidebar-foreground bg-sidebar">
-          <p className="text-gray-800 text-sidebar-foreground mb-4">
+          <p className=" text-sidebar-foreground mb-4">
             Enter the 6-digit code sent to your email.
           </p>
           <InputOTP

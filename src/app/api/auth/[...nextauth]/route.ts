@@ -1,10 +1,8 @@
-import NextAuth from "next-auth";
+import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { sendOtp } from "@/components/mailler-send/Otp";
-import { randomBytes } from "crypto";
 
 declare module "next-auth" {
   interface Session {
@@ -17,9 +15,13 @@ declare module "next-auth" {
       companyId?: string | null;
     };
   }
+  interface JWT {
+    role?: string;
+    companyId?: string;
+  }
 }
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   providers: [
@@ -30,36 +32,20 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("Authorizing user with credentials:", credentials);
-
         if (!credentials?.email || !credentials.password) {
-          console.error("Missing email or password");
           throw new Error("Email and password required");
         }
-
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-
-        if (!user) {
-          console.error("No user found with email:", credentials.email);
-          throw new Error("No user found with that email");
+        if (!user || !user.password) {
+          throw new Error("Invalid credentials");
         }
-
-        if (!user.password) {
-          console.error("Password missing for user:", user.email);
-          throw new Error("User password is missing");
-        }
-
         const isValid = await compare(credentials.password, user.password);
-        console.log("Password validation result:", isValid);
-
         if (!isValid) {
-          console.error("Invalid password for user:", user.email);
-          throw new Error("Wrong Password");
+          throw new Error("Invalid credentials");
         }
-
-        // Return an object representing the user; NextAuth stores minimal info in token/session
+        // Return minimal user object
         return {
           id: user.id,
           email: user.email,
@@ -71,31 +57,28 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async session({ session, token }) {
-      console.log("Session callback triggered:", session, token);
-
-      // session.user contains basic info; you can add role/id here
-      session.user = {
-        ...session.user,
-        id: token.sub!,
-        role: token.role as string,
-        companyId: token.companyId as string,
-      };
-      return session;
-    },
     async jwt({ token, user }) {
-      console.log("JWT callback triggered:", token, user);
-
-      // On first sign in, user object is available: store role in token
+      // On initial sign in, store role and companyId in token
       if (user) {
         token.role = (user as any).role;
+        token.companyId = (user as any).companyId;
       }
       return token;
+    },
+    async session({ session, token }) {
+      // Populate session.user with id, role, companyId
+      if (session.user) {
+        session.user.id = token.sub!;
+        session.user.role = token.role as string;
+        session.user.companyId = token.companyId as string;
+      }
+      return session;
     },
   },
   pages: {
     signIn: "/login",
   },
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

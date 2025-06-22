@@ -19,7 +19,7 @@ export function HeroSection() {
             Streamline your operations with AI-powered insights and automation at Golden Intelingent ERP.
           </p>
           <div className="flex space-x-4">
-            <Button onClick={() => nav('/signup')} className="bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] text-white rounded-lg px-6 py-3 shadow transition">
+            <Button onClick={() => nav('/signup')} className="bg-gradient-to-l from-[#80620e] to-[#c56a03] hover:bg-[#8C6A1A] text-white rounded-lg px-6 py-3 shadow transition">
               Request Demo
             </Button>
             <Link href="#features">
@@ -33,7 +33,7 @@ export function HeroSection() {
           <Image
             src="/images/dashboard-hero.jpg"
             alt="Dashboard Preview"
-            width={800}
+            width={1000}
             height={600}
             className="rounded-lg shadow-lg w-full max-w-md"
           />

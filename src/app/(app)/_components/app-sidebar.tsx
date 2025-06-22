@@ -37,10 +37,10 @@ const companyData = {
 };
 
 const transactions = [
-  { id: 1, date: "2025-06-01", amount: 15000, category: "Marketing", status: "Completed", url: "/finance/transactions/1" },
-  { id: 2, date: "2025-06-02", amount: 25000, category: "Sales", status: "Completed", url: "/finance/transactions/1" },
-  { id: 3, date: "2025-06-03", amount: 5000, category: "Office Supplies", status: "Pending", url: "/finance/transactions/1" },
-  { id: 4, date: "2025-06-04", amount: 12000, category: "HR", status: "Failed", url: "/finance/transactions/1" },
+  { id: 1, date: "2025-06-01", amount: 15000, category: "Marketing", status: "Completed", url: "/finance/transactions" },
+  { id: 2, date: "2025-06-02", amount: 25000, category: "Sales", status: "Completed", url: "/finance/transactions" },
+  { id: 3, date: "2025-06-03", amount: 5000, category: "Office Supplies", status: "Pending", url: "/finance/transactions" },
+  { id: 4, date: "2025-06-04", amount: 12000, category: "HR", status: "Failed", url: "/finance/transactions" },
 ];
 
 const navMainItems = [

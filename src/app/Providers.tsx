@@ -41,7 +41,6 @@ export default function Providers({
           >
             <QueryClientProvider client={queryClient}>
               {isLoading && <LoadingSpinner />}
-
               {children}
               <ReactQueryDevtools initialIsOpen={false} />
             </QueryClientProvider>

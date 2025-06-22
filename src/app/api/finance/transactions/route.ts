@@ -1,57 +1,30 @@
+// app/api/finance/transactions/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { CategoryType } from '@/generated/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../auth/[...nextauth]/route';
 
 export async function GET(req: NextRequest) {
+  const session = await getServerSession(authOptions)
+    if (!session?.user?.companyId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const companyId = session.user.companyId
   try {
-    // Parse query parameters for pagination and filtering
-    const url = new URL(req.url);
-    const page = parseInt(url.searchParams.get('page') || '1', 10);
-    const pageSize = parseInt(url.searchParams.get('pageSize') || '10', 10);
-    const categoryType = url.searchParams.get('categoryType'); // INCOME or EXPENSE
-
-    // Calculate pagination offsets
-    const skip = (page - 1) * pageSize;
-
-    // Fetch transactions with optional filtering by category type
     const transactions = await prisma.transaction.findMany({
-      where: categoryType
-        ? {
-            category: {
-              type: categoryType as CategoryType, // Cast categoryType to CategoryType
-            },
-          }
-        : undefined,
+      where: { companyId },
       include: {
-        category: true, // Include category details
-        user: true, // Include user details
+        category: true,
+        user: {
+          select: { id: true, name: true, email: true },
+        },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      skip,
-      take: pageSize,
+      orderBy: { createdAt: 'desc' },
     });
-
-    // Count total transactions for pagination
-    const totalTransactions = await prisma.transaction.count({
-      where: categoryType
-        ? {
-            category: {
-              type: categoryType as CategoryType, // Cast categoryType to CategoryType
-            },
-          }
-        : undefined,
-    });
-
-    return NextResponse.json({
-      transactions,
-      totalTransactions,
-      totalPages: Math.ceil(totalTransactions / pageSize),
-      currentPage: page,
-    });
+    // Return array directly; DataTable paginates on client.
+    return NextResponse.json({ transactions });
   } catch (error) {
-    console.error('Error fetching transactions:', error);
+    console.error('Error fetching all transactions:', error);
     return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 });
   }
 }
