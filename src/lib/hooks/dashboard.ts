@@ -64,3 +64,16 @@ export function useGenerateReport() {
     },
   });
 }
+
+export function useAuditLog() {
+  return useQuery({
+    queryKey: ['auditLog'],
+    queryFn: async () => {
+      const response = await fetch('/api/audit-log');
+      if (!response.ok) {
+        throw new Error('Failed to fetch audit logs');
+      }
+      return response.json();
+    },
+  });
+}

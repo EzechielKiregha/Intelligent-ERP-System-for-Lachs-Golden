@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import prisma from "@/lib/prisma";
 import { z } from 'zod';
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth';
@@ -107,37 +107,36 @@ export async function GET(req: NextRequest) {
         },
         orderBy: { date: 'asc' },
       });
-    } else if (type === 'revenue') {
-      // group by date and sum income
-      const grouped = await prisma.transaction.groupBy({
-        by: ['date'],
+    }  else if (type === 'revenue' || type === 'expenses') {
+      // Fetch all transactions for the given type and manually group by date
+      const isIncome = type === 'revenue';
+      const rawTransactions = await prisma.transaction.findMany({
         where: {
           companyId,
-          category: { type: 'INCOME' },
+          category: { type: isIncome ? 'INCOME' : 'EXPENSE' },
           date: { gte: start, lte: end },
         },
-        _sum: { amount: true },
-        orderBy: { date: 'asc' },
-      });
-      // reshape to a uniform object array
-      transactions = grouped.map(g => ({
-        date: g.date,
-        amount: g._sum.amount ?? 0,
-      }));
-    } else if (type === 'expenses') {
-      const grouped = await prisma.transaction.groupBy({
-        by: ['date'],
-        where: {
-          companyId,
-          category: { type: 'EXPENSE' },
-          date: { gte: start, lte: end },
+        select: {
+          date: true,
+          amount: true,
         },
-        _sum: { amount: true },
         orderBy: { date: 'asc' },
       });
-      transactions = grouped.map(g => ({
-        date: g.date,
-        amount: g._sum.amount ?? 0,
+
+      // Group transactions by date
+      const grouped = rawTransactions.reduce((acc, tx) => {
+        const dateKey = tx.date.toISOString().split('T')[0]; // Group by date only (YYYY-MM-DD)
+        if (!acc[dateKey]) {
+          acc[dateKey] = 0;
+        }
+        acc[dateKey] += tx.amount;
+        return acc;
+      }, {} as Record<string, number>);
+
+      // Convert grouped data into an array
+      transactions = Object.entries(grouped).map(([date, amount]) => ({
+        date: new Date(date),
+        amount,
       }));
     } else {
       return NextResponse.json({ error: 'Invalid report type' }, { status: 400 });

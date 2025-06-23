@@ -3,7 +3,7 @@ import { render } from '@react-email/render';
 import { Resend } from 'resend';
 import ForgotPasswordEmail from 'emails/ForgotPasswordEmail';
 import cuid2 from '@paralleldrive/cuid2';
-import { prisma } from '@/lib/prisma';
+import prisma from "@/lib/prisma";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
 
   const token = cuid2.createId();
-  const resetPasswordLink = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}`;
+  const resetPasswordLink = `http://localhost:3000/reset-password?token=${token}`;
 
   await prisma.user.update({
     where: { email: toEmail },
@@ -56,15 +56,61 @@ export async function POST(req: NextRequest) {
     if (error) {
       const errorMessage = "[Error]: " + error;
       console.log(errorMessage);
+
+      // Log failure using axiosdb
+      await prisma.auditLog.create({
+        data:{
+          companyId : userExist.companyId || "N/A",
+          action: 'EMAIL_FAILED',
+          description: `Failed to send forgot password email to ${toEmail}`,
+          url: '/api/mail/forgot-password',
+          entity: 'Email',
+          entityId: null,
+          userId: userExist.id || "N/A"
+        }
+      })
+
       return NextResponse.json(errorMessage, { status: 400 });
     }
 
+     // Log success using axiosdb
+     await prisma.auditLog.create(
+      {
+        data: {
+          companyId : "N/A",
+          action: 'EMAIL_SENT',
+          description: `Forgot password email sent to ${toEmail}`,
+          url: '/api/mail/forgot-password',
+          entity: 'Email',
+          entityId: null,
+          userId: userExist.id
+        }
+      }
+    )
+
     const successMessage = { message: 'Forgot password email sent successfully', data };
     console.log(successMessage);
+
     return NextResponse.json(successMessage);
-  } catch (err) {
+  } catch (err:any) {
     const errorMessage = { error: 'Failed to send forgot password email', details: err };
     console.log(errorMessage);
+
+    // Log failure using axiosdb
+    await prisma.auditLog.create(
+      {
+        data : {
+          companyId : userExist.companyId || "N/A",
+          action: 'EMAIL_FAILED',
+          description: `Failed to send forgot password email to ${toEmail}: ${err.message}`,
+          url: '/api/mail/forgot-password',
+          entity: 'Email',
+          entityId: null,
+          userId: userExist.id || "N/A"
+        }
+      }
+    )
+
     return NextResponse.json(errorMessage, { status: 500 });
   }
 }

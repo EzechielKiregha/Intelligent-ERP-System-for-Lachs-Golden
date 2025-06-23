@@ -1,134 +1,139 @@
-// app/api/finance/insights/route.ts
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
-  // 1. Auth check
-  const session = await getServerSession(authOptions)
-    if (!session?.user?.companyId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-    const companyId = session.user.companyId
+  const session = await getServerSession(authOptions);
 
-  if (!companyId) {
+  if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  try {
-    const now = new Date()
 
-    // 1. Budget usage insights
+  const companyId = session.user.companyId;
+
+  try {
+    const now = new Date();
+
+    // 1. Budget Usage Insights
     const categories = await prisma.category.findMany({
       where: { companyId },
       select: { id: true, name: true, budgetLimit: true, budgetUsed: true },
-    })
-    const budgetInsights: string[] = []
-    for (const cat of categories) {
-      if (cat.budgetLimit !== null && cat.budgetLimit > 0) {
-        const pct = (Number(cat.budgetUsed) / Number(cat.budgetLimit)) * 100
+    });
+
+    const budgetInsights = categories
+      .filter((cat) => cat.budgetLimit !== null && cat.budgetLimit > 0)
+      .map((cat) => {
+        const pct = (Number(cat.budgetUsed) / Number(cat.budgetLimit)) * 100;
         if (pct >= 100) {
-          budgetInsights.push(`Category "${cat.name}" has exceeded its budget.`)
+          return `Category "${cat.name}" has exceeded its budget.`;
         } else if (pct >= 80) {
-          budgetInsights.push(`Category "${cat.name}" is at ${pct.toFixed(0)}% of its budget.`)
+          return `Category "${cat.name}" is at ${pct.toFixed(0)}% of its budget.`;
         }
-      }
-    }
-
-    // 2. Unusual spending: compare this month vs last month per category
-    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
-    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1)
-    // For each category, sum expenses
-    const expenseCats = categories.map(c => c.id)
-    const pastSums = await Promise.all(
-      expenseCats.map(catId =>
-        prisma.transaction.aggregate({
-          where: {
-            companyId,
-            categoryId: catId,
-            category: { type: 'EXPENSE' },
-            date: { gte: lastMonthStart, lt: lastMonthEnd },
-          },
-          _sum: { amount: true },
-        }).then(res => ({ catId, sum: res._sum.amount ?? 0 }))
-      )
-    )
-    const currentSums = await Promise.all(
-      expenseCats.map(catId =>
-        prisma.transaction.aggregate({
-          where: {
-            companyId,
-            categoryId: catId,
-            category: { type: 'EXPENSE' },
-            date: { gte: thisMonthStart, lt: new Date() },
-          },
-          _sum: { amount: true },
-        }).then(res => ({ catId, sum: res._sum.amount ?? 0 }))
-      )
-    )
-    const spendingInsights: string[] = []
-    for (const cur of currentSums) {
-      const past = pastSums.find(p => p.catId === cur.catId)
-      if (past) {
-        // if last month was zero and current > 0, flag new spending
-        if (past.sum === 0 && cur.sum > 0) {
-          const cat = categories.find(c => c.id === cur.catId)
-          spendingInsights.push(`New expenses in category "${cat?.name}".`)
-        } else if (past.sum > 0) {
-          const ratio = cur.sum / past.sum
-          if (ratio >= 1.5) {
-            const cat = categories.find(c => c.id === cur.catId)
-            spendingInsights.push(
-              `Expenses in "${cat?.name}" are ${ (ratio*100).toFixed(0) }% of last month.`
-            )
-          }
-        }
-      }
-    }
-
-    // 3. Revenue alert: compare this month revenue vs average monthly revenue over past 6 months
-    // Sum monthly revenue for past 6 months
-    const revSums: number[] = []
-    for (let i = 1; i <= 6; i++) {
-      const start = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1)
-      const agg = await prisma.transaction.aggregate({
-        where: {
-          companyId,
-          category: { type: 'INCOME' },
-          date: { gte: start, lt: end },
-        },
-        _sum: { amount: true },
+        return null;
       })
-      revSums.push(Number(agg._sum.amount ?? 0))
-    }
-    const avgRev = revSums.reduce((a, b) => a + b, 0) / revSums.length
-    // This month revenue so far
-    const thisRevAgg = await prisma.transaction.aggregate({
+      .filter(Boolean);
+
+    // 2. Unusual Spending Insights
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const expenseData = await prisma.transaction.findMany({
+      where: {
+        companyId,
+        category: { type: 'EXPENSE' },
+        date: { gte: lastMonthStart },
+      },
+      select: {
+        categoryId: true,
+        date: true,
+        amount: true,
+      },
+    });
+
+    const spendingInsights = categories.map((cat) => {
+      const lastMonthExpenses = expenseData
+        .filter(
+          (tx) =>
+            tx.categoryId === cat.id &&
+            tx.date >= lastMonthStart &&
+            tx.date < lastMonthEnd
+        )
+        .reduce((sum, tx) => sum + tx.amount, 0);
+
+      const thisMonthExpenses = expenseData
+        .filter(
+          (tx) =>
+            tx.categoryId === cat.id &&
+            tx.date >= thisMonthStart &&
+            tx.date < now
+        )
+        .reduce((sum, tx) => sum + tx.amount, 0);
+
+      if (lastMonthExpenses === 0 && thisMonthExpenses > 0) {
+        return `New expenses in category "${cat.name}".`;
+      } else if (lastMonthExpenses > 0) {
+        const ratio = thisMonthExpenses / lastMonthExpenses;
+        if (ratio >= 1.5) {
+          return `Expenses in "${cat.name}" are ${(
+            ratio * 100
+          ).toFixed(0)}% of last month.`;
+        }
+      }
+      return null;
+    }).filter(Boolean);
+
+    // 3. Revenue Insights
+    const revenueData = await prisma.transaction.findMany({
       where: {
         companyId,
         category: { type: 'INCOME' },
-        date: { gte: new Date(now.getFullYear(), now.getMonth(), 1), lt: new Date() },
+        date: { lt: now },
       },
-      _sum: { amount: true },
-    })
-    const thisRev = Number(thisRevAgg._sum.amount ?? 0)
-    const revenueInsights: string[] = []
-    if (avgRev > 0 && thisRev < avgRev * 0.5) {
+      select: {
+        date: true,
+        amount: true,
+      },
+    });
+
+    const monthlyRevenue = Array.from({ length: 6 }, (_, i) => {
+      const start = new Date(now.getFullYear(), now.getMonth() - i - 1, 1);
+      const end = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      return revenueData
+        .filter((tx) => tx.date >= start && tx.date < end)
+        .reduce((sum, tx) => sum + tx.amount, 0);
+    });
+
+    const avgRev =
+      monthlyRevenue.reduce((sum, rev) => sum + rev, 0) / monthlyRevenue.length;
+
+    const thisMonthRevenue = revenueData
+      .filter((tx) => tx.date >= thisMonthStart && tx.date < now)
+      .reduce((sum, tx) => sum + tx.amount, 0);
+
+    const revenueInsights = [];
+    if (avgRev > 0 && thisMonthRevenue < avgRev * 0.5) {
       revenueInsights.push(
-        `This month’s revenue (${thisRev.toFixed(2)}) is below 50% of average (${avgRev.toFixed(2)}).`
-      )
+        `This month’s revenue (${thisMonthRevenue.toFixed(
+          2
+        )}) is below 50% of average (${avgRev.toFixed(2)}).`
+      );
     }
 
+    // Combine all insights
     const insights = [
       ...budgetInsights,
       ...spendingInsights,
       ...revenueInsights,
-    ]
-    return NextResponse.json({ insights })
+    ];
+
+    return NextResponse.json({ insights });
   } catch (error) {
-    console.error('Error generating insights:', error)
-    return NextResponse.json({ error: 'Failed to generate insights' }, { status: 500 })
+    console.error('Error generating insights:', error);
+    return NextResponse.json(
+      { error: 'Failed to generate insights' },
+      { status: 500 }
+    );
   }
 }

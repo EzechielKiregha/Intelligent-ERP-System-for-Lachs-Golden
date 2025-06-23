@@ -54,9 +54,14 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
     accessorKey: "name",
     header: () => <div className="w-full text-left">Category</div>,
     cell: ({ row }) => (
-      <div className="text-left font-semibold">
-        {row.original.name}
-      </div>
+      <TableCellViewer item={{
+        id: row.original.id,
+        category: row.original.name,
+        type: row.original.type,
+        budgetLimit: row.original.budgetLimit,
+        budgetUsed: row.original.budgetUsed
+      }}
+        typeName="Categories" />
     ),
   },
   {
@@ -124,7 +129,7 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
 export default function CategoriesList() {
   const { data: categories, isLoading, error } = useFinanceCategories();
 
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading categories</div>;
 
   return (

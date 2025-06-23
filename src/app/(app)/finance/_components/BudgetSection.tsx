@@ -12,16 +12,16 @@ interface BudgetCategory {
 export default function BudgetSection() {
   const { data, isLoading, isError } = useBudgetData();
 
-  if (isLoading) {
-    return <p>Loading budget data...</p>;
-  }
+  // if (isLoading) {
+  //   return <p>Loading budget data...</p>;
+  // }
 
   if (isError) {
     return <p>Error loading budget data.</p>;
   }
 
   return (
-    <div className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border-sidebar-border rounded-lg shadow p-4">
+    <div className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border border-sidebar-border rounded-lg shadow p-4">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Budget Allocation</h3>
       <ul className="space-y-4">
         {data && data.map((category: BudgetCategory) => (

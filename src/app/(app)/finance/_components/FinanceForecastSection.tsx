@@ -2,11 +2,12 @@
 import React from 'react'
 import { useFinanceForecast } from '@/lib/hooks/finance'
 import { InteractiveAreaChart } from './InteractiveAreaChart'
+import SkeletonLoader from '../../_components/SkeletonLoader'
 
 export default function FinanceForecastSection() {
   const { data, isLoading, isError } = useFinanceForecast()
 
-  if (isLoading) return <p>Loading chart...</p>
+  if (isLoading) return <SkeletonLoader type='list' count={1} height={60} />
   if (isError || !data) return <p>Error loading forecast.</p>
 
   // Transform past & forecast into uniform date strings "YYYY-MM-01"

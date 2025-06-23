@@ -3,7 +3,7 @@ import { render } from '@react-email/render';
 import { Resend } from 'resend';
 import OtpEmail from 'emails/OtpEmail';
 import { randomBytes } from 'crypto';
-import { prisma } from '@/lib/prisma';
+import prisma from "@/lib/prisma";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -18,7 +18,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(errorMessage, { status: 400 });
   }
 
-  const generateOtp = (): string => randomBytes(3).toString('hex').toUpperCase();
+  // const generateOtp = (): string => randomBytes(3).toString('hex').toUpperCase();
+  const generateOtp = (): string => {
+    const otp = Math.floor(100000 + Math.random() * 900000); // generates a 6-digit number
+    return otp.toString();
+  };
   const otp = generateOtp();
   console.log(`[POST] Generated OTP: ${otp}`);
 

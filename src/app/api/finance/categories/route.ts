@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import prisma from "@/lib/prisma";
 import { z } from 'zod';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -57,9 +57,39 @@ export async function POST(req: NextRequest) {
         company: { connect: { id: companyId } },
       },
     });
+
+    // Log success directly using Prisma
+    await prisma.auditLog.create({
+      data: {
+        companyId,
+        action: 'CREATE',
+        description: `Created category with ID ${newCat.id}`,
+        url: '/api/finance/categories',
+        entity: 'Category',
+        entityId: newCat.id,
+        userId: session.user.id,
+        timestamp: new Date(),
+      },
+    });
+
     return NextResponse.json({ category: newCat }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating category:', error);
+
+    // Log failure directly using Prisma
+    await prisma.auditLog.create({
+      data: {
+        companyId,
+        action: 'CREATE_FAILED',
+        description: `Failed to create category: ${error.message}`,
+        url: '/api/finance/categories',
+        entity: 'Category',
+        entityId: null,
+        userId: session.user.id,
+        timestamp: new Date(),
+      },
+    });
+
     return NextResponse.json({ error: 'Failed to create category' }, { status: 500 });
   }
 }
@@ -70,13 +100,15 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const companyId = session.user.companyId;
+
+  // Extract the `id` parameter from the URL
+  const { searchParams } = new URL(req.url);
+  const categoryId = searchParams.get('id');
+  if (!categoryId) {
+    return NextResponse.json({ error: 'Category ID is required' }, { status: 400 });
+  }
   try {
-     // Extract the `id` parameter from the URL
-     const { searchParams } = new URL(req.url);
-     const categoryId = searchParams.get('id');
-     if (!categoryId) {
-       return NextResponse.json({ error: 'Category ID is required' }, { status: 400 });
-     }
+    
     const body = await req.json();
     const parse = categorySchema.safeParse(body);
     if (!parse.success) {
@@ -92,9 +124,39 @@ export async function PUT(req: NextRequest) {
       where: { id: categoryId },
       data: parse.data,
     });
+
+    // Log success directly using Prisma
+    await prisma.auditLog.create({
+      data: {
+        companyId,
+        action: 'UPDATE',
+        description: `Updated category with ID ${updated.id}`,
+        url: '/api/finance/categories',
+        entity: 'Category',
+        entityId: updated.id,
+        userId: session.user.id,
+        timestamp: new Date(),
+      },
+    });
+
     return NextResponse.json({ category: updated });
-  } catch (error) {
+  } catch (error:any) {
     console.error('Error updating category:', error);
+
+    // Log failure directly using Prisma
+    await prisma.auditLog.create({
+      data: {
+        companyId,
+        action: 'UPDATE_FAILED',
+        description: `Failed to update category: ${error.message}`,
+        url: '/api/finance/categories',
+        entity: 'Category',
+        entityId: categoryId,
+        userId: session.user.id,
+        timestamp: new Date(),
+      },
+    });
+
     return NextResponse.json({ error: 'Failed to update category' }, { status: 500 });
   }
 }
@@ -105,13 +167,15 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const companyId = session.user.companyId
-  try {
+
     // Extract the `id` parameter from the URL
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get('id');
     if (!categoryId) {
       return NextResponse.json({ error: 'Category ID is required' }, { status: 400 });
     }
+  try {
+    
     const existing = await prisma.category.findUnique({ where: { id: categoryId } });
     if (!existing || existing.companyId !== companyId) {
       return NextResponse.json({ error: 'Not found or unauthorized' }, { status: 404 });
@@ -122,9 +186,39 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Cannot delete: transactions exist' }, { status: 400 });
     }
     await prisma.category.delete({ where: { id: categoryId } });
+
+    // Log success directly using Prisma
+    await prisma.auditLog.create({
+      data: {
+        companyId,
+        action: 'DELETE',
+        description: `Deleted category with ID ${categoryId}`,
+        url: '/api/finance/categories',
+        entity: 'Category',
+        entityId: categoryId,
+        userId: session.user.id,
+        timestamp: new Date(),
+      },
+    });
+
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error:any) {
     console.error('Error deleting category:', error);
+
+    // Log failure directly using Prisma
+    await prisma.auditLog.create({
+      data: {
+        companyId,
+        action: 'DELETE_FAILED',
+        description: `Failed to delete category: ${error.message}`,
+        url: '/api/finance/categories',
+        entity: 'Category',
+        entityId: categoryId,
+        userId: session.user.id,
+        timestamp: new Date(),
+      },
+    });
+
     return NextResponse.json({ error: 'Failed to delete category' }, { status: 500 });
   }
 }

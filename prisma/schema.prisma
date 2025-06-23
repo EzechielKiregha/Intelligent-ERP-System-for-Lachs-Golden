@@ -86,7 +86,6 @@ model Company {
 
   reports Report[]
 
-  auditLogs AuditLog[]
 }
 
 model User {
@@ -284,14 +283,14 @@ model Document {
 
 model AuditLog {
   id        String   @id @default(cuid())
-  action    String
-  entity    String
-  entityId  String
+  action    String?
+  entity    String?
+  entityId  String?
   userId    String?
+  description String?
+  url String?
   timestamp DateTime @default(now())
-
-  company     Company   @relation(fields: [companyId], references: [id])
-  companyId   String
+  companyId   String?
 }
 
 model Notification {

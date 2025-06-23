@@ -1,9 +1,9 @@
-'use client'
 import React from 'react';
 import { FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'react-hot-toast';
 
 interface ExportReportButtonProps {
@@ -57,24 +57,25 @@ export default function ExportReportButton({ type }: ExportReportButtonProps) {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 bg-sidebar">
       {/* Select date range */}
       <div className="flex items-center gap-2">
         <Label>Range:</Label>
-        <select
-          title="Select date range"
-          value={dateRange}
-          onChange={(e) => setDateRange(e.target.value as any)}
-          className="border px-2 py-1 rounded"
-        >
-          <option value="last7days">Last 7 days</option>
-          <option value="last30days">Last 30 days</option>
-          <option value="lastquarter">Last quarter</option>
-          <option value="custom">Custom</option>
-        </select>
+        <Select value={dateRange} onValueChange={(value) => setDateRange(value as any)}>
+          <SelectTrigger className="w-48 bg-sidebar-accent text-sidebar-accent-foreground">
+            <SelectValue placeholder="Select Date Range" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="last7days">Last 7 days</SelectItem>
+            <SelectItem value="last30days">Last 30 days</SelectItem>
+            <SelectItem value="lastquarter">Last quarter</SelectItem>
+            <SelectItem value="custom">Custom</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
+
       {dateRange === 'custom' && (
-        <div className="flex items-end gap-4">
+        <div className="flex items-end gap-4 bg-sidebar">
           <div className="flex flex-col">
             <Label htmlFor="startDate">Start Date</Label>
             <Input
@@ -97,10 +98,11 @@ export default function ExportReportButton({ type }: ExportReportButtonProps) {
           </div>
         </div>
       )}
+
       <Button
         onClick={handleGenerate}
         disabled={isGenerating}
-        className="flex items-center space-x-2 bg-[#A17E25] hover:bg-[#8C6A1A] text-white"
+        className="flex items-center space-x-2 bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-primary"
       >
         <FileText className="w-5 h-5" />
         <span>{isGenerating ? 'Generating...' : 'Export Report'}</span>

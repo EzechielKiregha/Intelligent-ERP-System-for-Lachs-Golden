@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/sidebar"
 import { IconAnalyze } from "@tabler/icons-react"
 import { useAuth } from "contents/authContext"
+import { useAuditLog } from "@/lib/hooks/dashboard"
+import SkeletonLoader from "./SkeletonLoader"
 
 // This is sample data.
 
@@ -36,13 +38,6 @@ const companyData = {
   plan: "Enterprise",
 };
 
-const transactions = [
-  { id: 1, date: "2025-06-01", amount: 15000, category: "Marketing", status: "Completed", url: "/finance/transactions" },
-  { id: 2, date: "2025-06-02", amount: 25000, category: "Sales", status: "Completed", url: "/finance/transactions" },
-  { id: 3, date: "2025-06-03", amount: 5000, category: "Office Supplies", status: "Pending", url: "/finance/transactions" },
-  { id: 4, date: "2025-06-04", amount: 12000, category: "HR", status: "Failed", url: "/finance/transactions" },
-];
-
 const navMainItems = [
   {
     title: "Dashboard",
@@ -51,7 +46,7 @@ const navMainItems = [
     isActive: true,
     items: [
       { title: "Dashboard", url: "/dashboard" },
-      { title: "Analytics", url: "/dashboard/analytics" },
+      // { title: "Analytics", url: "/dashboard/analytics" },
       { title: "Reports", url: "/dashboard/reports" },
     ],
   },
@@ -122,6 +117,8 @@ const userData = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
+  const { data: logs, isLoading } = useAuditLog();
+
   const user = useAuth().user;
 
   return (
@@ -131,7 +128,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMainItems} />
-        <NavProjects transactions={transactions} />
+        {isLoading && <SkeletonLoader type="list" height={40} />}
+        <NavProjects auditLogs={logs} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={{

@@ -67,7 +67,16 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <TableCellViewer item={row.original} typeName="Transactions" />
+      <TableCellViewer item={{
+        id: row.original.id,
+        date: row.original.date,
+        description: row.original.description,
+        status: row.original.status,
+        category: row.original.category.name,
+        amount: row.original.amount,
+        user: row.original.user?.name
+      }}
+        typeName="Transactions" />
     ),
     enableHiding: false,
   },

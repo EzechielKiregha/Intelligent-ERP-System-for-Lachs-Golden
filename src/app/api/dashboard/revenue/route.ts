@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { TransactionType } from '@/generated/prisma';
-
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -20,65 +18,69 @@ export async function GET(req: NextRequest) {
     let startDate: Date;
     let endDate = now;
 
+    // Determine the date range
     switch (range) {
       case 'last7days':
-        startDate = new Date(now.setDate(now.getDate() - 7));
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // Last 7 days
         break;
       case 'last30days':
-        startDate = new Date(now.setDate(now.getDate() - 30));
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Last 30 days
         break;
       case 'lastquarter':
-        startDate = new Date(now.setMonth(now.getMonth() - 3));
+        startDate = new Date(now.getFullYear(), now.getMonth() - 3, 1); // Last quarter
         break;
       default:
-        startDate = new Date(now.setDate(now.getDate() - 7));
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // Default to last 7 days
     }
 
-    
-
     // Fetch revenue data for the current range
-    const currentRevenue = await prisma.transaction.aggregate({
+    const currentTransactions = await prisma.transaction.findMany({
       where: {
         companyId,
         createdAt: {
           gte: startDate,
           lt: endDate,
         },
-        category : {
-          type : 'INCOME'
+        category: {
+          type: 'INCOME',
         },
       },
-      _sum: { amount: true },
+      select: { amount: true },
     });
 
-    // Fetch revenue data for the previous range
-    const previousStartDate = new Date(startDate);
-    const previousEndDate = new Date(endDate);
-    previousStartDate.setDate(startDate.getDate() - (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    previousEndDate.setDate(endDate.getDate() - (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    // Calculate total revenue for the current range
+    const currentRevenue = currentTransactions.reduce((sum, tx) => sum + tx.amount, 0);
 
-    const previousRevenue = await prisma.transaction.aggregate({
+    // Calculate the previous range
+    const previousStartDate = new Date(startDate.getTime() - (endDate.getTime() - startDate.getTime()));
+    const previousEndDate = new Date(startDate);
+
+    // Fetch revenue data for the previous range
+    const previousTransactions = await prisma.transaction.findMany({
       where: {
         companyId,
         createdAt: {
           gte: previousStartDate,
           lt: previousEndDate,
         },
-        category : {
-          type : 'INCOME'
+        category: {
+          type: 'INCOME',
         },
       },
-      _sum: { amount: true },
+      select: { amount: true },
     });
 
-    const revenue = currentRevenue._sum.amount || 0;
-    const previous = previousRevenue._sum.amount || 0;
-    const changePercent = previous > 0 ? ((revenue - previous) / previous) * 100 : 0;
+    // Calculate total revenue for the previous range
+    const previousRevenue = previousTransactions.reduce((sum, tx) => sum + tx.amount, 0);
 
+    // Calculate the percentage change
+    const changePercent = previousRevenue > 0 ? ((currentRevenue - previousRevenue) / previousRevenue) * 100 : 0;
+
+    // Return the response
     return NextResponse.json([
       {
         quarter: range === 'lastquarter' ? 'Last Quarter' : range === 'last30days' ? 'Last 30 Days' : 'Last 7 Days',
-        revenue,
+        revenue: currentRevenue,
         changePercent: parseFloat(changePercent.toFixed(2)),
       },
     ]);

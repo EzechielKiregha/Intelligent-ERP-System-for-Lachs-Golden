@@ -1,6 +1,6 @@
 import { hash } from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import prisma from "@/lib/prisma";
 import { SignUpInput, signUpSchema } from '@/lib/validations/auth';
 
 export async function POST(req: NextRequest) {
@@ -28,6 +28,20 @@ export async function POST(req: NextRequest) {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       console.error("Duplicate email detected:", email);
+
+      // Log failure directly using Prisma
+      await prisma.auditLog.create({
+        data: {
+          companyId: existingUser.companyId || "N/A",
+          action: 'CREATE_FAILED',
+          description: `Failed to create user: Email ${email} already exists`,
+          url: '/api/signup',
+          entity: 'User',
+          entityId: null,
+          userId: existingUser.id,
+        },
+      });
+
       return NextResponse.json({ message: 'Email already used' }, { status: 400 });
     }
 
@@ -87,6 +101,21 @@ export async function POST(req: NextRequest) {
         });
 
         console.log("User created successfully:", user);
+
+        // Log success directly using Prisma
+        await prisma.auditLog.create({
+          data: {
+            companyId: user.companyId || "N/A",
+            action: 'CREATE',
+            description: `Created user with ID ${user.id}`,
+            url: '/api/signup',
+            entity: 'User',
+            entityId: user.id,
+            userId: user.id,
+            timestamp: new Date(),
+          },
+        });
+
         return NextResponse.json(user, { status: 200 });
       }
     } catch (err) {
@@ -116,15 +145,59 @@ export async function POST(req: NextRequest) {
           role: 'USER',
         },
       });
-    } catch (err) {
+
+      if (user){
+        // Log success directly using Prisma
+      await prisma.auditLog.create({
+        data: {
+          companyId: user.companyId || "N/A",
+          action: 'CREATE',
+          description: `Created user with ID ${user.id}`,
+          url: '/api/signup',
+          entity: 'User',
+          entityId: user.id,
+          userId: user.id,
+          timestamp: new Date(),
+        },
+      });
+      }
+        // Ensure the response is sent and no further code is executed
+      return NextResponse.json(user, { status: 200 });
+    } catch (err:any) {
       console.error("Error creating user record:", err);
+      // Log failure directly using Prisma
+      await prisma.auditLog.create({
+        data: {
+          companyId: "N/A",
+          action: 'CREATE_FAILED',
+          description: `Failed to create user: ${err.message}`,
+          url: '/api/signup',
+          entity: 'User',
+          entityId: null,
+          userId: null,
+          timestamp: new Date(),
+        },
+      });
       return NextResponse.json({ message: 'Failed to create user' }, { status: 500 });
     }
-
-    console.log("User created successfully:", user);
-    return NextResponse.json(user, { status: 200 });
-  } catch (err) {
+    
+  } catch (err : any) {
     console.error("Unexpected error during signup:", err);
+
+    // Log failure directly using Prisma
+    await prisma.auditLog.create({
+      data: {
+        companyId: "N/A",
+        action: 'CREATE_FAILED',
+        description: `Failed to create user: ${err.message}`,
+        url: '/api/signup',
+        entity: 'User',
+        entityId: null,
+        userId: null,
+        timestamp: new Date(),
+      },
+    });
+
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

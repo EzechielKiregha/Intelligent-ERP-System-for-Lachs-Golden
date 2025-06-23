@@ -12,7 +12,7 @@ import { AlertCircle } from 'lucide-react'
 export default function FinancialInsights() {
   const { data: insights, isLoading, isError } = useFinanceInsights()
 
-  if (isLoading) return <p>Loading insights...</p>
+  // if (isLoading) return <p>Loading insights...</p>
   if (isError) return <p>Error loading insights.</p>
   if (!insights || insights.length === 0) return <p>No insights at this time.</p>
 

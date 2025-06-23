@@ -28,34 +28,37 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation";
-import { IconAnalyze, TablerIcon } from "@tabler/icons-react";
 import Link from "next/link";
 
-interface Transaction {
-  transactions: {
+interface AuditLog {
+  auditLogs: {
     id: number;
-    date: string;
-    amount: number;
-    category: string;
-    status: string;
+    action: string;
+    entityId: string;
+    entity: string;
+    description: string;
+    createdAt: string;
     url: string;
   }[];
 }
 
-export function NavProjects({ transactions }: Transaction) {
-  const { isMobile } = useSidebar()
+export function NavProjects({ auditLogs }: AuditLog) {
+  const { isMobile } = useSidebar();
   const router = useRouter();
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Recent Transactions</SidebarGroupLabel>
+      <SidebarGroupLabel>Recent Activity</SidebarGroupLabel>
       <SidebarMenu>
-        {transactions.slice(0, 4).map((transaction) => (
-          <SidebarMenuItem key={transaction.id}>
+        {auditLogs && auditLogs.slice(0, 4).map((log) => (
+          <SidebarMenuItem key={log.id}>
             <SidebarMenuButton asChild>
-              <Link href={transaction.url} className="flex items-center gap-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-                <IconAnalyze />
-                <span className="text-sidebar-foreground" >{transaction.category} {transaction.amount}</span>
-              </Link>
+              <div
+                className="flex items-center gap-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              >
+                <span className="text-sidebar-foreground">{log.action}</span>
+                <span className="text-xs text-gray-500">({log.description})</span>
+              </div>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -65,23 +68,22 @@ export function NavProjects({ transactions }: Transaction) {
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-48 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
+                className="w-48 rounded-lg bg-sidebar"
+                side={isMobile ? 'bottom' : 'right'}
+                align={isMobile ? 'end' : 'start'}
               >
-                <DropdownMenuItem onClick={() => router.replace(transaction.url)}>
+                <DropdownMenuItem>
                   <Folder className="text-muted-foreground" />
-                  <span>View Transaction</span>
-
+                  <span>View Activity</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Forward className="text-muted-foreground" />
-                  <span>Share Transaction</span>
+                  <span>Share Activity</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <Trash2 className="text-muted-foreground" />
-                  <span>Delete Transaction</span>
+                  <span>Delete Activity</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

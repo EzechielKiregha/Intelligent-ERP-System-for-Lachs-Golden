@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useDashboardStats, useRevenueAnalytics, useInventorySummary, useRecentActivities, useAIInsights } from '@/lib/hooks/dashboard';
+import { useDashboardStats, useRevenueAnalytics, useInventorySummary, useRecentActivities, useAIInsights, useAuditLog } from '@/lib/hooks/dashboard';
 // import MetricCards from './_components/MetricCards';
 // import RevenueAnalytics from './_components/RevenueAnalytics';
 import SalesDistribution from './_components/SalesDistribution';
@@ -24,6 +24,7 @@ export default function DashboardPage() {
   const { data: inventoryData, isLoading: inventoryLoading } = useInventorySummary();
   const { data: activitiesData, isLoading: activitiesLoading } = useRecentActivities();
   const { data: insightsData, isLoading: insightsLoading } = useAIInsights();
+  const { data: auditLogs, isLoading: logsLoading } = useAuditLog()
 
   const loading = statsLoading || revenueLoading || inventoryLoading || activitiesLoading || insightsLoading;
 
@@ -97,10 +98,10 @@ export default function DashboardPage() {
             </div>
             <div className="grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6">
 
-              {activitiesLoading && <SkeletonLoader height={12} type="list" count={1} />}
+              {logsLoading && <SkeletonLoader height={12} type="list" count={1} />}
               {/* Recent Activities */}
-              {!activitiesLoading && activitiesData && (
-                <ActivityFeed activities={activitiesData} />
+              {!logsLoading && auditLogs && (
+                <ActivityFeed auditLogs={auditLogs} />
               )}
 
               {insightsLoading && <SkeletonLoader height={12} type="list" count={1} />}

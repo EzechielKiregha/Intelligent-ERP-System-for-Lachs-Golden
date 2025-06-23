@@ -106,6 +106,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import CategoryForm from "./CategoryForm"
 
 // Generic interface for data with required id
 interface DataWithId {
@@ -302,6 +303,7 @@ export function DataTable<TData extends DataWithId>({
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
+            onClick={() => typeName === "category" ? <CategoryForm /> : console.log("add clicked")}
             variant="outline"
             size="sm"
             className="border-[var(--sidebar-border)] bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] focus:ring-[var(--sidebar-ring)]"
@@ -470,11 +472,11 @@ export function TableCellViewer<TData extends DataWithId>({ item, typeName }: { 
       return {
         budgetLimit: {
           label: "Budget Limit",
-          color: "hsl(var(--sidebar-primary))",
+          color: "hsl(var(--sidebar-accent))",
         },
         budgetUsed: {
           label: "Budget Used",
-          color: "hsl(var(--sidebar-border))",
+          color: "hsl(var(--sidebar-ring))",
         },
         value1: {
           label: undefined,
