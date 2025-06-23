@@ -1,5 +1,12 @@
 import { z } from "zod";
 import { ColumnDef } from "@tanstack/react-table";
+import { useFinanceCategories } from "@/lib/hooks/finance";
+import { DataTable, DragHandle, TableCellViewer } from "./ReusableDataTable";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { IconDotsVertical } from "@tabler/icons-react";
 
 // Category schema
 export const categorySchema = z.object({
@@ -44,6 +51,15 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "name",
+    header: () => <div className="w-full text-left">Category</div>,
+    cell: ({ row }) => (
+      <div className="text-left font-semibold">
+        {row.original.name}
+      </div>
+    ),
+  },
+  {
     accessorKey: "type",
     header: "Type",
     cell: ({ row }) => (
@@ -51,8 +67,8 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
         <Badge
           variant="outline"
           className={`px-1.5 border-[var(--sidebar-border)] text-[var(--sidebar-foreground)] ${row.original.type === "INCOME"
-              ? "bg-[var(--sidebar-primary)] dark:bg-[var(--sidebar-primary)]"
-              : "bg-red-500 dark:bg-red-700"
+            ? "bg-[var(--sidebar-primary)] dark:bg-[var(--sidebar-primary)]"
+            : "bg-red-500 dark:bg-red-700"
             }`}
         >
           {row.original.type}
@@ -103,14 +119,7 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
   },
 ];
 
-// Usage with useFinanceCategories
-import { useFinanceCategories } from "@/lib/hooks/finance";
-import { DataTable, DragHandle, TableCellViewer } from "./ReusableDataTable";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { IconDotsVertical } from "@tabler/icons-react";
+
 
 export default function CategoriesList() {
   const { data: categories, isLoading, error } = useFinanceCategories();

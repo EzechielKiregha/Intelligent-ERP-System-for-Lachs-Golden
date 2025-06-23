@@ -18,28 +18,26 @@ export default function FinancePage() {
 
   return (
     <AuthGuard>
-      <div className="flex flex-col bg-sidebar">
+      <div className="flex flex-col">
 
-        <main className="p-6 space-y-6">
+        <main className="p-4 space-y-6">
           {/* Finance Cards */}
-          <div className='"grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6"'>
+          <section>
             <FinanceSummaryCards />
-            <FinanceForecastSection />
-          </div>
+          </section>
 
           {/* Forecast Chart & Budget Section */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-
+          <section>
+            <FinanceForecastSection />
           </section>
 
           {/* Transaction List */}
           <section>
-            <TransactionList data={transactions || []} />
+            <CategoriesList />
           </section>
 
           {/* Financial Insights */}
-          <section>
+          <section className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
             <FinancialInsights />
             <BudgetSection />
           </section>

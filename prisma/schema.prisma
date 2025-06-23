@@ -85,6 +85,8 @@ model Company {
   documents Document[]
 
   reports Report[]
+
+  auditLogs AuditLog[]
 }
 
 model User {
@@ -287,6 +289,9 @@ model AuditLog {
   entityId  String
   userId    String?
   timestamp DateTime @default(now())
+
+  company     Company   @relation(fields: [companyId], references: [id])
+  companyId   String
 }
 
 model Notification {

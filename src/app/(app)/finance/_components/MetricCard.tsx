@@ -39,7 +39,7 @@ export function MetricCard({
   const isUp = showBadge && percentChange >= 0
 
   return (
-    <Card className="@container/card">
+    <Card className="@container/card bg-[var(--sidebar)] text-[var(--sidebar-foreground)]">
       <CardHeader>
         <CardDescription>{description}</CardDescription>
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">

@@ -114,7 +114,7 @@ export function InteractiveAreaChart<T extends Record<string, any>>({
   })
 
   return (
-    <Card className="@container/card">
+    <Card className="@container/card bg-[var(--sidebar)] text-[var(--sidebar-foreground)]">
       <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
         <div>
           <CardTitle>{title}</CardTitle>
@@ -127,7 +127,7 @@ export function InteractiveAreaChart<T extends Record<string, any>>({
             value={timeRange}
             onValueChange={(val) => val && setTimeRange(val)}
             variant="outline"
-            className="hidden @[767px]/card:flex"
+            className="hidden @[767px]/card:flex "
           >
             {ranges.map(r => (
               <ToggleGroupItem key={r.value} value={r.value}>
@@ -141,13 +141,13 @@ export function InteractiveAreaChart<T extends Record<string, any>>({
             onValueChange={(val) => setTimeRange(val)}
           >
             <SelectTrigger
-              className="flex w-40 @[767px]/card:hidden"
+              className="flex w-40 @[767px]/card:hidden bg-sidebar-accent text-sidebar-accent-foreground"
               size="sm"
               aria-label="Select time range"
             >
               <SelectValue placeholder="Select range" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl">
+            <SelectContent className=" rounded-xl">
               {ranges.map(r => (
                 <SelectItem key={r.value} value={r.value} className="rounded-lg">
                   {r.label}

@@ -133,7 +133,7 @@ export function useFinanceInsights() {
     {
       queryKey: ['finance', 'insights'],
       queryFn : async () => {
-      const { data } = await axiosdb.get<{ insights: string[] }>('/api/finance/insights')
+      const { data } = await axiosdb.get<{ insights: string[] }>('/api/insights')
       return data.insights
     },
     }

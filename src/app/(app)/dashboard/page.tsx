@@ -11,11 +11,16 @@ import AIInsights from './_components/AIInsights';
 import SkeletonLoader from '../_components/SkeletonLoader';
 import AuthGuard from '../_components/AuthGuard';
 import FinanceSummaryCards from '../finance/_components/FinanceSummaryCards';
+import { MetricCard } from './_components/MetricCards';
+import { DollarSign, GroupIcon, ShoppingCart, Users } from 'lucide-react';
+import RevenueAnalytics from './_components/RevenueAnalytics';
+import FinanceForecastSection from '../finance/_components/FinanceForecastSection';
+import CategoriesList from '../finance/_components/CategoryList';
 
 export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
   const [range, setRange] = React.useState('last7days');
-  const { data: revenueData, isLoading: revenueLoading } = useRevenueAnalytics(range);
+  const { data: revenueData, isLoading: revenueLoading } = useRevenueAnalytics(range || 'last7days');
   const { data: inventoryData, isLoading: inventoryLoading } = useInventorySummary();
   const { data: activitiesData, isLoading: activitiesLoading } = useRecentActivities();
   const { data: insightsData, isLoading: insightsLoading } = useAIInsights();
@@ -27,45 +32,78 @@ export default function DashboardPage() {
       <div className="flex">
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
-          <main className="flex-1 overflow-auto bg-white dark:bg-[#111827] p-6 pt-4">
+          <main className="flex-1 overflow-auto p-6 pt-4">
             {/* Show Skeleton Loader if loading */}
-            {loading && <SkeletonLoader type="card" count={4} />}
+            {statsLoading && <SkeletonLoader height={40} type="card" count={3} />}
 
             {/* Metric Cards */}
             {!statsLoading && stats && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                {/* Total Revenue */}
+                <MetricCard
+                  icon={<DollarSign className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
+                  title="Total Revenue"
+                  value={`$${stats.totalRevenue.toLocaleString()}`}
+                  delta="132%" // Replace with actual delta if available
+                  deltaType="increase" // Replace with 'increase' or 'decrease' if applicable
+                  footerMessage="Revenue generated so far"
+                  footerSubtext=""
+                />
 
-              <FinanceSummaryCards />
+                {/* Total Orders */}
+                <MetricCard
+                  icon={<ShoppingCart className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
+                  title="Total Orders"
+                  value={stats.totalOrders.toLocaleString()}
+                  delta="12%" // Replace with actual delta if available
+                  deltaType="increase" // Replace with 'increase' or 'decrease' if applicable
+                  footerMessage="Orders processed so far"
+                  footerSubtext=""
+                />
 
-              // <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              //   <MetricCards
-              //     icon={<DollarSign className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
-              //     title="Total Revenue"
-              //     value={`$${stats.totalRevenue.toLocaleString()}`}
-              //     delta={`${stats.revenueChange > 0 ? '+' : ''}${stats.revenueChange}%`}
-              //     deltaType={stats.revenueChange >= 0 ? 'increase' : 'decrease'}
-              //     subtitle="vs last month"
-              //   />
-
-              //   {/* Add other MetricCards for New Orders, Total Customers, Inventory Status */}
-              // </div>
+                {/* Total Customers */}
+                <MetricCard
+                  icon={<Users className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
+                  title="Total Customers"
+                  value={stats.totalCustomers.toLocaleString()}
+                  delta="2.3%" // Replace with actual delta if available
+                  deltaType="decrease" // Replace with 'increase' or 'decrease' if applicable
+                  footerMessage="Customers served so far"
+                  footerSubtext=""
+                />
+              </div>
             )}
+
+            {/* Forecast Chart & Budget Section */}
+            <div className="grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6">
+              {statsLoading && <SkeletonLoader height={48} type="list" count={1} />}
+              <FinanceForecastSection />
+
+              {statsLoading && <SkeletonLoader height={48} type="list" count={1} />}
+              <CategoriesList />
+
+            </div>
 
             {/* Revenue Analytics & Sales Distribution */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              {/* {!revenueLoading && revenueData && (
+              {revenueLoading && <SkeletonLoader height={48} type="card" count={1} />}
+              {!revenueLoading && revenueData && (
                 <RevenueAnalytics data={revenueData} range={range} onRangeChange={setRange} />
-              )} */}
+              )}
+              {inventoryLoading && <SkeletonLoader height={48} type="card" count={1} />}
               {!inventoryLoading && inventoryData && (
                 <SalesDistribution data={inventoryData} />
               )}
             </div>
             <div className="grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6">
 
+              {activitiesLoading && <SkeletonLoader height={12} type="list" count={1} />}
               {/* Recent Activities */}
               {!activitiesLoading && activitiesData && (
                 <ActivityFeed activities={activitiesData} />
               )}
 
+              {insightsLoading && <SkeletonLoader height={12} type="list" count={1} />}
               {/* AI Insights Section */}
               {!insightsLoading && insightsData && (
                 <AIInsights

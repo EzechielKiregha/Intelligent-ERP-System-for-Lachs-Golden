@@ -21,10 +21,10 @@ export default function BudgetSection() {
   }
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] rounded-lg shadow p-4">
+    <div className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border-sidebar-border rounded-lg shadow p-4">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Budget Allocation</h3>
       <ul className="space-y-4">
-        {data.map((category: BudgetCategory) => (
+        {data && data.map((category: BudgetCategory) => (
           <li key={category.id} className="flex items-center justify-between">
             {/* Category Name */}
             <div className="flex-1">

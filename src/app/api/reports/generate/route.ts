@@ -1,7 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
+
+  // 1. Auth check
+    const session = await getServerSession(authOptions)
+      if (!session?.user?.companyId) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+      const companyId = session.user.companyId
+  
+    if (!companyId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
   try {
     // Parse the request body
     const body = await req.json();
@@ -30,6 +43,7 @@ export async function POST(req: NextRequest) {
           by: ['createdAt'],
           _sum: { amount: true },
           where: {
+            companyId,
             createdAt: {
               gte: startDate,
             },
@@ -41,6 +55,7 @@ export async function POST(req: NextRequest) {
       case 'inventory':
         reportData = await prisma.product.findMany({
           where: {
+            companyId,
             quantity: {
               lte: 10, // Low stock threshold
             },
@@ -51,6 +66,9 @@ export async function POST(req: NextRequest) {
 
       case 'activities':
         reportData = await prisma.auditLog.findMany({
+          where :{
+            companyId,
+          },
           orderBy: { timestamp: 'desc' },
           take: 20, // Limit to the 20 most recent activities
         });

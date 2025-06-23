@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { IconCircleCheckFilled, IconDotsVertical, IconLoader } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Transaction schema
 const transactionSchema = z.object({
@@ -170,7 +171,7 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
 export default function TransactionsPage() {
   const { data: transactions, isLoading, error } = useFinanceTransactions();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Skeleton className={`p-4 h-90 w-full rounded-lg bg-sidebar`} />;
   if (error) return <div>Error loading transactions</div>;
 
   return (

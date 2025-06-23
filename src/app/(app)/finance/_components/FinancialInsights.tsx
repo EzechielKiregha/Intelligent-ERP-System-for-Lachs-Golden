@@ -17,7 +17,7 @@ export default function FinancialInsights() {
   if (!insights || insights.length === 0) return <p>No insights at this time.</p>
 
   return (
-    <Card className="bg-sidebar dark:bg-sidebar text-sidebar-foreground dark:text-sidebar-foreground">
+    <Card className="bg-sidebar text-sidebar-foreground dark:text-sidebar-foreground">
       <CardHeader>
         <CardTitle>Financial Insights</CardTitle>
       </CardHeader>

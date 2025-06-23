@@ -517,7 +517,7 @@ export function TableCellViewer<TData extends DataWithId>({ item, typeName }: { 
           {title}
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="border-[var(--sidebar-border)]">
+      <DrawerContent className="border-[var(--sidebar-border)] bg-sidebar text-sidebarforeground">
         <DrawerHeader className="gap-1">
           <DrawerTitle className="text-[var(--sidebar-foreground)]">{title}</DrawerTitle>
           <DrawerDescription className="text-[var(--sidebar-foreground)]">{description}</DrawerDescription>

@@ -12,6 +12,9 @@ export async function GET(req: NextRequest) {
   try {
     // Fetch budget data for all categories
     const budgetData = await prisma.category.findMany({
+      where:{
+        companyId
+      },
       select: {
         id: true,
         name: true,
@@ -33,6 +36,8 @@ export async function GET(req: NextRequest) {
       budgetUsed: category.budgetUsed || 0,
       remainingBudget: (category.budgetLimit || 0) - (category.budgetUsed || 0),
     }));
+
+    console.log("Budget Categories: "+transformedData)
 
     return NextResponse.json(transformedData);
   } catch (error) {

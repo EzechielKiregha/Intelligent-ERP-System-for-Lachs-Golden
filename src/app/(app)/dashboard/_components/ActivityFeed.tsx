@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle, UserPlus, Truck, AlertTriangle } from 'lucide-react';
+import Link from 'next/link';
 
 interface Activity {
   id: string;
@@ -40,16 +41,16 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] rounded-lg shadow p-4">
+    <div className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] rounded-lg shadow p-4">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Recent Activities</h3>
-        <a
-          href="/dashboard/activities"
+        <Link
+          href="/finance/transactions"
           className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]"
         >
           View All
-        </a>
+        </Link>
       </div>
 
       {/* Activity List */}

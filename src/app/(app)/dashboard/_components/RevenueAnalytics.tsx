@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface RevenueAnalyticsProps {
   data: {
@@ -12,25 +13,36 @@ interface RevenueAnalyticsProps {
 }
 
 const RevenueAnalytics: React.FC<RevenueAnalyticsProps> = ({ data, range, onRangeChange }) => {
-  const ranges = ['Last 7 days', 'Last 30 days', 'Last quarter'];
+  const ranges = [
+    { label: 'Last 7 days', value: 'last7days' },
+    { label: 'Last 30 days', value: 'last30days' },
+    { label: 'Last quarter', value: 'lastquarter' },
+  ];
+
+  if (!data || data.length === 0) {
+    return <p className="text-gray-500 dark:text-gray-400">No revenue data available for the selected range.</p>;
+  }
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] rounded-lg shadow p-4">
+    <div className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] rounded-lg shadow p-4">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Revenue Analytics</h3>
-        <select
-          title="Select Date Range"
+        <Select
           value={range}
-          onChange={(e) => onRangeChange(e.target.value)}
-          className="bg-gray-100 dark:bg-[#374151] text-gray-800 dark:text-gray-200 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#A17E25] dark:focus:ring-[#D4AF37]"
+          onValueChange={(value) => onRangeChange(value)}
         >
-          {ranges.map((r) => (
-            <option key={r} value={r.toLowerCase().replace(/\s+/g, '')}>
-              {r}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-48 bg-sidebar-accent text-sidebar-accent-foreground">
+            <SelectValue placeholder="Select Date Range" />
+          </SelectTrigger>
+          <SelectContent>
+            {ranges.map((r) => (
+              <SelectItem key={r.value} value={r.value}>
+                {r.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Revenue Data */}
@@ -41,7 +53,7 @@ const RevenueAnalytics: React.FC<RevenueAnalyticsProps> = ({ data, range, onRang
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">{item.quarter}</p>
               <p className="text-base font-medium text-gray-800 dark:text-gray-200">
-                ${item.revenue !== undefined && item.revenue !== null ? item.revenue.toLocaleString() : '0'}
+                ${item.revenue.toLocaleString()}
               </p>
             </div>
 

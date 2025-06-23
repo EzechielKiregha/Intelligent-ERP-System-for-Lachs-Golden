@@ -35,7 +35,7 @@ const SalesDistribution: React.FC<SalesDistributionProps> = ({ data }) => {
   ];
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] rounded-lg shadow p-4">
+    <div className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] rounded-lg shadow p-4">
       {/* Header */}
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Sales Distribution</h3>
 

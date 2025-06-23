@@ -46,7 +46,7 @@ export default function FinanceSummaryCards() {
   const netFooter = `Compared to previous ${data.period}`;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-3 lg:px-6">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 px-4 py-3 lg:px-4">
       <MetricCard
         description="Total Revenue"
         value={data.totalRevenue}

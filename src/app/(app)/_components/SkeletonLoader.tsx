@@ -1,37 +1,44 @@
+import { Skeleton } from '@/components/ui/skeleton';
 import React from 'react';
 
 interface SkeletonLoaderProps {
+  height: number,
   type: 'card' | 'list' | 'grid';
   count?: number; // Number of skeletons to render
 }
 
-const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type, count = 1 }) => {
-  const renderSkeleton = () => {
-    switch (type) {
-      case 'card':
-        return (
-          <div className="animate-pulse bg-gray-200 dark:bg-[#374151] rounded-lg h-24 w-full mb-4"></div>
-        );
-      case 'list':
-        return (
-          <div className="animate-pulse bg-gray-200 dark:bg-[#374151] rounded-lg h-12 w-full mb-2"></div>
-        );
-      case 'grid':
-        return (
-          <div className="animate-pulse bg-gray-200 dark:bg-[#374151] rounded-lg h-24 w-full"></div>
-        );
-      default:
-        return null;
-    }
-  };
+const SkeletonLoader = ({ height, type, count = 1 }: SkeletonLoaderProps) => {
+  switch (type) {
+    case 'card':
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {Array.from({ length: count }).map((_, i) => (
+            <Skeleton key={i} className={`h-${height} w-full rounded-lg bg-sidebar`} />
+          ))}
+        </div>
+      );
+    case 'list':
+      return (
+        // <div className="animate-pulse bg-gray-200 dark:bg-[#374151] rounded-lg h-12 w-full mb-2"></div>
+        <div className="">
+          {Array.from({ length: count }).map((_, i) => (
+            <Skeleton key={i} className={`h-${height} w-full rounded-lg bg-sidebar`} />
+          ))}
+        </div>
+      );
+    case 'grid':
+      return (
+        // <div className="animate-pulse bg-gray-200 dark:bg-[#374151] rounded-lg h-24 w-full"></div>
+        <div className="">
+          {Array.from({ length: count }).map((_, i) => (
+            <Skeleton key={i} className={`h-${height} w-full rounded-lg bg-sidebar`} />
+          ))}
+        </div>
+      );
+    default:
+      return null;
+  }
 
-  return (
-    <div className='p-4'>
-      {Array.from({ length: count }).map((_, index) => (
-        <div key={index}>{renderSkeleton()}</div>
-      ))}
-    </div>
-  );
 };
 
 export default SkeletonLoader;

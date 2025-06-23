@@ -29,7 +29,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ insights, onGenerateReport, isG
   };
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] rounded-lg shadow p-4">
+    <div className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] rounded-lg shadow p-4">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">AI-Driven Insights</h3>
@@ -37,8 +37,8 @@ const AIInsights: React.FC<AIInsightsProps> = ({ insights, onGenerateReport, isG
           onClick={onGenerateReport}
           disabled={isGenerating}
           className={`px-4 py-2 rounded-lg shadow ${isGenerating
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-[#A17E25] hover:bg-[#8C6A1A] text-white'
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-sidebar-accent text-sidebar-accent-foreground'
             }`}
         >
           {isGenerating ? (
@@ -54,7 +54,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ insights, onGenerateReport, isG
 
       {/* Insights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {insights.map((insight) => (
+        {Array.isArray(insights) && insights.map((insight) => (
           <div
             key={insight.id}
             className="bg-[#FEF9C3] dark:bg-[#3E3E3E] rounded-lg p-4 flex items-start"
