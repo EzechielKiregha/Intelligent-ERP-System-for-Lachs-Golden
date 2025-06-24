@@ -107,6 +107,8 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import CategoryForm from "./CategoryForm"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import NewTransactionPopover from "./TransactioForm"
 
 // Generic interface for data with required id
 interface DataWithId {
@@ -192,6 +194,8 @@ export function DataTable<TData extends DataWithId>({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -238,6 +242,12 @@ export function DataTable<TData extends DataWithId>({
         return arrayMove(data, oldIndex, newIndex);
       });
     }
+  }
+
+  const createTransaction = () => {
+    return (
+      <NewTransactionPopover />
+    )
   }
 
   return (
@@ -303,7 +313,7 @@ export function DataTable<TData extends DataWithId>({
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            onClick={() => typeName === "Categories" ? <CategoryForm /> : console.log("add clicked")}
+            onClick={() => typeName === "Categories" ? setIsModalOpen(true) : createTransaction()}
             variant="outline"
             size="sm"
             className="border-[var(--sidebar-border)] bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] focus:ring-[var(--sidebar-ring)]"
@@ -311,6 +321,28 @@ export function DataTable<TData extends DataWithId>({
             <IconPlus />
             <span className="hidden lg:inline">Add {typeName.slice(0, -1)}</span>
           </Button>
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
+            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
+              <DialogHeader>
+                <DialogTitle>Redirect to budget section</DialogTitle>
+                <DialogDescription>
+                  Want allocate a new budget?
+                  Please proceed to the budget page and follow instructions
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    window.location.href = '/finance/budget';
+                  }}
+                  className="bg-sider-accent text-sidebar-accent-foreground"
+                >
+                  continue
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <TabsContent
@@ -589,6 +621,7 @@ export function TableCellViewer<TData extends DataWithId>({ item, typeName }: { 
                   <Input
                     id={key}
                     defaultValue={value}
+                    disabled
                     type={typeof value === "number" ? "number" : "text"}
                     className="border-[var(--sidebar-border)] text-[var(--sidebar-foreground)] focus:ring-[var(--sidebar-ring)]"
                   />
@@ -612,11 +645,11 @@ export function TableCellViewer<TData extends DataWithId>({ item, typeName }: { 
           </form>
         </div>
         <DrawerFooter>
-          <Button
+          {/* <Button
             className="bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] focus:ring-[var(--sidebar-ring)]"
           >
             Submit
-          </Button>
+          </Button> */}
           <DrawerClose asChild>
             <Button
               variant="outline"

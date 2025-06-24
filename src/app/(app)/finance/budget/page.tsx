@@ -5,9 +5,13 @@ import ExportReportButton from '../../finance/_components/ExportReportButton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import BudgetSection from '../_components/BudgetSection';
 import CategoryForm from '../_components/CategoryForm';
-import { Button } from '@/components/ui/button';
+import { useSearchParams } from 'next/navigation';
 
 export default function BudgetPage() {
+
+  const searchParams = useSearchParams();
+  const catId = searchParams.get('catId')
+
   return (
     <div className="p-6 space-y-8">
       {/* Header Card */}
@@ -77,7 +81,7 @@ export default function BudgetPage() {
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-        <CategoryForm />
+        <CategoryForm id={catId} />
         <BudgetSection />
       </div>
     </div>

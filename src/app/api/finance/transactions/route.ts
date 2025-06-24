@@ -28,3 +28,53 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 });
   }
 }
+
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user || !session.user.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { categoryId, amount, description, type, status } = await req.json();
+
+  if (!categoryId || !amount || !type || !status) {
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  }
+
+  try {
+    const transaction = await prisma.transaction.create({
+      data: {
+        category: { connect: { id: categoryId } },
+        company: { connect: { id: session.user.companyId } },
+        user: { connect: { id: session.user.id } },
+        amount: parseFloat(amount),
+        description,
+        date: new Date(),
+        type,
+        status,
+      },
+      include: {
+        category: true,
+        user: true,
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'CREATE',
+        entity: 'Transaction',
+        entityId: transaction.id,
+        userId: session.user.id,
+        companyId: session.user.companyId,
+        url: req.url,
+        description: `Created a ${type} transaction of $${amount} in category ${transaction.category.name}`,
+      },
+    });
+
+    return NextResponse.json(transaction);
+  } catch (err) {
+    console.error('Transaction create error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

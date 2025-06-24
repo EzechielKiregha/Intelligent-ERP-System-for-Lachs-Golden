@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
 
       {/* Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
           <DialogHeader>
             <DialogTitle>Reset Link Sent</DialogTitle>
             <DialogDescription>
@@ -114,7 +114,7 @@ export default function ForgotPasswordPage() {
                 setIsModalOpen(false);
                 window.location.href = '/login';
               }}
-              className="bg-gradient-to-l from-[#80410e] to-[#c56a03] text-white"
+              className="bg-sider-accent text-sidebar-accent-foreground"
             >
               Back to Login
             </Button>

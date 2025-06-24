@@ -9,6 +9,8 @@ import { IconCircleCheckFilled, IconDotsVertical, IconLoader } from "@tabler/ico
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 // Transaction schema
 const transactionSchema = z.object({
@@ -184,11 +186,32 @@ export default function TransactionsPage() {
   if (error) return <div>Error loading transactions</div>;
 
   return (
-    <DataTable
-      data={transactions || []}
-      columns={transactionColumns}
-      schema={transactionSchema}
-      typeName="Transactions"
-    />
+
+    <Card className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border border-sidebar-border">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold">Financial Overview & Transactions Visualization</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className="text-sm text-muted-foreground">
+          Still in finance dashboard. Use view all transactions made so far category budgets and visualize your company’s financial allocation in real-time.
+        </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <p className="text-sm text-gray-800 dark:text-gray-300 max-w-2xl">
+            Click on the <span className="text-sidebar-accent">description</span>. Track usage as it happens and export detailed reports to keep your team aligned click <Link className="text-sidebar-accent" href="/dashboard/reports">here</Link>.
+          </p>
+
+        </div>
+        {/* Reports Section */}
+        <div className="p-1.5">
+          {/* Transactions Report */}
+          <DataTable
+            data={transactions || []}
+            columns={transactionColumns}
+            schema={transactionSchema}
+            typeName="Transactions"
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }

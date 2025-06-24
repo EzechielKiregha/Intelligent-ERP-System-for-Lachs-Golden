@@ -72,9 +72,6 @@ interface Category {
 }
 
 export function useFinanceCategories() {
-
-  
-
   return useQuery<Category[], Error>({
     queryKey: ['finance', 'categories'],
     queryFn: async () => {
@@ -83,7 +80,15 @@ export function useFinanceCategories() {
     },
   });
 }
-
+export function useSingleCategory(id : string | null) {
+  return useQuery<Category, Error>({
+    queryKey: ['finance', 'category'],
+    queryFn: async () => {
+      const { data } = await axiosdb.get<{ category: Category }>(`/api/finance/categories/category?id=${id}`);
+      return data.category;
+    },
+  });
+}
 export function useDeleteCategory() {
   const qc = useQueryClient();
   return useMutation({

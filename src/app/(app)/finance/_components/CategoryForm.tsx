@@ -10,6 +10,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { useRouter } from 'next/navigation'
 import axiosfb from 'axios'
 import { toast } from 'react-hot-toast'
+import axiosdb from '@/lib/axios'
+import { useSingleCategory } from '@/lib/hooks/finance'
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -18,9 +20,17 @@ const categorySchema = z.object({
 })
 type CategoryFormValues = z.infer<typeof categorySchema>
 
-export default function CategoryForm({ existing }: { existing?: CategoryFormValues & { id: string } }) {
+interface props {
+  id: string | null
+}
+
+export default function CategoryForm(
+  { id }: props
+) {
   const router = useRouter()
+  const { data: existing } = useSingleCategory(id)
   const isEdit = Boolean(existing)
+
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
     defaultValues: existing ? { name: existing.name, type: existing.type, budgetLimit: existing.budgetLimit } : undefined,
@@ -29,7 +39,7 @@ export default function CategoryForm({ existing }: { existing?: CategoryFormValu
   const onSubmit = async (data: CategoryFormValues) => {
     try {
       if (isEdit && existing) {
-        await axiosfb.put(`/api/finance/categories/${existing.id}`, data)
+        await axiosfb.put(`/api/finance/categories?id=${existing.id}`, data)
         toast.success('Category updated')
       } else {
         await axiosfb.post('/api/finance/categories', data)
@@ -71,8 +81,23 @@ export default function CategoryForm({ existing }: { existing?: CategoryFormValu
           {...register('budgetLimit', { valueAsNumber: true })}
         />
         {errors.budgetLimit && <p className="text-red-600">{errors.budgetLimit.message}</p>}
+        {isEdit && (
+          <>
+            <Label htmlFor="budgetUsed">Budget Used</Label>
+            <Input
+              id="budgetUsed"
+              type="number"
+              step="0.01"
+              disabled={true}
+              value={existing?.budgetUsed}
+
+            /></>
+        )}
       </div>
-      <Button type="submit" disabled={isSubmitting}>{isEdit ? 'Update' : 'Create'}</Button>
+      <Button className='bg-sidebar-accent text-sidebar-accent-foreground'
+        type="submit" disabled={isSubmitting}>
+        {isEdit ? 'Update' : 'Create'}
+      </Button>
     </form>
   )
 }

@@ -1,3 +1,4 @@
+"use client"
 import { z } from "zod";
 import { ColumnDef } from "@tanstack/react-table";
 import { useFinanceCategories } from "@/lib/hooks/finance";
@@ -7,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { IconDotsVertical } from "@tabler/icons-react";
+import { useNavigation } from "@/hooks/use-navigation";
 
 // Category schema
 export const categorySchema = z.object({
@@ -16,6 +18,8 @@ export const categorySchema = z.object({
   budgetLimit: z.number(),
   budgetUsed: z.number(),
 });
+
+
 
 // Category columns
 export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
@@ -102,7 +106,7 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
   },
   {
     id: "actions",
-    cell: () => (
+    cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -115,8 +119,12 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Duplicate</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {
+            const nav = useNavigation()
+
+            nav(`/finance/budget?catId=${row.original.id}`)
+          }} >Edit</DropdownMenuItem>
+          {/* <DropdownMenuItem>Duplicate</DropdownMenuItem> */}
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
         </DropdownMenuContent>
@@ -127,12 +135,16 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
 
 
 
+
 export default function CategoriesList() {
   const { data: categories, isLoading, error } = useFinanceCategories();
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading categories</div>;
 
+  const editCat = (id: string | null) => {
+
+  }
   return (
     <DataTable
       data={categories || []}
