@@ -109,6 +109,8 @@ import {
 import CategoryForm from "./CategoryForm"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import NewTransactionPopover from "./TransactioForm"
+import { useNavigation } from "@/hooks/use-navigation"
+import { useRouter } from "next/navigation"
 
 // Generic interface for data with required id
 interface DataWithId {
@@ -195,6 +197,7 @@ export function DataTable<TData extends DataWithId>({
     pageSize: 10,
   });
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = React.useState(false);
 
   const sortableId = React.useId();
   const sensors = useSensors(
@@ -249,6 +252,8 @@ export function DataTable<TData extends DataWithId>({
       <NewTransactionPopover />
     )
   }
+  const nav = useNavigation()
+  const router = useRouter()
 
   return (
     <Tabs
@@ -313,7 +318,7 @@ export function DataTable<TData extends DataWithId>({
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            onClick={() => typeName === "Categories" ? setIsModalOpen(true) : createTransaction()}
+            onClick={() => typeName === "Categories" ? setIsModalOpen(true) : setIsTransactionModalOpen(true)}
             variant="outline"
             size="sm"
             className="border-[var(--sidebar-border)] bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] focus:ring-[var(--sidebar-ring)]"
@@ -333,12 +338,30 @@ export function DataTable<TData extends DataWithId>({
               <DialogFooter>
                 <Button
                   onClick={() => {
+                    nav(`/finance/budget`)
                     setIsModalOpen(false);
-                    window.location.href = '/finance/budget';
                   }}
-                  className="bg-sider-accent text-sidebar-accent-foreground"
+                  className="bg-sidebar-accent text-sidebar-accent-foreground"
                 >
                   continue
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Dialog open={isTransactionModalOpen} onOpenChange={setIsTransactionModalOpen} >
+            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
+              <DialogHeader>
+                <NewTransactionPopover />
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    router.refresh()
+                  }}
+                  className="bg-sidebar-accent text-sidebar-accent-foreground"
+                >
+                  Done
                 </Button>
               </DialogFooter>
             </DialogContent>

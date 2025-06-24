@@ -44,7 +44,7 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full h-16 bg-sidebar shadow flex items-center px-6 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-full w-full">
-        <Link href="/" className="text-lg font-bold text-[#80520e] dark:text-[#c56a03]">
+        <Link href="/" className="text-xl font-bold text-sidebar-accent text-shadow-sidebar">
           Golden Intelingent ERP
         </Link>
 
@@ -152,9 +152,9 @@ export function Navbar() {
 
                 {user ? (
                   <>
-                    <div className="flex items-center gap-2 mt-4">
+                    <div className="flex items-center gap-2 mt-4 bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.avatar || "https://github.com/shadcn.png"} />
+                        <AvatarImage src={"https://github.com/shadcn.png"} />
                         <AvatarFallback>CN</AvatarFallback>
                       </Avatar>
                       <div>

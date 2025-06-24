@@ -187,7 +187,7 @@ export default function TransactionsPage() {
 
   return (
 
-    <Card className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border border-sidebar-border">
+    <Card className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] p-2.5">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Financial Overview & Transactions Visualization</CardTitle>
       </CardHeader>
