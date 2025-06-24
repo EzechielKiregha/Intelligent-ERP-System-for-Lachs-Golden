@@ -18,6 +18,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 const forgotSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -58,8 +59,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <>
-      <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#0f1522] px-4">
-        <div className="bg-white dark:bg-[#111827] shadow-lg rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[635px] overflow-hidden">
+      <div className="flex items-center justify-center min-h-screen bg-sidebar px-4">
+        <div className="bg-white dark:bg-[#111827] shadow-2xl rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[635px] overflow-hidden">
           <LeftAuthPanel />
           <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
             <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
@@ -88,9 +89,9 @@ export default function ForgotPasswordPage() {
                 {mutation.status === "pending" ? 'Submitting...' : 'Send Reset Link'}
               </button>
               <div className="mt-4 text-center text-sm text-gray-800 dark:text-gray-200">
-                <a href="/login" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+                <Link href="/login" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
                   Back to Sign In
-                </a>
+                </Link>
               </div>
             </form>
           </div>

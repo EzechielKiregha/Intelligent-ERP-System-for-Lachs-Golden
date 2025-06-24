@@ -101,8 +101,8 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#0f1522] px-4 shadow-lg">
-      <div className="bg-white dark:bg-[#111827] shadow-lg rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[635px] overflow-hidden">
+    <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg">
+      <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[635px] overflow-hidden">
         <LeftAuthPanel />
         <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
