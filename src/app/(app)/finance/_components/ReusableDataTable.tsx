@@ -253,7 +253,6 @@ export function DataTable<TData extends DataWithId>({
     )
   }
   const nav = useNavigation()
-  const router = useRouter()
 
   return (
     <Tabs
@@ -321,7 +320,7 @@ export function DataTable<TData extends DataWithId>({
             onClick={() => typeName === "Categories" && setIsModalOpen(true)}
             variant="outline"
             size="sm"
-            className="border-[var(--sidebar-border)] bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] focus:ring-[var(--sidebar-ring)]"
+            className="border-[var(--sidebar-border)] bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)] hover:bg-[var(--sidebar-primary)] focus:ring-[var(--sidebar-ring)]"
           >
             <IconPlus />
             {typeName === "Categories" ? (

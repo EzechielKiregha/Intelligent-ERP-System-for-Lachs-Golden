@@ -139,7 +139,7 @@ export default function NewTransactionPopover() {
         </div>
 
         <div className="pt-4">
-          <Button onClick={handleSubmit} className="w-full">
+          <Button onClick={handleSubmit} className="w-full bg-sidebar-accent text-sidebar-accent-foreground">
             Submit Transaction
           </Button>
         </div>
