@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "email": "email dev",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate --no-engine",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "ts-node -r tsconfig-paths/register ./seed/seed.ts",
     "postbuild": "prisma migrate deploy"

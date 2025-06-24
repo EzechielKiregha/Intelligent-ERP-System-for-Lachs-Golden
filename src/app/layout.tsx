@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "./Providers";
 import { LoadingProvider } from "@/contexts/loadingContext";
 import ToastProvider from "@/components/providers/toaster-provider";
+import { Suspense } from "react";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,7 +33,9 @@ export default function RootLayout({
         <LoadingProvider>
           <Providers>
             <ToastProvider />
-            {children}
+            <Suspense>
+              {children}
+            </Suspense>
           </Providers>
         </LoadingProvider>
       </body>

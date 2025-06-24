@@ -121,7 +121,6 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
         <DropdownMenuContent align="end" className="w-32">
           <DropdownMenuItem onClick={() => {
             const nav = useNavigation()
-
             nav(`/finance/budget?catId=${row.original.id}`)
           }} >Edit</DropdownMenuItem>
           {/* <DropdownMenuItem>Duplicate</DropdownMenuItem> */}
