@@ -13,7 +13,7 @@ import { toast } from 'react-hot-toast';
 export default function ResetPasswordPageWrapper() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-sidebar px-4">
-      <div className="bg-white dark:bg-[#111827] shadow-2xl rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[635px] overflow-hidden">
+      <div className="bg-white dark:bg-[#111827] shadow-2xl rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
         <LeftAuthPanel />
         <Suspense fallback={<div>Loading...</div>}>
           <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
