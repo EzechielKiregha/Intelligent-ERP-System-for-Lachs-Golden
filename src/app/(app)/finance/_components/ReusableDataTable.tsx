@@ -318,13 +318,17 @@ export function DataTable<TData extends DataWithId>({
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            onClick={() => typeName === "Categories" ? setIsModalOpen(true) : setIsTransactionModalOpen(true)}
+            onClick={() => typeName === "Categories" && setIsModalOpen(true)}
             variant="outline"
             size="sm"
             className="border-[var(--sidebar-border)] bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] focus:ring-[var(--sidebar-ring)]"
           >
             <IconPlus />
-            <span className="hidden lg:inline">Add {typeName.slice(0, -1)}</span>
+            {typeName === "Categories" ? (
+              <span className="hidden lg:inline">Add {typeName.slice(0, -1)}</span>
+            ) : (
+              <NewTransactionPopover />
+            )}
           </Button>
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
             <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
@@ -348,24 +352,7 @@ export function DataTable<TData extends DataWithId>({
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          <Dialog open={isTransactionModalOpen} onOpenChange={setIsTransactionModalOpen} >
-            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
-              <DialogHeader>
-                <NewTransactionPopover />
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    router.refresh()
-                  }}
-                  className="bg-sidebar-accent text-sidebar-accent-foreground"
-                >
-                  Done
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+
         </div>
       </div>
       <TabsContent

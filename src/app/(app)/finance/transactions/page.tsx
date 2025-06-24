@@ -186,32 +186,33 @@ export default function TransactionsPage() {
   if (error) return <div>Error loading transactions</div>;
 
   return (
-
-    <Card className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] p-2.5">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Financial Overview & Transactions Visualization</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">
-          Still in finance dashboard. Use view all transactions made so far category budgets and visualize your company’s financial allocation in real-time.
-        </p>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <p className="text-sm text-gray-800 dark:text-gray-300 max-w-2xl">
-            Click on the <span className="text-sidebar-accent">description</span>. Track usage as it happens and export detailed reports to keep your team aligned click <Link className="text-sidebar-accent" href="/dashboard/reports">here</Link>.
+    <div className="space-y-6">
+      <Card className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] ">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Financial Overview & Transactions Visualization</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Still in finance dashboard. Use view all transactions made so far category budgets and visualize your company’s financial allocation in real-time.
           </p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <p className="text-sm text-gray-800 dark:text-gray-300 max-w-2xl">
+              Click on the <span className="text-sidebar-accent">description</span>. Track usage as it happens and export detailed reports to keep your team aligned click <Link className="text-sidebar-accent" href="/dashboard/reports">here</Link>.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+      {/* Reports Section */}
+      <div>
+        {/* Transactions Report */}
+        <DataTable
+          data={transactions || []}
+          columns={transactionColumns}
+          schema={transactionSchema}
+          typeName="Transactions"
+        />
+      </div>
+    </div>
 
-        </div>
-        {/* Reports Section */}
-        <div className="p-1.5">
-          {/* Transactions Report */}
-          <DataTable
-            data={transactions || []}
-            columns={transactionColumns}
-            schema={transactionSchema}
-            typeName="Transactions"
-          />
-        </div>
-      </CardContent>
-    </Card>
   );
 }

@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Input } from '@/components/ui/input'
@@ -31,10 +31,22 @@ export default function CategoryForm(
   const { data: existing } = useSingleCategory(id)
   const isEdit = Boolean(existing)
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CategoryFormValues>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
-    defaultValues: existing ? { name: existing.name, type: existing.type, budgetLimit: existing.budgetLimit } : undefined,
-  })
+    defaultValues: existing
+      ? {
+        name: existing.name,
+        type: existing.type,
+        budgetLimit: existing.budgetLimit,
+      }
+      : undefined,
+  });
+
 
   const onSubmit = async (data: CategoryFormValues) => {
     try {
@@ -53,7 +65,7 @@ export default function CategoryForm(
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-sidebar p-14 rounded-2xl border">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-sidebar p-14 min-h-full rounded-2xl border">
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
         <Input id="name" {...register('name')} />
@@ -61,17 +73,24 @@ export default function CategoryForm(
       </div>
       <div className="space-y-2">
         <Label htmlFor="type">Type</Label>
-        <Select {...register('type')}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="INCOME">Income</SelectItem>
-            <SelectItem value="EXPENSE">Expense</SelectItem>
-          </SelectContent>
-        </Select>
+        <Controller
+          control={control}
+          name="type"
+          render={({ field }) => (
+            <Select onValueChange={field.onChange} value={field.value}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="INCOME">Income</SelectItem>
+                <SelectItem value="EXPENSE">Expense</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
         {errors.type && <p className="text-red-600">{errors.type.message}</p>}
       </div>
+
       <div className="space-y-2">
         <Label htmlFor="budgetLimit">Budget Limit</Label>
         <Input
