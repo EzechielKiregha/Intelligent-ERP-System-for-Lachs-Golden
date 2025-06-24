@@ -63,6 +63,7 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
       }}
         typeName="Categories" />
     ),
+    enableHiding: false,
   },
   {
     accessorKey: "type",
@@ -129,7 +130,7 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
 export default function CategoriesList() {
   const { data: categories, isLoading, error } = useFinanceCategories();
 
-  // if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading categories</div>;
 
   return (

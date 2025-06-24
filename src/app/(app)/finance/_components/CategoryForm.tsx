@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { useRouter } from 'next/navigation'
-import axios from 'axios'
+import axiosfb from 'axios'
 import { toast } from 'react-hot-toast'
 
 const categorySchema = z.object({
@@ -29,10 +29,10 @@ export default function CategoryForm({ existing }: { existing?: CategoryFormValu
   const onSubmit = async (data: CategoryFormValues) => {
     try {
       if (isEdit && existing) {
-        await axios.put(`/api/finance/categories/${existing.id}`, data)
+        await axiosfb.put(`/api/finance/categories/${existing.id}`, data)
         toast.success('Category updated')
       } else {
-        await axios.post('/api/finance/categories', data)
+        await axiosfb.post('/api/finance/categories', data)
         toast.success('Category created')
       }
       router.refresh() // refresh list
@@ -43,13 +43,13 @@ export default function CategoryForm({ existing }: { existing?: CategoryFormValu
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-sidebar p-14 rounded-2xl border">
+      <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
         <Input id="name" {...register('name')} />
         {errors.name && <p className="text-red-600">{errors.name.message}</p>}
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="type">Type</Label>
         <Select {...register('type')}>
           <SelectTrigger>
@@ -62,7 +62,7 @@ export default function CategoryForm({ existing }: { existing?: CategoryFormValu
         </Select>
         {errors.type && <p className="text-red-600">{errors.type.message}</p>}
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="budgetLimit">Budget Limit</Label>
         <Input
           id="budgetLimit"

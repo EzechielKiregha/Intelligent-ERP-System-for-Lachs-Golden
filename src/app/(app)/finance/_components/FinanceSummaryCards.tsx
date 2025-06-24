@@ -20,7 +20,7 @@ export default function FinanceSummaryCards() {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[0, 1, 2].map(i => (
-          <Skeleton key={i} className="h-40 w-full rounded-lg" />
+          <Skeleton key={i} className="h-40 w-full rounded-lg bg-sidebar" />
         ))}
       </div>
     );

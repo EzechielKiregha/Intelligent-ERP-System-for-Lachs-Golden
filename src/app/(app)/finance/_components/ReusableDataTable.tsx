@@ -303,7 +303,7 @@ export function DataTable<TData extends DataWithId>({
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            onClick={() => typeName === "category" ? <CategoryForm /> : console.log("add clicked")}
+            onClick={() => typeName === "Categories" ? <CategoryForm /> : console.log("add clicked")}
             variant="outline"
             size="sm"
             className="border-[var(--sidebar-border)] bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] focus:ring-[var(--sidebar-ring)]"
@@ -509,7 +509,7 @@ export function TableCellViewer<TData extends DataWithId>({ item, typeName }: { 
   }, [typeName]);
 
   // Dynamic title and description
-  const title = typeName === "Categories" ? (item as any).name : (item as any).description ?? `Unnamed ${typeName.slice(0, -1)}`;
+  const title = typeName === "Categories" ? (item as any).category : (item as any).description ?? `Unnamed ${typeName.slice(0, -1)}`;
   const description = `Details for ${typeName.toLowerCase()}`;
 
   return (
