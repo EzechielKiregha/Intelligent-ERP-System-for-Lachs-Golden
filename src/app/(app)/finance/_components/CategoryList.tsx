@@ -137,9 +137,7 @@ export default function CategoriesList() {
   const { data: categories, isLoading, error } = useFinanceCategories();
 
   if (isLoading) return (
-    <div className="">
-      <SkeletonLoader type="list" height={60} count={1} />
-    </div>
+    <SkeletonLoader type="card" height={60} count={1} col={1} />
   );
   if (error) return <div>Error loading categories</div>;
 

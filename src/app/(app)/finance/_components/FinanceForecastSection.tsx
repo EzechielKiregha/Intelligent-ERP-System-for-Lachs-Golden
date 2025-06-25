@@ -7,7 +7,7 @@ import SkeletonLoader from '../../_components/SkeletonLoader'
 export default function FinanceForecastSection() {
   const { data, isLoading, isError } = useFinanceForecast()
 
-  if (isLoading) return <SkeletonLoader type='list' count={1} height={60} />
+  if (isLoading) return <SkeletonLoader type='card' count={1} height={60} col={1} />
   if (isError || !data) return <p>Error loading forecast.</p>
 
   // Transform past & forecast into uniform date strings "YYYY-MM-01"
