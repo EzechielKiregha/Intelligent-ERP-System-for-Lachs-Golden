@@ -15,6 +15,7 @@ interface Product {
   quantity: number,
   threshold: number,
   description?: string,
+  unitPrice: number;
 };
 
 export function useInventorySummaryCards() {

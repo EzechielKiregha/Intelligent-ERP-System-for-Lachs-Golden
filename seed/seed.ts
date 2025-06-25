@@ -18,8 +18,8 @@ async function main() {
         contactEmail: faker.internet.email(),
         timezone: faker.location.timeZone(),
         dateFormat: 'YYYY-MM-DD',
-        forecastedRevenue: faker.number.float({ min: 50_000, max: 100_000, fractionDigits: 0.01 }),
-        forecastedExpenses: faker.number.float({ min: 20_000, max: 50_000, fractionDigits: 0.01 }),
+        forecastedRevenue: faker.number.float({ min: 50_000, max: 100_000, fractionDigits: 2 }),
+        forecastedExpenses: faker.number.float({ min: 20_000, max: 50_000, fractionDigits: 2 }),
       },
     });
     companies.push(comp);
@@ -59,7 +59,7 @@ async function main() {
         data: {
           name,
           type: 'INCOME',
-          budgetLimit: faker.number.float({ min: 10_000, max: 30_000, fractionDigits: 0.01 }),
+          budgetLimit: faker.number.float({ min: 10_000, max: 30_000, fractionDigits: 2 }),
           budgetUsed: 0,
           companyId: comp.id,
         },
@@ -71,7 +71,7 @@ async function main() {
         data: {
           name,
           type: 'EXPENSE',
-          budgetLimit: faker.number.float({ min: 5_000, max: 20_000, fractionDigits: 0.01 }),
+          budgetLimit: faker.number.float({ min: 5_000, max: 20_000, fractionDigits: 2 }),
           budgetUsed: 0,
           companyId: comp.id,
         },
@@ -90,7 +90,7 @@ async function main() {
         data: {
           name: faker.commerce.productName(),
           sku: faker.string.alphanumeric({ length: 8 }),
-          unitPrice: faker.number.float({ min: 10, max: 500, fractionDigits: 0.01 }),
+          unitPrice: faker.number.float({ min: 10, max: 500, fractionDigits: 2 }),
           quantity: faker.number.int({ min: 0, max: 200 }),
           threshold: faker.number.int({ min: 5, max: 20 }),
           description: faker.commerce.productDescription(),
@@ -163,7 +163,7 @@ async function main() {
         employeeId: emp.id,
         companyId: emp.companyId,
         payPeriod: faker.helpers.arrayElement(paysDates),
-        grossAmount: faker.number.float({ min: 500, max: 5000, fractionDigits: 0.01 }),
+        grossAmount: faker.number.float({ min: 500, max: 5000, fractionDigits: 2 }),
         issuedDate: faker.date.recent({ days: 30 }),
       },
     });
@@ -233,7 +233,7 @@ async function main() {
     );
     await prisma.transaction.create({
       data: {
-        amount: faker.number.float({ min: 10, max: 2000, fractionDigits: 0.01 }),
+        amount: faker.number.float({ min: 10, max: 2000, fractionDigits: 2 }),
         date: faker.date.between({
           from: faker.date.recent({ days: 120 }),
           to: new Date(),

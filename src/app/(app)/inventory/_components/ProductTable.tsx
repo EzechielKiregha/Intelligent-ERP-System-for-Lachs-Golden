@@ -25,6 +25,7 @@ export const productSchema = z.object({
   quantity: z.number(),
   threshold: z.number(),
   description: z.string().optional(),
+  unitPrice: z.number()
 });
 
 // 2. Columns
@@ -69,9 +70,17 @@ export const productColumns: ColumnDef<z.infer<typeof productSchema>>[] = [
           type: row.original.sku,
           quantity: row.original.quantity,
           threshold: row.original.threshold,
+          unitPrice: row.original.unitPrice
         }}
         typeName="Products"
       />
+    ),
+  },
+  {
+    accessorKey: "unitPrice",
+    header: () => <div className="text-right">Unit Price</div>,
+    cell: ({ row }) => (
+      <div className="text-right font-mono">{row.original.unitPrice}</div>
     ),
   },
   {
