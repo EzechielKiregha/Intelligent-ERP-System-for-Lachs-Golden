@@ -77,12 +77,8 @@ export default function DashboardPage() {
 
             {/* Forecast Chart & Budget Section */}
             <div className="grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6">
-              {statsLoading && <SkeletonLoader height={48} type="list" count={1} />}
               <FinanceForecastSection />
-
-              {statsLoading && <SkeletonLoader height={48} type="list" count={1} />}
               <CategoriesList />
-
             </div>
 
             {/* Revenue Analytics & Sales Distribution */}
