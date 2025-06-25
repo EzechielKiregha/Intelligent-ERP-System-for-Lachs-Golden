@@ -18,7 +18,7 @@ export default function FinancePage() {
 
   return (
     <AuthGuard>
-      <div className="flex flex-col">
+      <div className="flex flex-col min-h-full">
 
         <main className="p-4 space-y-6">
           {/* Finance Cards */}

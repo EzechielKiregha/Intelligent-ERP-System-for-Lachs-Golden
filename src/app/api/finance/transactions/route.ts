@@ -60,6 +60,25 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    if (transaction){
+      const cat = await prisma.category.findUnique({
+        where : { id : transaction.categoryId},
+      })
+
+      if(cat){
+        await prisma.category.update(
+          {
+            where : {
+              id: transaction.categoryId
+            },
+            data : {
+              budgetUsed: cat.budgetUsed !== null ? cat.budgetUsed + transaction.amount : transaction.amount
+            }
+          }
+        )
+      }
+    }
+
     await prisma.auditLog.create({
       data: {
         action: 'CREATE',

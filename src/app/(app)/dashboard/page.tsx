@@ -30,9 +30,9 @@ export default function DashboardPage() {
 
   return (
     <AuthGuard>
-      <div className="flex bg-black">
+      <div className="flex">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col bg-black">
+        <div className="flex-1 flex flex-col ">
           <main className="flex-1 overflow-auto p-6 pt-4">
             {/* Show Skeleton Loader if loading */}
             {statsLoading && <SkeletonLoader height={40} type="card" count={3} />}

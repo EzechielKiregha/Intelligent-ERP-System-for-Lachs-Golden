@@ -344,7 +344,7 @@ export function DataTable<TData extends DataWithId>({
                     nav(`/finance/budget`)
                     setIsModalOpen(false);
                   }}
-                  className="bg-sidebar-accent text-sidebar-accent-foreground"
+                  className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
                 >
                   continue
                 </Button>

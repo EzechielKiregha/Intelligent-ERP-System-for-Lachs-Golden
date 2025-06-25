@@ -84,7 +84,7 @@ export default function NewTransactionPopover() {
   return (
     <BasePopover title="New Transaction" buttonLabel="Add Transaction">
       <div className="w-full max-w-3xl space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap- text-sidebar-foreground">
           <div>
             <Label>Transaction Type</Label>
             <Select value={type} onValueChange={(val) => setType(val as typeof type)}>

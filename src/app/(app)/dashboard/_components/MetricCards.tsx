@@ -90,10 +90,11 @@ export function MetricCard({
     <Card className="@container/card bg-[var(--sidebar)] text-[var(--sidebar-foreground)]">
       <CardHeader>
         <CardDescription>{title}</CardDescription>
-        <CardTitle className="text-2xl flex flex-col font-semibold tabular-nums @[250px]/card:text-3xl">
-          <div className="p-2 w-14 h-14 justify-center flex items-center bg-sidebar-accent rounded-full">
-            {icon} - {value}
+        <CardTitle className="text-2xl flex flex-col justify-between font-semibold tabular-nums @[250px]/card:text-3xl">
+          <div className="p-2 w-14 h-14 justify-center flex items-center bg-sidebar-primary rounded-full">
+            {icon}
           </div>
+          <div className="">{value}</div>
         </CardTitle>
         {showBadge && (
           <CardAction>

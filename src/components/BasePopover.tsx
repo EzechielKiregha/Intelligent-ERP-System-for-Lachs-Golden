@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useId, useState } from 'react';
 import { AnimatePresence, MotionConfig, Transition, motion } from 'framer-motion';
-import { ArrowLeftIcon, Cross, Minus } from 'lucide-react';
+import { ArrowLeftIcon, Cross, EyeClosed, Minus } from 'lucide-react';
 import { Button } from './ui/button';
 
 // Explicitly cast TRANSITION to the correct type
@@ -56,13 +56,13 @@ export default function BasePopover({
         {/* Trigger Button */}
         <motion.div
           key="button"
-          className="relative group"
+          className="relative group bg-sidebar"
           layoutId={`popover-${uniqueId}`}
           onClick={handleToggle}
         >
           <motion.span
             layoutId={`popover-label-${uniqueId}`}
-            className="hover:text-[#745338] transition-all duration-300 cursor-pointer"
+            className="hover:text-sidebar-foreground transition-all duration-300 cursor-pointer"
           >
             {buttonLabel}
           </motion.span>
@@ -93,9 +93,9 @@ export default function BasePopover({
                       setIsOpen(false);
                       if (onClose) onClose();
                     }}
-                    className="flex items-center text-sidebar-foreground hover:text-[#eebd73]"
+                    className="flex items-center bg-sidebar-accent text-sidebar-accent-foreground hover:text-[#eebd73]"
                   >
-                    <Minus size={20} className="mr-2" />
+                    <EyeClosed size={20} className="mr-2" />
                   </Button>
                   <h3 className="text-lg font-semibold text-sidebar-foreground ml-auto">{title}</h3>
                 </div>

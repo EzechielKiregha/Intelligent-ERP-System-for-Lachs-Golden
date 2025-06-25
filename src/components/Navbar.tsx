@@ -67,7 +67,7 @@ export function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button
                   size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  className="data-[state=open]:bg-sidebar-accent bg-sidebar-accent hover:bg-sidebar-primary data-[state=open]:text-sidebar-accent-foreground text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user.avatar} alt={user.name} />
@@ -175,9 +175,9 @@ export function Navbar() {
                 {user ? (
                   <>
                     <div className="flex items-center gap-2 mt-4 bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={"https://github.com/shadcn.png"} />
-                        <AvatarFallback>CN</AvatarFallback>
+                      <Avatar className="h-8 w-8 rounded-lg">
+                        <AvatarImage src={user.avatar || "https://github.com/shadcn.png"} alt={user.name} />
+                        <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">{user.name}</p>
