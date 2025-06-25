@@ -8,7 +8,7 @@ import { AppSidebar } from '@/app/(app)/_components/app-sidebar';
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
 
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen">
       {/* Sidebar */}
       <SidebarProvider>
         <AppSidebar />
