@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useDashboardStats, useRevenueAnalytics, useInventorySummary, useRecentActivities, useAIInsights, useAuditLog } from '@/lib/hooks/dashboard';
-// import MetricCards from './_components/MetricCards';
-// import RevenueAnalytics from './_components/RevenueAnalytics';
+import { useDashboardStats, useRevenueAnalytics, useRecentActivities, useAIInsights, useAuditLog } from '@/lib/hooks/dashboard';
 import SalesDistribution from './_components/SalesDistribution';
 import ActivityFeed from './_components/ActivityFeed';
 import AIInsights from './_components/AIInsights';
@@ -16,17 +14,15 @@ import { DollarSign, GroupIcon, ShoppingCart, Users } from 'lucide-react';
 import RevenueAnalytics from './_components/RevenueAnalytics';
 import FinanceForecastSection from '../finance/_components/FinanceForecastSection';
 import CategoriesList from '../finance/_components/CategoryList';
+import { useInventorySummary } from '@/lib/hooks/inventory';
 
 export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
   const [range, setRange] = React.useState('last7days');
   const { data: revenueData, isLoading: revenueLoading } = useRevenueAnalytics(range || 'last7days');
   const { data: inventoryData, isLoading: inventoryLoading } = useInventorySummary();
-  const { data: activitiesData, isLoading: activitiesLoading } = useRecentActivities();
   const { data: insightsData, isLoading: insightsLoading } = useAIInsights();
   const { data: auditLogs, isLoading: logsLoading } = useAuditLog()
-
-  const loading = statsLoading || revenueLoading || inventoryLoading || activitiesLoading || insightsLoading;
 
   return (
     <AuthGuard>
@@ -89,7 +85,11 @@ export default function DashboardPage() {
               )}
               {inventoryLoading && <SkeletonLoader height={48} type="card" count={1} />}
               {!inventoryLoading && inventoryData && (
-                <SalesDistribution data={inventoryData} />
+                <SalesDistribution data={{
+                  totalItems: inventoryData.totalProducts,
+                  lowStock: inventoryData.lowStockCount,
+                  pendingOrders: inventoryData.recentOrders.length
+                }} />
               )}
             </div>
             <div className="grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6">

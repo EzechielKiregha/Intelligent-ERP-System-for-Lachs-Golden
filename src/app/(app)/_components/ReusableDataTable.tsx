@@ -106,11 +106,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import CategoryForm from "./CategoryForm"
+import CategoryForm from "../finance/_components/CategoryForm"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import NewTransactionPopover from "./TransactioForm"
+import NewTransactionPopover from "../finance/_components/TransactioForm"
 import { useNavigation } from "@/hooks/use-navigation"
 import { useRouter } from "next/navigation"
+import ProductForm from "../inventory/_components/ProductForm"
 
 // Generic interface for data with required id
 interface DataWithId {
@@ -197,7 +198,6 @@ export function DataTable<TData extends DataWithId>({
     pageSize: 10,
   });
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [isTransactionModalOpen, setIsTransactionModalOpen] = React.useState(false);
 
   const sortableId = React.useId();
   const sensors = useSensors(
@@ -247,11 +247,6 @@ export function DataTable<TData extends DataWithId>({
     }
   }
 
-  const createTransaction = () => {
-    return (
-      <NewTransactionPopover />
-    )
-  }
   const nav = useNavigation()
 
   return (
@@ -323,8 +318,11 @@ export function DataTable<TData extends DataWithId>({
             className="border-[var(--sidebar-border)] bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)] hover:bg-[var(--sidebar-primary)] focus:ring-[var(--sidebar-ring)]"
           >
             <IconPlus />
-            {typeName === "Categories" ? (
+            {typeName === "Categories" && (
               <span className="hidden lg:inline">Add {typeName.slice(0, -1)}</span>
+            )}
+            {typeName === "Products" ? (
+              <ProductForm />
             ) : (
               <NewTransactionPopover />
             )}
@@ -517,6 +515,25 @@ export function TableCellViewer<TData extends DataWithId>({ item, typeName }: { 
         },
         budgetUsed: {
           label: "Budget Used",
+          color: "hsl(var(--sidebar-ring))",
+        },
+        value1: {
+          label: undefined,
+          color: undefined,
+        },
+        value2: {
+          label: undefined,
+          color: undefined,
+        },
+      };
+    } else if (typeName === "Products") {
+      return {
+        budgetLimit: {
+          label: "Quantity",
+          color: "hsl(var(--sidebar-accent))",
+        },
+        budgetUsed: {
+          label: "Threshold",
           color: "hsl(var(--sidebar-ring))",
         },
         value1: {

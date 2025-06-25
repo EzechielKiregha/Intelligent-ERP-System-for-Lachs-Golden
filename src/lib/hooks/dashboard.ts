@@ -21,16 +21,6 @@ export function useRevenueAnalytics(range: string) {
   });
 }
 
-export function useInventorySummary() {
-  return useQuery({
-    queryKey: ['inventory', 'summary'],
-    queryFn: async () => {
-      const { data } = await axiosdb.get('/api/inventory/summary');
-      return data;
-    },
-  });
-}
-
 export function useRecentActivities() {
   return useQuery({
     queryKey: ['activities', 'recent'],

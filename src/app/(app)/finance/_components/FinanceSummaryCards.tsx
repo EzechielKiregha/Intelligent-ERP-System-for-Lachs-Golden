@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import { MetricCard } from './MetricCard';
+import { MetricCard } from '../../_components/MetricCard';
 import { useFinanceSummaryPeriod } from '@/lib/hooks/finance';
 import { Skeleton } from '@/components/ui/skeleton';
 

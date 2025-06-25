@@ -2,13 +2,12 @@
 import { z } from "zod";
 import { ColumnDef } from "@tanstack/react-table";
 import { useFinanceCategories } from "@/lib/hooks/finance";
-import { DataTable, DragHandle, TableCellViewer } from "./ReusableDataTable";
+import { DataTable, DragHandle, TableCellViewer } from "../../_components/ReusableDataTable";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { IconDotsVertical } from "@tabler/icons-react";
-import { useNavigation } from "@/hooks/use-navigation";
 import SkeletonLoader from "../../_components/SkeletonLoader";
 
 // Category schema

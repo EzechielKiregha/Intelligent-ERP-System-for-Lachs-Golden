@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { ColumnDef } from "@tanstack/react-table";
 import { useFinanceTransactions } from "@/lib/hooks/finance";
-import { DataTable, DragHandle, TableCellViewer } from "../_components/ReusableDataTable";
+import { DataTable, DragHandle, TableCellViewer } from "../../_components/ReusableDataTable";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { IconCircleCheckFilled, IconDotsVertical, IconLoader } from "@tabler/icons-react";
