@@ -27,7 +27,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from './toggleTheme';
 import { Menu, LogOut, Sparkles, Bell, CreditCard, BadgeCheck, ChevronsUpDown } from 'lucide-react';
-import { SidebarMenuButton } from './ui/sidebar';
 
 export function Navbar() {
   const nav = useNavigation();
@@ -66,7 +65,7 @@ export function Navbar() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
+                <Button
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
@@ -79,7 +78,7 @@ export function Navbar() {
                     <span className="truncate text-xs">{user.email}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
-                </SidebarMenuButton>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg bg-sidebar text-sidebar-foreground"
