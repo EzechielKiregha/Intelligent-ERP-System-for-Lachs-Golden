@@ -176,8 +176,8 @@ export function Navbar() {
                   <>
                     <div className="flex items-center gap-2 mt-4 bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
                       <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage src={user.avatar || "https://github.com/shadcn.png"} alt={user.name} />
-                        <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                        <AvatarImage src={"https://github.com/shadcn.png"} alt={user.name} />
+                        <AvatarFallback className="rounded-lg">ERP</AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">{user.name}</p>
