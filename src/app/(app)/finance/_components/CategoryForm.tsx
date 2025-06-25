@@ -113,7 +113,7 @@ export default function CategoryForm(
             /></>
         )}
       </div>
-      <Button className='bg-sidebar-accent text-sidebar-accent-foreground'
+      <Button className='bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground'
         type="submit" disabled={isSubmitting}>
         {isEdit ? 'Update' : 'Create'}
       </Button>

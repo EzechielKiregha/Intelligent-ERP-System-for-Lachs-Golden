@@ -15,6 +15,19 @@ import {
 import BasePopover from '@/components/BasePopover'
 import axios from 'axios'
 import { useFinanceCategories } from '@/lib/hooks/finance'
+import { toast } from 'react-hot-toast'
+import { z } from 'zod'
+import axiosdb from '@/lib/axios'
+
+const transactionSchema = z.object({
+  amount: z.number().min(0.01, 'Amount must be positive'),
+  description: z.string().min(3, 'Description is too short'),
+  type: z.enum(['ORDER', 'REFUND', 'PAYMENT']),
+  status: z.enum(['PENDING', 'COMPLETED', 'FAILED', 'REFUNDED']),
+  categoryId: z.string().min(1, 'Category is required'),
+})
+
+type TransactionForm = z.infer<typeof transactionSchema>
 
 interface Category {
   id: string
@@ -38,26 +51,34 @@ export default function NewTransactionPopover() {
     if (categories) {
       const cat = categories.find((c) => c.id === categoryId)
       setSelectedCategory(cat || null)
+    } else {
+      setSelectedCategory(null)
     }
-    setSelectedCategory(null)
   }
 
   const handleSubmit = async () => {
-    if (!selectedCategory) return
+    try {
+      const data: TransactionForm = {
+        amount: parseFloat(amount),
+        description,
+        type,
+        status,
+        categoryId: selectedCategory?.id || '',
+      }
+      transactionSchema.parse(data)
 
-    await axios.post('/api/finance/transactions', {
-      categoryId: selectedCategory.id,
-      amount: parseFloat(amount),
-      description,
-      type,
-      status,
-    })
+      await axiosdb.post('/api/finance/transactions', data)
 
-    setAmount('')
-    setDescription('')
-    setSelectedCategory(null)
-    setType('PAYMENT')
-    setStatus('PENDING')
+      toast.success('Transaction submitted!')
+      setAmount('')
+      setDescription('')
+      setSelectedCategory(null)
+      setType('PAYMENT')
+      setStatus('PENDING')
+    } catch (error: any) {
+      const message = error?.errors?.[0]?.message || 'Validation error'
+      toast.error(message)
+    }
   }
 
   return (
@@ -67,12 +88,16 @@ export default function NewTransactionPopover() {
           <div>
             <Label>Transaction Type</Label>
             <Select value={type} onValueChange={(val) => setType(val as typeof type)}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-sidebar">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-sidebar">
                 {transactionTypes.map((t) => (
-                  <SelectItem key={t} value={t}>
+                  <SelectItem
+                    key={t}
+                    value={t}
+                    className="hover:bg-sidebar-accent"
+                  >
                     {t}
                   </SelectItem>
                 ))}
@@ -83,12 +108,16 @@ export default function NewTransactionPopover() {
           <div>
             <Label>Status</Label>
             <Select value={status} onValueChange={(val) => setStatus(val as typeof status)}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-sidebar">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-sidebar">
                 {['PENDING', 'COMPLETED', 'FAILED', 'REFUNDED'].map((s) => (
-                  <SelectItem key={s} value={s}>
+                  <SelectItem
+                    key={s}
+                    value={s}
+                    className="hover:bg-sidebar-accent"
+                  >
                     {s}
                   </SelectItem>
                 ))}
@@ -99,15 +128,20 @@ export default function NewTransactionPopover() {
           <div>
             <Label>Category</Label>
             <Select onValueChange={handleCategorySelect}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-sidebar">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
-              <SelectContent>
-                {categories && categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name} ({cat.type})
-                  </SelectItem>
-                ))}
+              <SelectContent className="bg-sidebar">
+                {categories &&
+                  categories.map((cat) => (
+                    <SelectItem
+                      key={cat.id}
+                      value={cat.id}
+                      className="hover:bg-sidebar-accent"
+                    >
+                      {cat.name} ({cat.type})
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
@@ -139,7 +173,7 @@ export default function NewTransactionPopover() {
         </div>
 
         <div className="pt-4">
-          <Button onClick={handleSubmit} className="w-full bg-sidebar-accent text-sidebar-accent-foreground">
+          <Button onClick={handleSubmit} className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
             Submit Transaction
           </Button>
         </div>

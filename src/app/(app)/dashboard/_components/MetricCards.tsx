@@ -92,9 +92,8 @@ export function MetricCard({
         <CardDescription>{title}</CardDescription>
         <CardTitle className="text-2xl flex flex-col font-semibold tabular-nums @[250px]/card:text-3xl">
           <div className="p-2 w-14 h-14 justify-center flex items-center bg-sidebar-accent rounded-full">
-            {icon}
+            {icon} - {value}
           </div>
-          {value}
         </CardTitle>
         {showBadge && (
           <CardAction>

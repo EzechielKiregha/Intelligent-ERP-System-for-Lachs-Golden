@@ -19,11 +19,11 @@ export function HeroSection() {
             Streamline your operations with AI-powered insights and automation at Golden Intelingent ERP.
           </p>
           <div className="flex space-x-4">
-            <Button onClick={() => nav('/signup')} className="bg-gradient-to-l from-[#80620e] to-[#c56a03] hover:bg-[#8C6A1A] text-white rounded-lg px-6 py-3 shadow transition">
+            <Button onClick={() => nav('/signup')} className="border-sidebar-border text-sidebar-accent-foreground bg-sidebar-accent hover:bg-sidebar-primary rounded-lg px-6 py-3 shadow transition">
               Request Demo
             </Button>
             <Link href="#features">
-              <Button className="border border-[#A17E25] text-[#A17E25] bg-[#FEF3C7] rounded-lg px-6 py-3">
+              <Button className="border border-sidebar-border text-[#A17E25] bg-[#FEF3C7] rounded-lg px-6 py-3">
                 Learn More
               </Button>
             </Link>

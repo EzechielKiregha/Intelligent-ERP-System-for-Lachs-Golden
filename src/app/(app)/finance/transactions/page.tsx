@@ -182,11 +182,11 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
 export default function TransactionsPage() {
   const { data: transactions, isLoading, error } = useFinanceTransactions();
 
-  if (isLoading) return <Skeleton className={`p-4 h-90 w-full rounded-lg bg-sidebar`} />;
+  if (isLoading) return <Skeleton className={`p-4 m-4 h-90 w-full rounded-lg bg-sidebar`} />;
   if (error) return <div>Error loading transactions</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <Card className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] ">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Financial Overview & Transactions Visualization</CardTitle>

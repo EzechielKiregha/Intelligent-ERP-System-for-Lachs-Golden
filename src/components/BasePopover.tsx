@@ -52,7 +52,7 @@ export default function BasePopover({
 
   return (
     <MotionConfig transition={TRANSITION}>
-      <div className="relative flex items-center justify-center bg-white dark:bg-[#1E293B]">
+      <div className="relative flex items-center justify-center bg-sidebar">
         {/* Trigger Button */}
         <motion.div
           key="button"
@@ -66,7 +66,7 @@ export default function BasePopover({
           >
             {buttonLabel}
           </motion.span>
-          <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-full h-0.5 bg-green-600 transition-all duration-300"></div>
+          <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-full h-0.5 bg-sidebar-accent transition-all duration-300"></div>
         </motion.div>
 
         {/* Full-Page Overlay */}

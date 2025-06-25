@@ -30,9 +30,9 @@ export default function DashboardPage() {
 
   return (
     <AuthGuard>
-      <div className="flex">
+      <div className="flex bg-black">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col bg-black">
           <main className="flex-1 overflow-auto p-6 pt-4">
             {/* Show Skeleton Loader if loading */}
             {statsLoading && <SkeletonLoader height={40} type="card" count={3} />}
@@ -42,7 +42,7 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                 {/* Total Revenue */}
                 <MetricCard
-                  icon={<DollarSign className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
+                  icon={<DollarSign className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                   title="Total Revenue"
                   value={`$${stats.totalRevenue.toLocaleString()}`}
                   delta="132%" // Replace with actual delta if available
@@ -53,7 +53,7 @@ export default function DashboardPage() {
 
                 {/* Total Orders */}
                 <MetricCard
-                  icon={<ShoppingCart className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
+                  icon={<ShoppingCart className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                   title="Total Orders"
                   value={stats.totalOrders.toLocaleString()}
                   delta="12%" // Replace with actual delta if available
@@ -64,7 +64,7 @@ export default function DashboardPage() {
 
                 {/* Total Customers */}
                 <MetricCard
-                  icon={<Users className="w-6 h-6 text-[#A17E25] dark:text-[#D4AF37]" />}
+                  icon={<Users className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                   title="Total Customers"
                   value={stats.totalCustomers.toLocaleString()}
                   delta="2.3%" // Replace with actual delta if available

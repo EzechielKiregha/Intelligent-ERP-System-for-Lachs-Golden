@@ -133,12 +133,14 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
 ];
 
 
-
-
 export default function CategoriesList() {
   const { data: categories, isLoading, error } = useFinanceCategories();
 
-  // if (isLoading) return <SkeletonLoader type=""/>;
+  if (isLoading) return (
+    <div className="">
+      <SkeletonLoader type="list" height={60} count={1} />
+    </div>
+  );
   if (error) return <div>Error loading categories</div>;
 
   return (
