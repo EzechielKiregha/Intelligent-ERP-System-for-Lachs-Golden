@@ -137,7 +137,7 @@ export default function CategoriesList() {
   const { data: categories, isLoading, error } = useFinanceCategories();
 
   if (isLoading) {
-    return <Skeleton className="h-96 w-full rounded-lg bg-sidebar" />
+    return <Skeleton className="h-56 w-full rounded-lg bg-sidebar" />
   }
   if (error) return <div>Error loading categories</div>;
 

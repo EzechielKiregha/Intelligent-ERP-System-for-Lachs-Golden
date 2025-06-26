@@ -112,6 +112,7 @@ import NewTransactionPopover from "../finance/_components/TransactioForm"
 import { useNavigation } from "@/hooks/use-navigation"
 import { useRouter } from "next/navigation"
 import ProductForm from "../inventory/_components/ProductForm"
+import ProductFormPopover from "../inventory/_components/ProductForm"
 
 // Generic interface for data with required id
 interface DataWithId {
@@ -321,8 +322,8 @@ export function DataTable<TData extends DataWithId>({
             {typeName === "Categories" && (
               <span className="hidden lg:inline">Add {typeName.slice(0, -1)}</span>
             )}
-            {typeName === "Products" ? (
-              <ProductForm />
+            {typeName !== "Categories" && typeName === "Products" ? (
+              <ProductFormPopover />
             ) : (
               <NewTransactionPopover />
             )}

@@ -66,7 +66,7 @@ const navMainItems = [
     icon: Frame,
     items: [
       { title: "Inventory", url: "/inventory" },
-      { title: "Stock Management", url: "/inventory/stock" },
+      { title: "Stock Management", url: "/inventory/manage" },
       { title: "Low Stock Alerts", url: "/inventory/alerts" },
     ],
   },

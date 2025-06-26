@@ -29,7 +29,7 @@ export default function InventorySummaryCards() {
   return (
     <div className="space-y-6">
       {/* Top cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4">
         <MetricCard
           description="Total Products"
           value={totalProducts}
