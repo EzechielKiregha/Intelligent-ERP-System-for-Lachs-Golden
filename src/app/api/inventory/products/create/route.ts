@@ -14,10 +14,9 @@ export async function POST(req: NextRequest) {
   
     const companyId = session.user.companyId;
   
-
   try {
     const body = await req.json();
-    const { name, sku, quantity, threshold,unitPrice, description } = body;
+    const { name, sku, quantity, threshold, unitPrice, description } = body;
 
     const product = await prisma.product.create({
       data: {
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
         threshold,
         unitPrice,
         description,
-        company : { connect: { id: session.user.companyId } }
+        companyId
       },
     });
 
@@ -38,7 +37,7 @@ export async function POST(req: NextRequest) {
           entity: 'Product',
           entityId: product.id,
           userId: session.user.id,
-          companyId: session.user.companyId,
+          companyId: companyId,
           url: req.url,
           description: `Created a ${product.name} product of $${product.unitPrice} each among ${product.quantity} in Stock`,
         },

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'react-hot-toast';
+import axiosdb from '@/lib/axios';
 
 interface ExportReportButtonProps {
   type: 'transactions' | 'revenue' | 'expenses';
@@ -34,23 +35,31 @@ export default function ExportReportButton({ type }: ExportReportButtonProps) {
     } else {
       params.set('dateRange', dateRange);
     }
-    const url = `/api/finance/reports/generate?${params.toString()}`;
-    setIsGenerating(true);
+    const url = `/api/finance/report/generate?type=${type}&dateRange=${dateRange}`
+    setIsGenerating(true)
     try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Failed to generate');
-      const blob = await res.blob();
+      const res = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',          // ensure cookies/auth get sent
+      })
+      console.log('Fetch response status:', res.status, res.statusText)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`HTTP ${res.status}: ${text}`)
+      }
+      const blob = await res.blob()
       const href = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = href;
-      a.download = `report_${type}_${customStart || dateRange}.csv`; // or match filename from headers
+      a.download = `${type}-${dateRange}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(href);
-    } catch (e) {
-      console.error(e);
-      toast.error('Export failed');
+
+    } catch (e: any) {
+      console.error('Export error:', e.message)
+      toast.error('Export failed')
     } finally {
       setIsGenerating(false);
     }

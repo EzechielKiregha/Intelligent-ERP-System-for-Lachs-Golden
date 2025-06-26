@@ -8,11 +8,12 @@ import {
   CardContent,
 } from '@/components/ui/card'
 import { AlertCircle } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function FinancialInsights() {
   const { data: insights, isLoading, isError } = useFinanceInsights()
 
-  // if (isLoading) return <p>Loading insights...</p>
+  if (isLoading) return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
   if (isError) return <p>Error loading insights.</p>
   if (!insights || insights.length === 0) return <p>No insights at this time.</p>
 

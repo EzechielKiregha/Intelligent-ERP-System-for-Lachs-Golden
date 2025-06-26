@@ -47,19 +47,23 @@ export async function GET(req: NextRequest) {
       end = new Date();
       start = new Date();
       start.setDate(end.getDate() - 7);
+      console.log("start: " + start + "end: "+ end)
     } else if (dateRange === 'last30days') {
       end = new Date();
       start = new Date();
       start.setDate(end.getDate() - 30);
+      console.log("start: " + start + "end: "+ end)
     } else if (dateRange === 'lastquarter') {
       end = new Date();
       start = new Date();
       start.setMonth(end.getMonth() - 3);
+      console.log("start: " + start + "end: "+ end)
     } else {
       // fallback
       end = new Date();
       start = new Date();
       start.setDate(end.getDate() - 7);
+      console.log("start: " + start + "end: "+ end)
     }
   } else if (dateRange === 'custom') {
     // require both startDate and endDate
@@ -84,6 +88,7 @@ export async function GET(req: NextRequest) {
     end = new Date();
     start = new Date();
     start.setDate(end.getDate() - 7);
+    console.log("start: " + start + "end: "+ end)
   }
   // Normalize end to end of day
   end.setHours(23, 59, 59, 999);
@@ -107,6 +112,8 @@ export async function GET(req: NextRequest) {
         },
         orderBy: { date: 'asc' },
       });
+      console.log("transactions: "+ transactions )
+
     }  else if (type === 'revenue' || type === 'expenses') {
       // Fetch all transactions for the given type and manually group by date
       const isIncome = type === 'revenue';
@@ -122,6 +129,7 @@ export async function GET(req: NextRequest) {
         },
         orderBy: { date: 'asc' },
       });
+      console.log("R/E transactions: "+ rawTransactions )
 
       // Group transactions by date
       const grouped = rawTransactions.reduce((acc, tx) => {
@@ -138,6 +146,12 @@ export async function GET(req: NextRequest) {
         date: new Date(date),
         amount,
       }));
+
+      if (transactions.length === 0 || rawTransactions.length === 0){
+        console.log("Transactions not found")
+        return NextResponse.json({message : "Transaction for repports not found"}, {status : 404})
+      }
+
     } else {
       return NextResponse.json({ error: 'Invalid report type' }, { status: 400 });
     }

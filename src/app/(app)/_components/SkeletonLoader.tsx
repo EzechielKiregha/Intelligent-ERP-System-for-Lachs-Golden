@@ -12,7 +12,7 @@ const SkeletonLoader = ({ height, type, count = 1, col = 3 }: SkeletonLoaderProp
   switch (type) {
     case 'card':
       return (
-        <div className={` grid grid-cols-1 sm:grid-cols-${col} gap-4`}>
+        <div className={` grid grid-cols-1 sm:grid-cols-${col} gap-4 mb-6`}>
           {Array.from({ length: count }).map((_, i) => (
             <Skeleton key={i} className={`h-${height} w-full rounded-lg bg-sidebar`} />
           ))}

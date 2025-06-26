@@ -15,6 +15,8 @@ import RevenueAnalytics from './_components/RevenueAnalytics';
 import FinanceForecastSection from '../finance/_components/FinanceForecastSection';
 import CategoriesList from '../finance/_components/CategoryList';
 import { useInventorySummary } from '@/lib/hooks/inventory';
+import { Skeleton } from '@/components/ui/skeleton';
+import FinancialInsights from '../finance/_components/FinancialInsights';
 
 export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
@@ -79,11 +81,11 @@ export default function DashboardPage() {
 
             {/* Revenue Analytics & Sales Distribution */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              {revenueLoading && <SkeletonLoader height={48} type="card" count={1} />}
+              {revenueLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
               {!revenueLoading && revenueData && (
                 <RevenueAnalytics data={revenueData} range={range} onRangeChange={setRange} />
               )}
-              {inventoryLoading && <SkeletonLoader height={48} type="card" count={1} />}
+              {inventoryLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
               {!inventoryLoading && inventoryData && (
                 <SalesDistribution data={{
                   totalItems: inventoryData.totalProducts,
@@ -94,19 +96,14 @@ export default function DashboardPage() {
             </div>
             <div className="grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6">
 
-              {logsLoading && <SkeletonLoader height={12} type="list" count={1} />}
+              {logsLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
               {/* Recent Activities */}
               {!logsLoading && auditLogs && (
                 <ActivityFeed auditLogs={auditLogs} />
               )}
-
-              {insightsLoading && <SkeletonLoader height={12} type="list" count={1} />}
               {/* AI Insights Section */}
               {!insightsLoading && insightsData && (
-                <AIInsights
-                  insights={insightsData}
-                  onGenerateReport={() => console.log('Generate Report')}
-                />
+                <FinancialInsights />
               )}
             </div>
           </main>

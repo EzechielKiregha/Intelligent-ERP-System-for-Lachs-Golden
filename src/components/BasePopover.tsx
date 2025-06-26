@@ -56,7 +56,7 @@ export default function BasePopover({
         {/* Trigger Button */}
         <motion.div
           key="button"
-          className="relative group bg-sidebar"
+          className="relative group bg-sidebar-accent hover:bg-sidebar-primary"
           layoutId={`popover-${uniqueId}`}
           onClick={handleToggle}
         >

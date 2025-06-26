@@ -319,9 +319,10 @@ export function DataTable<TData extends DataWithId>({
             {typeName === "Categories" && (
               <span className="hidden lg:inline">Add {typeName.slice(0, -1)}</span>
             )}
-            {typeName !== "Categories" && typeName === "Products" ? (
+            {typeName === "Products" && (
               <ProductFormPopover />
-            ) : (
+            )}
+            {typeName === "Transactions" && (
               <NewTransactionPopover />
             )}
           </Button>
@@ -565,7 +566,7 @@ export function TableCellViewer<TData extends DataWithId>({ item, typeName }: { 
   }, [typeName]);
 
   // Dynamic title and description
-  const title = typeName === "Categories" ? (item as any).category : (item as any).description ?? `Unnamed ${typeName.slice(0, -1)}`;
+  const title = typeName === "Categories" ? (item as any).category : (item as any).description ?? typeName === "Products" ? (item as any).category : `Unnamed ${typeName.slice(0, -1)}`;
   const description = `Details for ${typeName.toLowerCase()}`;
 
   return (
