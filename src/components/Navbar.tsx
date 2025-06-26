@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from './toggleTheme';
-import { Menu, LogOut, Sparkles, Bell, CreditCard, BadgeCheck, ChevronsUpDown } from 'lucide-react';
+import { Menu, LogOut, Sparkles, Bell, CreditCard, BadgeCheck, ChevronsUpDown, Cpu } from 'lucide-react';
 
 export function Navbar() {
   const nav = useNavigation();
@@ -44,20 +44,23 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full h-16 bg-sidebar shadow flex items-center px-6 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-full w-full">
-        <Link href="/" className="text-xl font-bold text-sidebar-primary text-shadow-sidebar">
-          Golden Intelingent ERP
+        <Link href="/" className="text-xl font-bold flex flex-row gap-1.5 text-[#80410e] dark:text-[#D4AF37]">
+          <Cpu className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />
+          Intelligent ERP Inc.
+          <span className="hidden md:flex text-sm">Enterprise</span>
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden md:flex items-center space-x-2">
           {navItems.map((item) => (
-            <Link
+            <Button
+              variant="link"
+              className='text-gray-800 cursor-pointer dark:text-gray-200 hover:text-[#80410e] dark:hover:text-[#D4AF37]'
               key={item.href}
-              href={item.href}
-              className="text-gray-800 dark:text-gray-200 hover:text-[#80410e] dark:hover:text-[#D4AF37]"
+              onClick={() => window.location.href === item.href}
             >
               {item.label}
-            </Link>
+            </Button>
           ))}
 
           <ModeToggle />
@@ -206,6 +209,6 @@ export function Navbar() {
           </Sheet>
         </div>
       </div>
-    </nav>
+    </nav >
   );
 }

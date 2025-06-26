@@ -10,7 +10,7 @@ export function HeroSection() {
   const nav = useNavigation();
   return (
     <section className="pt-16 bg-white dark:bg-[#0f1522]">
-      <div className="min-h-[calc(100vh-4rem)] max-w-screen-xl mx-auto flex flex-col md:flex-row justify-center items-center px-4 text-center">
+      <div className="min-h-[calc(100vh-4rem)] max-w-screen-xl mx-auto flex flex-col md:flex-row justify-center items-center px-4 gap-2 text-center">
         <div className="flex-1 flex flex-col justify-center items-center md:items-start text-center md:text-left">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-200 mb-4">
             Intelligent ERP System for Modern Business
@@ -29,7 +29,7 @@ export function HeroSection() {
             </Link>
           </div>
         </div>
-        <div className="flex-1 hidden md:flex justify-center items-center rounded-2xl">
+        <div className="flex-1 hidden md:flex justify-center shadow-2xl items-center rounded-2xl">
           <Image
             src="/images/dashboard-hero.jpg"
             alt="Dashboard Preview"

@@ -6,6 +6,7 @@ import {
   BookOpen,
   Bot,
   Command,
+  Cpu,
   Frame,
   GalleryVerticalEnd,
   Map,
@@ -94,7 +95,7 @@ const navMainItems = [
 const company = [
   {
     name: "Intelligent ERP Inc.",
-    logo: GalleryVerticalEnd,
+    logo: Cpu,
     plan: "Enterprise",
   },
   {
