@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Button } from "@/components/ui/button";
 import { IconDotsVertical } from "@tabler/icons-react";
 import SkeletonLoader from "../../_components/SkeletonLoader";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Category schema
 export const categorySchema = z.object({
@@ -135,9 +136,9 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
 export default function CategoriesList() {
   const { data: categories, isLoading, error } = useFinanceCategories();
 
-  if (isLoading) return (
-    <SkeletonLoader type="card" height={60} count={1} col={1} />
-  );
+  if (isLoading) {
+    return <Skeleton className="h-96 w-full rounded-lg bg-sidebar" />
+  }
   if (error) return <div>Error loading categories</div>;
 
   return (

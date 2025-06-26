@@ -18,6 +18,16 @@ interface Product {
   unitPrice: number;
 };
 
+export function useProducts() {
+  return useQuery<Product[], Error>({
+    queryKey : ['inventory','products'], 
+    queryFn: async () => {
+      const { data } = await axiosdb.get<Product[]>(API.fetch);
+      return data;
+    }
+  });
+}
+
 export function useInventorySummaryCards() {
   return useQuery({
     queryKey: ['inventory', 'summary-cards'],
@@ -53,16 +63,7 @@ export function useInventorySummary() {
   })
 }
 
-export function useProducts() {
-  return useQuery<Product[], Error>({
-    queryKey : ['inventory','products'], 
-    queryFn: async () => {
-      const { data } = await axiosdb.get<{ products : Product[] }>(API.fetch);
-      return data.products;
-    }
-  }
-    );
-}
+
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();

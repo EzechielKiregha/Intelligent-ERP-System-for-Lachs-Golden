@@ -17,13 +17,7 @@ export default function FinanceSummaryCards() {
     }).format(value);
 
   if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[0, 1, 2].map(i => (
-          <Skeleton key={i} className="h-40 w-full rounded-lg bg-sidebar" />
-        ))}
-      </div>
-    );
+    return <Skeleton className="h-96 w-full rounded-lg bg-sidebar" />
   }
   if (isError || !data) {
     return <p className="text-red-600">Failed to load summary.</p>;
