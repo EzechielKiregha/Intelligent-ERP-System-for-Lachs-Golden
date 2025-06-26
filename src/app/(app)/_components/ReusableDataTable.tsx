@@ -106,12 +106,9 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import CategoryForm from "../finance/_components/CategoryForm"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import NewTransactionPopover from "../finance/_components/TransactioForm"
 import { useNavigation } from "@/hooks/use-navigation"
-import { useRouter } from "next/navigation"
-import ProductForm from "../inventory/_components/ProductForm"
 import ProductFormPopover from "../inventory/_components/ProductForm"
 
 // Generic interface for data with required id

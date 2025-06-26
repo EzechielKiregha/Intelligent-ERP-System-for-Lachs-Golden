@@ -97,7 +97,7 @@ export default function ProductFormPopover({ product }: ProductFormPopoverProps)
       title={isEdit ? 'Edit Product' : 'Add Product'}
       buttonLabel={isEdit ? 'Edit' : 'Add Product'}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg space-y-6 p-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full bg-sidebar text-sidebar-foreground max-w-lg space-y-6 p-4">
         <div>
           <Label htmlFor="name">Name</Label>
           <Input id="name" {...register('name')} />
