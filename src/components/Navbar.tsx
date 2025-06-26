@@ -46,21 +46,24 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between h-full w-full">
         <Link href="/" className="text-xl font-bold flex flex-row gap-1.5 text-[#80410e] dark:text-[#D4AF37]">
           <Cpu className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />
-          Intelligent ERP Inc.
-          <span className="hidden md:flex text-sm">Enterprise</span>
+          Intelligent ERP
+          <span className="hidden md:flex text-sm text-muted-foreground">Inc.</span>
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-2">
+        <div className="hidden md:flex items-center space-x-3">
           {navItems.map((item) => (
-            <Button
-              variant="link"
-              className='text-gray-800 cursor-pointer dark:text-gray-200 hover:text-[#80410e] dark:hover:text-[#D4AF37]'
+            <Link
               key={item.href}
-              onClick={() => window.location.href === item.href}
+              href={item.href}
             >
-              {item.label}
-            </Button>
+              <Button
+                variant="link"
+                className='text-gray-800 cursor-pointer dark:text-gray-200 hover:text-[#80410e] dark:hover:text-[#D4AF37]'
+              >
+                {item.label}
+              </Button>
+            </Link>
           ))}
 
           <ModeToggle />

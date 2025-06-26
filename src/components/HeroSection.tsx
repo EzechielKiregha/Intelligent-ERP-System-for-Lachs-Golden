@@ -15,7 +15,7 @@ export function HeroSection() {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-200 mb-4">
             Intelligent ERP System for Modern Business
           </h1>
-          <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 mb-6">
+          <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 mb-12">
             Streamline your operations with AI-powered insights and automation at Golden Intelingent ERP.
           </p>
           <div className="flex space-x-4">
@@ -29,13 +29,13 @@ export function HeroSection() {
             </Link>
           </div>
         </div>
-        <div className="flex-1 hidden md:flex justify-center shadow-2xl items-center rounded-2xl">
+        <div className="flex-1 hidden md:flex shadow-2xl rounded-2xl">
           <Image
-            src="/images/dashboard-hero.jpg"
+            src="/images/hero-image.PNG"
             alt="Dashboard Preview"
-            width={1000}
-            height={600}
-            className="rounded-lg shadow-lg w-full max-w-md"
+            width={1200}
+            height={500}
+            className="rounded-lg shadow-lg w-full"
           />
         </div>
       </div>
