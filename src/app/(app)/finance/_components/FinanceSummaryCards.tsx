@@ -17,7 +17,7 @@ export default function FinanceSummaryCards() {
     }).format(value);
 
   if (isLoading) {
-    return <Skeleton className="h-96 w-full rounded-lg bg-sidebar" />
+    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
   }
   if (isError || !data) {
     return <p className="text-red-600">Failed to load summary.</p>;
