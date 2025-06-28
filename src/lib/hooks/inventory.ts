@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axiosdb from 'axios';
+import toast from 'react-hot-toast';
 
 const API = {
   fetch: '/api/inventory/products',
   create: '/api/inventory/products/create',
   update: '/api/inventory/products/update',
-  delete: '/api/inventory/products/delete',
+  delete: '/api/inventory/products',
 };
 
 export interface Product {
@@ -82,16 +83,22 @@ export function useUpdateProduct() {
     onSuccess: () => queryClient.invalidateQueries({
       queryKey : ['inventory','products'],
     }),
+    onError () {
+      toast.error("Failed")
+    }
   });
 }
 
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => axiosdb.delete(`${API.delete}/${id}`),
+    mutationFn: (id: string) => axiosdb.delete(`${API.delete}?id=${id}`),
     onSuccess: () => queryClient.invalidateQueries({
       queryKey : ['inventory','products'],
     }),
+    onError () {
+      toast.error("Failed")
+    }
   });
 }
 

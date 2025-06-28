@@ -68,7 +68,7 @@ export default function ManageProductForm({ productId }: Props) {
         await axiosdb.post('/api/inventory/products/create', data)
         toast.success('Product created')
       }
-      router.push('/inventory/manage')
+      router.refresh()
     } catch (err) {
       console.error(err)
       toast.error('Failed to save product')
@@ -80,33 +80,33 @@ export default function ManageProductForm({ productId }: Props) {
       <div className="grid md:grid-cols-2 gap-4">
         <div>
           <label className="block mb-1">Name</label>
-          <Input {...register('name')} />
+          <Input {...register('name')} value={product?.name} />
           {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
         </div>
         <div>
           <label className="block mb-1">SKU</label>
-          <Input {...register('sku')} />
+          <Input {...register('sku')} value={product?.sku} />
           {errors.sku && <p className="text-sm text-red-500">{errors.sku.message}</p>}
         </div>
       </div>
       <div className="grid md:grid-cols-3 gap-4">
         <div>
           <label className="block mb-1">Unit Price</label>
-          <Controller name="unitPrice" control={control} render={({ field }) => (
+          <Controller defaultValue={product?.unitPrice} name="unitPrice" control={control} render={({ field }) => (
             <Input type="number" step="0.01" {...field} onChange={(e) => field.onChange(parseFloat(e.target.value))} />
           )} />
           {errors.unitPrice && <p className="text-sm text-red-500">{errors.unitPrice.message}</p>}
         </div>
         <div>
           <label className="block mb-1">Quantity</label>
-          <Controller name="quantity" control={control} render={({ field }) => (
+          <Controller defaultValue={product?.quantity} name="quantity" control={control} render={({ field }) => (
             <Input type="number" {...field} onChange={(e) => field.onChange(parseInt(e.target.value))} />
           )} />
           {errors.quantity && <p className="text-sm text-red-500">{errors.quantity.message}</p>}
         </div>
         <div>
           <label className="block mb-1">Threshold</label>
-          <Controller name="threshold" control={control} render={({ field }) => (
+          <Controller defaultValue={product?.threshold} name="threshold" control={control} render={({ field }) => (
             <Input type="number" {...field} onChange={(e) => field.onChange(parseInt(e.target.value))} />
           )} />
           {errors.threshold && <p className="text-sm text-red-500">{errors.threshold.message}</p>}
@@ -114,7 +114,7 @@ export default function ManageProductForm({ productId }: Props) {
       </div>
       <div>
         <label className="block mb-1">Description</label>
-        <Textarea {...register('description')} />
+        <Textarea {...register('description')} value={product?.description} />
       </div>
       <Button type="submit" disabled={isSubmitting} className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
         {isEdit ? 'Update Product' : 'Create Product'}
