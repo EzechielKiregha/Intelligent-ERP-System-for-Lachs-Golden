@@ -145,7 +145,7 @@ export function Navbar() {
               <Link href="/login" className="text-gray-800 dark:text-gray-200 hover:text-[#80410e] dark:hover:text-[#D4AF37]">
                 Login
               </Link>
-              <Button onClick={() => nav('/signup')} className="bg-gradient-to-l from-[#80410e] to-[#c56a03] text-white">
+              <Button onClick={() => nav('/signup')} className="bg-sidebar-accent text-sidebar-accent-foreground">
                 Register
               </Button>
             </>
@@ -202,7 +202,7 @@ export function Navbar() {
                     <Button variant="outline" className="w-full" onClick={() => nav('/login')}>
                       Login
                     </Button>
-                    <Button className="w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] text-white" onClick={() => nav('/signup')}>
+                    <Button className="w-full bg-sidebar-accent text-sidebar-accent-foreground" onClick={() => nav('/signup')}>
                       Register
                     </Button>
                   </>
