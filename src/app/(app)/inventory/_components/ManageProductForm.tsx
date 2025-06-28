@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-import { useSingleProduct } from '@/lib/hooks/inventory'
+import { Product, useSingleProduct } from '@/lib/hooks/inventory'
 import { toast } from 'react-hot-toast'
 import axiosdb from '@/lib/axios'
 
@@ -28,7 +28,11 @@ interface Props {
 
 export default function ManageProductForm({ productId }: Props) {
   const router = useRouter()
-  const { data: product } = useSingleProduct(productId)
+  let product: Product | undefined;
+  if (productId) {
+    const { data } = useSingleProduct(productId)
+    product = data
+  }
   const isEdit = Boolean(productId && product)
 
   const {
@@ -39,7 +43,14 @@ export default function ManageProductForm({ productId }: Props) {
     formState: { errors, isSubmitting }
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
-    defaultValues: product ?? {}
+    defaultValues: {
+      name: product?.name,
+      sku: product?.sku,
+      unitPrice: product?.unitPrice,
+      quantity: product?.quantity,
+      threshold: product?.threshold,
+      description: product?.description,
+    }
   })
 
   useEffect(() => {
@@ -51,10 +62,10 @@ export default function ManageProductForm({ productId }: Props) {
   const onSubmit = async (data: ProductFormValues) => {
     try {
       if (isEdit && productId) {
-        await axiosdb.patch(`/api/inventory/products/${productId}`, data)
+        await axiosdb.patch(`/api/inventory/products/${productId}?id=${productId}`, data)
         toast.success('Product updated')
       } else {
-        await axiosdb.post('/api/inventory/products', data)
+        await axiosdb.post('/api/inventory/products/create', data)
         toast.success('Product created')
       }
       router.push('/inventory/manage')

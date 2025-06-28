@@ -2,7 +2,6 @@
 'use client'
 import { useLowStockProducts } from '@/lib/hooks/inventory'
 import ProductListTable, { productColumns } from './ProductListTable'
-import { Badge } from '@/components/ui/badge'
 
 export default function LowStockAlerts() {
   const { data } = useLowStockProducts()

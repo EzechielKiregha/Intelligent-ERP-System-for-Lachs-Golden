@@ -8,7 +8,7 @@ const API = {
   delete: '/api/inventory/products/delete',
 };
 
-interface Product {
+export interface Product {
   id: string,
   name: string,
   sku: string,
@@ -112,7 +112,7 @@ export function useSingleProduct(id?: string | null) {
     {
       queryKey: ['product', id],
       queryFn: async () => {
-        const { data } = await axiosdb.get(`/api/inventory/products/${id}`)
+        const { data } = await axiosdb.get<Product>(`/api/inventory/products/${id}`)
         return data
       },
     },
