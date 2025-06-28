@@ -4,27 +4,47 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(_:NextRequest,{params}:{params:{id:string}}) {
+export async function GET(req:NextRequest) {
+  const {searchParams} = new URL(req.url)
+  const id = searchParams.get("id")
+  if(!id) return NextResponse.json({"message": "Missing product ID"}, {status: 400})
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const prod = await prisma.product.findUnique({ where:{id:params.id} })
+  const prod = await prisma.product.findUnique({ where:{id : id} })
   return NextResponse.json(prod)
 }
 
-export async function PATCH(req:NextRequest,{params}:{params:{id:string}}) {
+export async function PATCH(req:NextRequest) {
+  const {searchParams} = new URL(req.url)
+  const id = searchParams.get("id")
   const session = await getServerSession(authOptions);
 
+  if(!id) return NextResponse.json({"message": "Missing product ID"}, {status: 400})
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const body = await req.json()
   const updated = await prisma.product.update({
-    where:{id:params.id},
+    where:{id : id},
     data:body
   })
+
+  if (updated){
+            await prisma.auditLog.create({
+              data: {
+                action: 'UPDATE',
+                entity: 'Product',
+                entityId: updated.id,
+                userId: session.user.id,
+                companyId: session.user.companyId,
+                url: req.url,
+                description: `Updated a ${updated.name} product of $${updated.unitPrice} each among ${updated.quantity} in Stock`,
+              },
+            });
+          }
   return NextResponse.json(updated)
 }
 
