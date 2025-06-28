@@ -1,3 +1,5 @@
+"use client"
+
 import { useSearchParams } from 'next/navigation'
 import ManageProductForm from '../_components/ManageProductForm'
 import ProductListTable from '../_components/ProductListTable'
