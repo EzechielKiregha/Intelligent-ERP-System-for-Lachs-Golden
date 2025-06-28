@@ -4,6 +4,30 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
+export async function GET(_:NextRequest,{params}:{params:{id:string}}) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const prod = await prisma.product.findUnique({ where:{id:params.id} })
+  return NextResponse.json(prod)
+}
+
+export async function PATCH(req:NextRequest,{params}:{params:{id:string}}) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const body = await req.json()
+  const updated = await prisma.product.update({
+    where:{id:params.id},
+    data:body
+  })
+  return NextResponse.json(updated)
+}
+
 export async function DELETE(req : NextRequest) {
 
   const { searchParams } = new URL(req.url)

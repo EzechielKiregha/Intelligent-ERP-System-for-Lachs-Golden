@@ -8,11 +8,11 @@ export async function PUT(req: NextRequest) {
 
   const session = await getServerSession(authOptions);
   
-    if (!session?.user?.companyId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-  
-    const companyId = session.user.companyId;
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const companyId = session.user.companyId;
   
 
   try {

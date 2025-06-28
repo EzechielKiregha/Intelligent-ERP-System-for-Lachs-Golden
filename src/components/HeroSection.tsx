@@ -29,12 +29,12 @@ export function HeroSection() {
             </Link>
           </div>
         </div>
-        <div className="flex-1 hidden md:flex shadow-2xl rounded-2xl">
+        <div className="flex-1 hidden justify-center items-center md:flex shadow-2xl rounded-2xl">
           <Image
             src="/images/hero-image.PNG"
             alt="Dashboard Preview"
             width={1200}
-            height={500}
+            height={600}
             className="rounded-lg shadow-lg w-full"
           />
         </div>

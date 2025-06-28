@@ -94,3 +94,28 @@ export function useDeleteProduct() {
     }),
   });
 }
+
+export function useLowStockProducts() {
+  return useQuery(
+    {
+      queryKey: ['products','low-stock'],
+    queryFn: async () => {
+      const { data } = await axiosdb.get('/api/inventory/products/low-stock')
+      return data
+    }
+    }
+  )
+}
+
+export function useSingleProduct(id?: string | null) {
+  return useQuery(
+    {
+      queryKey: ['product', id],
+      queryFn: async () => {
+        const { data } = await axiosdb.get(`/api/inventory/products/${id}`)
+        return data
+      },
+    },
+    
+  )
+}
