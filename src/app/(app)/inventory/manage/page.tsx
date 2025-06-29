@@ -26,7 +26,16 @@ export default function ManagePage() {
             </p>
           </div>
           <div className="p-6 space-y-6">
-            <ManageProductForm productId={id} />
+            <Card className="bg-sidebar shadow">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-sidebar-foreground">
+                  Product Form
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ManageProductForm productId={id} />
+              </CardContent>
+            </Card>
           </div>
         </CardContent>
       </Card>

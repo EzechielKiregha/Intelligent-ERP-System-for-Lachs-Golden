@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
     // 1. Top metrics
     const [totalProducts, lowStockCount, products] = await Promise.all([
       prisma.product.count(),
-      prisma.product.count({ where: { quantity: { lt:  10 } } }),
+      prisma.product.count({ where: { quantity: { lt:  100 } } }),
       prisma.product.findMany({ select: { quantity: true, unitPrice: true, createdAt: true } }),
     ])
 

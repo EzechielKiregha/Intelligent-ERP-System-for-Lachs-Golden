@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { IconDotsVertical } from "@tabler/icons-react";
 import SkeletonLoader from "../../_components/SkeletonLoader";
 import { Skeleton } from "@/components/ui/skeleton";
+import toast from "react-hot-toast";
 
 // Category schema
 export const categorySchema = z.object({
@@ -125,7 +126,9 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
           }} >Edit</DropdownMenuItem>
           {/* <DropdownMenuItem>Duplicate</DropdownMenuItem> */}
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {
+            toast.error("Sorry! You have no delete permission")
+          }} variant="destructive">Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),

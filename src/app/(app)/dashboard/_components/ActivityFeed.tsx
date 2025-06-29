@@ -1,6 +1,8 @@
 import React from 'react';
 import { useAuditLog } from '@/lib/hooks/dashboard';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { useNavigation } from '@/hooks/use-navigation';
+import { Button } from '@/components/ui/button';
 
 interface AuditLog {
   auditLogs: {
@@ -30,8 +32,8 @@ const ActivityFeed = ({
         {auditLogs.length === 0 ? (
           <p className="text-sm text-gray-600 dark:text-gray-400">No recent activity found.</p>
         ) : (
-          <ul className="space-y-2">
-            {auditLogs && auditLogs.map((log) => (
+          <><ul className="space-y-2">
+            {auditLogs && auditLogs.slice(0, 8).map((log) => (
               <li key={log.id} className="flex justify-between items-center">
                 <div>
                   <p className="text-sm text-gray-800 dark:text-gray-200">{log.action}</p>
@@ -43,7 +45,10 @@ const ActivityFeed = ({
                 <p className="text-sm text-gray-600 dark:text-gray-400">{log.description}</p>
               </li>
             ))}
-          </ul>
+          </ul><Button variant="link" onClick={() => {
+            const nav = useNavigation();
+            nav('/dashnoard/activity');
+          }}>More</Button></>
         )}
       </CardContent>
     </Card>

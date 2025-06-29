@@ -47,8 +47,8 @@ const navMainItems = [
     isActive: true,
     items: [
       { title: "Dashboard", url: "/dashboard" },
-      // { title: "Analytics", url: "/dashboard/analytics" },
       { title: "Reports", url: "/dashboard/reports" },
+      { title: "Activity Feed", url: "/dashboard/activity" },
     ],
   },
   {

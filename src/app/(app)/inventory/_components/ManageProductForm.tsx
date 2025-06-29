@@ -28,12 +28,8 @@ interface Props {
 
 export default function ManageProductForm({ productId }: Props) {
   const router = useRouter()
-  let product: Product | undefined;
-  if (productId) {
-    const { data } = useSingleProduct(productId)
-    product = data
-  }
-  const isEdit = Boolean(productId && product)
+  const { data: product } = useSingleProduct(productId)
+  const isEdit = Boolean(product)
 
   const {
     register,
@@ -43,14 +39,14 @@ export default function ManageProductForm({ productId }: Props) {
     formState: { errors, isSubmitting }
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
-    defaultValues: {
+    defaultValues: product ? {
       name: product?.name,
       sku: product?.sku,
       unitPrice: product?.unitPrice,
       quantity: product?.quantity,
       threshold: product?.threshold,
       description: product?.description,
-    }
+    } : undefined
   })
 
   useEffect(() => {

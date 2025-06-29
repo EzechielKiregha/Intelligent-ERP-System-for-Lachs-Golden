@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface AuditLog {
   auditLogs: {
@@ -92,7 +93,10 @@ export function NavProjects({ auditLogs }: AuditLog) {
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
             <MoreHorizontal className="text-sidebar-foreground/70" />
-            <span>More</span>
+            <Button variant="link" onClick={() => {
+              const nav = useNavigation();
+              nav('/dashnoard/activity');
+            }}>More</Button>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

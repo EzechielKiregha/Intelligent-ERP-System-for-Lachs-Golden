@@ -92,10 +92,13 @@ export function useUpdateProduct() {
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => axiosdb.delete(`${API.delete}?id=${id}`),
-    onSuccess: () => queryClient.invalidateQueries({
-      queryKey : ['inventory','products'],
-    }),
+    mutationFn: (id: string) => axiosdb.delete(`${API.delete}/${id}?id=${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey : ['inventory','products'],
+      })
+      toast.success("Deleted Successfully")
+    },
     onError () {
       toast.error("Failed")
     }
@@ -107,7 +110,7 @@ export function useLowStockProducts() {
     {
       queryKey: ['products','low-stock'],
     queryFn: async () => {
-      const { data } = await axiosdb.get('/api/inventory/products/low-stock')
+      const { data } = await axiosdb.get<Product[]>('/api/inventory/products/low-stock')
       return data
     }
     }

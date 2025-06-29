@@ -66,9 +66,10 @@ export default function CategoryForm(
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-sidebar p-14 min-h-full rounded-2xl border">
+      <h1 className='font-bold my-2'>{isEdit ? `Update ${existing?.name} category` : 'Create new category'}</h1>
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
-        <Input id="name" {...register('name')} />
+        <Input value={existing?.name} id="name" {...register('name')} />
         {errors.name && <p className="text-red-600">{errors.name.message}</p>}
       </div>
       <div className="space-y-2">
@@ -77,7 +78,7 @@ export default function CategoryForm(
           control={control}
           name="type"
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value} defaultValue={existing?.type}>
               <SelectTrigger>
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
@@ -98,6 +99,7 @@ export default function CategoryForm(
           type="number"
           step="0.01"
           {...register('budgetLimit', { valueAsNumber: true })}
+          value={existing?.budgetLimit}
         />
         {errors.budgetLimit && <p className="text-red-600">{errors.budgetLimit.message}</p>}
         {isEdit && (

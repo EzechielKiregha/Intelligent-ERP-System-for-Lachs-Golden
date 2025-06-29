@@ -10,6 +10,7 @@ import { Edit2, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useDeleteProduct } from '@/lib/hooks/inventory'
 import { DataTable, DragHandle, TableCellViewer } from '../../_components/ReusableDataTable'
+import SkeletonLoader from "../../_components/SkeletonLoader";
 
 
 // 1. Schema
@@ -114,6 +115,17 @@ export const productColumns: ColumnDef<z.infer<typeof productSchema>>[] = [
 ];
 
 export default function ProductListTable() {
-  const { data } = useProducts()
-  return <DataTable data={data || []} columns={productColumns} schema={productSchema} typeName="Products" />
+  const { data: products, isLoading, error } = useProducts();
+
+  if (isLoading) return <SkeletonLoader type="card" height={60} count={1} col={1} />;
+  if (error) return <div className="text-red-500">Error loading products.</div>;
+
+  return (
+    <DataTable
+      data={products || []}
+      columns={productColumns}
+      schema={productSchema}
+      typeName="Products"
+    />
+  );
 }
