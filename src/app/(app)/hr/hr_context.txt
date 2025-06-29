@@ -1,0 +1,137 @@
+# 🧑‍💼 HR_CONTEXT.md
+
+## 🔰 Goal
+Build the Human Resources module of the **Intelligent ERP System**, enabling seamless employee and department management, payroll records, performance tracking, document handling, and task assignments.
+
+This module uses the dark gold ERP theme and Shadcn UI components, and interacts heavily with Prisma models related to employees.
+
+---
+
+## 📁 File & Folder Structure
+
+```sh
+/app/hr
+  ├─ page.tsx                            # Overview page
+  ├─ layout.tsx                          # With sidebar/topbar if needed
+  └─ _components
+      ├─ EmployeeTable.tsx
+      ├─ EmployeeProfileDrawer.tsx
+      ├─ DepartmentSelect.tsx
+      ├─ PayrollList.tsx
+      ├─ PerformanceChart.tsx
+      ├─ ReviewTimeline.tsx
+      ├─ TaskList.tsx
+      ├─ DocumentManager.tsx
+      └─ HRTopbar.tsx
+```
+
+---
+
+## 🔁 Involved Prisma Models
+
+| Model                | Used For                              |
+|---------------------|----------------------------------------|
+| `Employee`          | Core employee record                   |
+| `Department`        | Department assignment and filtering    |
+| `Payroll`           | Salary, taxes, and issued pay records  |
+| `PerformanceReview` | Ratings, comments, reviewer data       |
+| `Task`              | Assigned responsibilities and tracking |
+| `Document`          | Uploaded files and related notes       |
+| `User`              | Reviewer or creator (optional)         |
+
+> `CompanyId` is required on all records
+
+---
+
+## 🔹 Key Components
+
+### 1. `EmployeeTable.tsx`
+- Table of employees with sortable columns: Name, Department, Status, Email, Start Date
+- Action buttons: View Profile, Pay, Review, Assign Task
+- Badge colors for status: Active (green), Inactive (gray), Terminated (red)
+
+### 2. `EmployeeProfileDrawer.tsx`
+- Slide-over drawer showing employee details
+- Tabs: Info, Payroll, Reviews, Documents, Tasks
+
+### 3. `DepartmentSelect.tsx`
+- Dropdown to filter employees by department
+- Also used in `EmployeeForm` for adding/updating
+
+### 4. `PayrollList.tsx`
+- Table of payroll history per employee
+- Columns: Period, Gross, Tax, Net, Notes
+- Total summaries at bottom
+
+### 5. `PerformanceChart.tsx`
+- Line or radar chart showing ratings over time
+- Color scale by performance level
+
+### 6. `ReviewTimeline.tsx`
+- Vertical timeline of past reviews with dates and comments
+
+### 7. `TaskList.tsx`
+- Assigned tasks (if any), with status filter and due dates
+
+### 8. `DocumentManager.tsx`
+- File upload and preview
+- Show documents with title, upload date, and link
+
+### 9. `HRTopbar.tsx`
+- Header section: Filter by department, add new employee, export data
+
+---
+
+## 🎨 Styling (Tailwind CSS Only)
+Use the following classes and variables:
+
+| Context               | Tailwind Class                                       |
+|-----------------------|------------------------------------------------------|
+| Section bg            | `bg-[#1e1408] text-[#f7f3eb]`                         |
+| Table header bg       | `bg-[#2a1c0e] text-[#d4af37]`                         |
+| Buttons (main)        | `bg-[#80410e] hover:bg-[#a5631d] text-white`         |
+| Accent hover          | `hover:bg-[#503417]`                                 |
+| Borders               | `border border-[#d4af3760]`                          |
+| Cards / panels        | `bg-[#2a1c0e] shadow-sm rounded-lg`                  |
+
+---
+
+## 🧠 Copilot Prompt Template
+Paste this at the top of each file:
+```ts
+// Intelligent ERP System – HR Module
+// Dark Gold Theme: Tailwind utility classes only
+// No custom Tailwind config, no inline styles
+// Use Shadcn UI components and lucide-react icons
+// For layout, use responsive grid/flex as needed
+// Use data from Prisma models: Employee, Department, Payroll, PerformanceReview, Task, Document
+```
+
+---
+
+## 🔗 Suggested API Endpoints
+
+| Endpoint                        | Method | Purpose                            |
+|--------------------------------|--------|------------------------------------|
+| `/api/hr/employees`            | GET    | Get all employees                  |
+| `/api/hr/employees/:id`        | GET    | Get employee by ID                 |
+| `/api/hr/employees`            | POST   | Add new employee                   |
+| `/api/hr/employees/:id`        | PUT    | Update employee                    |
+| `/api/hr/employees/:id/payroll`| GET    | Payroll records per employee       |
+| `/api/hr/employees/:id/review` | GET    | Performance reviews per employee   |
+| `/api/hr/employees/:id/tasks`  | GET    | Tasks assigned to employee         |
+| `/api/hr/employees/:id/docs`   | GET    | Employee documents                 |
+
+---
+
+## ✅ Dev Tasks
+- [ ] Display employees grouped by department
+- [ ] Support search by name/email/phone
+- [ ] Add employee drawer with full profile
+- [ ] Integrate charts for performance
+- [ ] Allow uploading documents per employee
+- [ ] Role-based access for HR managers only
+
+---
+
+Let me know when you're ready to scaffold the files or start building the first component like `EmployeeTable.tsx`.

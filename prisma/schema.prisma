@@ -192,6 +192,7 @@ model Customer {
 model Department {
   id        String  @id @default(cuid())
   name      String
+  description String?
   company   Company @relation(fields: [companyId], references: [id])
   companyId String
 
@@ -227,8 +228,8 @@ model Payroll {
   id          String    @id @default(cuid())
   payPeriod   String? // e.g., "2025-06" or date-range string
   grossAmount Float
-  taxAmount   Float?
-  netAmount   Float?
+  taxAmount   Float
+  netAmount   Float
   issuedDate  DateTime?
   notes       String?
   employee    Employee  @relation(fields: [employeeId], references: [id])
