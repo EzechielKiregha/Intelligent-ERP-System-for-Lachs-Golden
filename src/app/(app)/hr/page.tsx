@@ -2,6 +2,9 @@ import React from 'react'
 import HRStatsCards from './_components/HRStatsCards'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import RecentEmployeesPreview from './_components/RecentEmployeesPreview'
+import HRPendingTasksPreview from './_components/HRPendingTasksPreview'
+import RecentReviewsFeed from './_components/RecentReviewsFeed'
 
 export default function HRDashboardPage() {
   return (
@@ -31,18 +34,11 @@ export default function HRDashboardPage() {
       {/* Summary c  */}
       <HRStatsCards />
 
-      {/* Placeholder for charts & quick links */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Future: PerformanceChart */}
-        <div className="bg-sidebar rounded-lg shadow p-4">
-          <h2 className="text-xl font-semibold mb-2 text-sidebar-foreground">Performance Trends</h2>
-          <p className="text-sidebar-foreground">Coming soon…</p>
-        </div>
-        {/* Future: Recent Reviews */}
-        <div className="bg-sidebar rounded-lg shadow p-4">
-          <h2 className="text-xl font-semibold mb-2 text-sidebar-foreground">Recent Reviews</h2>
-          <p className="text-sidebar-foreground">Coming soon…</p>
-        </div>
+      {/* Grid layout for previews */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <RecentEmployeesPreview />
+        <HRPendingTasksPreview />
+        <RecentReviewsFeed />
       </div>
     </div>
   )

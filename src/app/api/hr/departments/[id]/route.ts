@@ -3,7 +3,9 @@ import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }
+) {
+   const id = (await params).id; 
   const session = await getServerSession(authOptions);
         
       if (!session?.user?.companyId) {
@@ -11,7 +13,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       }
   const { name } = await req.json()
   const updated = await prisma.department.update({
-    where: { id: params.id },
+    where: { id },
     data: { name },
     include: { _count: { select: { employees: true } } },
   })
@@ -22,12 +24,14 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   })
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }
+) {
+   const id = (await params).id; 
   const session = await getServerSession(authOptions);
         
       if (!session?.user?.companyId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
-  await prisma.department.delete({ where: { id: params.id } })
+  await prisma.department.delete({ where: { id} })
   return NextResponse.json({ success: true })
 }

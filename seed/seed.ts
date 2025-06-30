@@ -163,7 +163,9 @@ async function main() {
         employeeId: emp.id,
         companyId: emp.companyId,
         payPeriod: faker.helpers.arrayElement(paysDates),
-        grossAmount: faker.number.float({ min: 500, max: 5000, fractionDigits: 2 }),
+        grossAmount: faker.number.float({ min: 1000, max: 5000, fractionDigits: 2 }),
+        netAmount: faker.number.float({ min: 3000, max: 4000, fractionDigits: 2 }),
+        taxAmount: faker.number.float({ min: 50, max: 500, fractionDigits: 2 }),
         issuedDate: faker.date.recent({ days: 30 }),
       },
     });

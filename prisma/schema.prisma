@@ -227,9 +227,9 @@ model Employee {
 model Payroll {
   id          String    @id @default(cuid())
   payPeriod   String? // e.g., "2025-06" or date-range string
-  grossAmount Float
-  taxAmount   Float
-  netAmount   Float
+  grossAmount Float?
+  taxAmount   Float?
+  netAmount   Float?
   issuedDate  DateTime?
   notes       String?
   employee    Employee  @relation(fields: [employeeId], references: [id])

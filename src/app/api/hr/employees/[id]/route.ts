@@ -3,20 +3,24 @@ import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }
+) {
+   const id = (await params).id; 
   const session = await getServerSession(authOptions);
       
     if (!session?.user?.companyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   const emp = await prisma.employee.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { department: true },
   })
   return NextResponse.json(emp)
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }
+) {
+   const id = (await params).id; 
   const session = await getServerSession(authOptions);
       
     if (!session?.user?.companyId) {
@@ -24,18 +28,20 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
   const data = await req.json()
   const updated = await prisma.employee.update({
-    where: { id: params.id },
+    where: { id },
     data,
   })
   return NextResponse.json(updated)
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }
+) {
+   const id = (await params).id; 
   const session = await getServerSession(authOptions);
       
     if (!session?.user?.companyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-  await prisma.employee.delete({ where: { id: params.id } })
+  await prisma.employee.delete({ where: { id } })
   return NextResponse.json({ success: true })
 }

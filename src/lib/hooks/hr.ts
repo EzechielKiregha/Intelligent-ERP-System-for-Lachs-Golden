@@ -16,6 +16,74 @@ export function useHRSummary() {
     },
   })
 }
+interface Emp {
+  id: string,
+  firstName: string,
+  lastName: string,
+  email: string,
+  jobTitle: string,
+  department: { name: string },
+  createdAt: string,
+}
+// Preview recent employees
+export function useHREmployeesPreview() {
+  return useQuery({
+    queryKey: ['recent-employees'],
+    queryFn: async () => {
+      const { data } = await axiosdb.get<Emp[]>('/api/hr/preview/employees')
+      return data
+    }
+  })
+}
+
+interface Task {
+  id: string,
+  title: string,
+  description: string,
+  dueDate: string,
+  assignee: {
+    firstName: string,
+    lastName: string,
+  },
+  createdAt: string,
+}
+
+// Tasks preview
+export function useHRPendingTasksPreview() {
+  return useQuery({
+    queryKey: ['hr-pending-tasks'],
+    queryFn: async () => {
+      const { data } = await axiosdb.get<Task[]>('/api/hr/preview/tasks')
+      return data
+    }
+  })
+}
+
+interface Review {
+  id: string,
+  reviewDate: string,
+  rating: string,
+  comments: string,
+  employee: {
+      firstName: string,
+      lastName: string,
+  },
+  reviewer: {
+      name: string,
+      email: string,
+  },
+}
+
+// Performance reviews preview
+export function useHRRecentReviewsPreview() {
+  return useQuery({
+    queryKey: ['hr-recent-reviews'],
+    queryFn: async () => {
+      const { data } = await axiosdb.get<Review[]>('/api/hr/preview/reviews')
+      return data
+    }
+  })
+}
 
 // 1. Fetch all employees
 export function useEmployees() {
