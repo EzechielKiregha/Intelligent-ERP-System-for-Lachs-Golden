@@ -92,7 +92,7 @@ export function useUpdateProduct() {
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => axiosdb.delete(`${API.delete}/${id}?id=${id}`),
+    mutationFn: (id: string) => axiosdb.delete(`${API.delete}/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey : ['inventory','products'],

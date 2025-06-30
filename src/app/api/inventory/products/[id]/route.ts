@@ -4,9 +4,9 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req:NextRequest) {
-  const {searchParams} = new URL(req.url)
-  const id = searchParams.get("id")
+export async function GET(req:NextRequest,{ params }: { params: Promise<{ id: string }> }
+) {
+   const id = (await params).id; 
   if(!id) return NextResponse.json({"message": "Missing product ID"}, {status: 400})
   const session = await getServerSession(authOptions);
 
@@ -17,9 +17,9 @@ export async function GET(req:NextRequest) {
   return NextResponse.json(prod)
 }
 
-export async function PATCH(req:NextRequest) {
-  const {searchParams} = new URL(req.url)
-  const id = searchParams.get("id")
+export async function PATCH(req:NextRequest,{ params }: { params: Promise<{ id: string }> }
+) {
+   const id = (await params).id; 
   const session = await getServerSession(authOptions);
 
   if(!id) return NextResponse.json({"message": "Missing product ID"}, {status: 400})
@@ -48,10 +48,9 @@ export async function PATCH(req:NextRequest) {
   return NextResponse.json(updated)
 }
 
-export async function DELETE(req : NextRequest) {
-
-  const { searchParams } = new URL(req.url)
-  const id = searchParams.get("id")
+export async function DELETE(req : NextRequest,{ params }: { params: Promise<{ id: string }> }
+) {
+   const id = (await params).id; 
 
   if (!id)  return NextResponse.json({ message : "Product ID is missing"}, {status : 400})
 
