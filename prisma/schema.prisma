@@ -229,7 +229,7 @@ model Payroll {
   payPeriod   String? // e.g., "2025-06" or date-range string
   grossAmount Float?
   taxAmount   Float?
-  netAmount   Float?
+  netAmount   Float
   issuedDate  DateTime?
   notes       String?
   employee    Employee  @relation(fields: [employeeId], references: [id])
