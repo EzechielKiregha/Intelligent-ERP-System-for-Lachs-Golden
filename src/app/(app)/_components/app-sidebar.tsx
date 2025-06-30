@@ -79,7 +79,7 @@ const navMainItems = [
       { title: "Human Resource", url: "/hr" },
       { title: "Employee Management", url: "/hr/employees" },
       { title: "Department Management", url: "/hr/departments" },
-      { title: "Doument Management", url: "/hr/documents" },
+      { title: "Document Management", url: "/hr/documents" },
       { title: "Performance Review", url: "/hr/reviews" },
       { title: "Task Assignment", url: "/hr/tasks" },
       { title: "Payroll", url: "/hr/payroll" },

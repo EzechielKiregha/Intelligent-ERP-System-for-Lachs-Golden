@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { useDeleteDepartment, useDepartments } from '@/lib/hooks/hr'
 import { z } from 'zod'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type Dept = {
   id: string
@@ -76,6 +77,8 @@ export const departmentColumns: ColumnDef<Dept>[] = [
 
 export default function DepartmentTable() {
   const { data, isLoading } = useDepartments()
-  if (isLoading) return <p>Loading...</p>
+  if (isLoading) {
+    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+  }
   return <DataTable data={data || []} columns={departmentColumns} schema={depSchema} typeName='Departments' />
 }

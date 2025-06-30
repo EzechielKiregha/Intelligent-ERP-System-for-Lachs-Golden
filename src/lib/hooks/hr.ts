@@ -155,7 +155,7 @@ export function useDepartments() {
     queryKey: ['hr', 'departments'],
     queryFn: async () => {
       const { data } = await axiosdb.get('/api/hr/departments')
-      return data as Array<{ id: string; name: string; employeeCount: number }>
+      return data as Array<{ id: string; name: string; employeeCount: number, description?: string }>
     },
   })
 }
@@ -163,12 +163,12 @@ export function useDepartments() {
 export function useSaveDepartment() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: async (dept: { id?: string; name: string }) => {
+    mutationFn: async (dept: { id?: string; name: string, desc?: string }) => {
       if (dept.id) {
-        const { data } = await axiosdb.put(`/api/hr/departments/${dept.id}`, { name: dept.name })
+        const { data } = await axiosdb.put(`/api/hr/departments/${dept.id}`, { name: dept.name, description : dept.desc })
         return data
       } else {
-        const { data } = await axiosdb.post('/api/hr/departments', { name: dept.name })
+        const { data } = await axiosdb.post('/api/hr/departments', { name: dept.name, description : dept.desc })
         return data
       }
     },

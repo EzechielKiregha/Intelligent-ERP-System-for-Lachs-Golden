@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { useDeletePayroll, usePayrolls } from '@/lib/hooks/hr'
 import { z } from 'zod'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type PR = {
   id: string
@@ -80,6 +81,8 @@ export const payrollColumns: ColumnDef<PR>[] = [
 
 export default function PayrollTable() {
   const { data, isLoading } = usePayrolls()
-  if (isLoading) return <p>Loading payrolls…</p>
+  if (isLoading) {
+    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+  }
   return <DataTable data={data || []} columns={payrollColumns} schema={payrollSchema} typeName='Payrolls' />
 }

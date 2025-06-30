@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { useDeleteReview, useReviews } from '@/lib/hooks/hr'
 import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { z } from 'zod'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type RV = {
   id: string
@@ -39,6 +40,8 @@ export const reviewColumns: ColumnDef<RV>[] = [
 
 export default function ReviewTable() {
   const { data, isLoading } = useReviews()
-  if (isLoading) return <p>Loading...</p>
+  if (isLoading) {
+    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+  }
   return <DataTable data={data || []} columns={reviewColumns} schema={rvSchema} typeName='Permance Reviews' />
 }

@@ -31,10 +31,9 @@ enum EmployeeStatus {
 }
 
 enum PerformanceRating {
-  POOR
-  AVERAGE
-  GOOD
-  EXCELLENT
+  EXCEEDS
+  MEETS
+  NEEDS_IMPROVEMENT
 }
 
 enum TaskStatus {

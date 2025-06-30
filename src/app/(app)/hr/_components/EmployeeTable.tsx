@@ -11,6 +11,7 @@ import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { useDeleteEmployee, useEmployees } from '@/lib/hooks/hr'
 import { empSchema } from '../employees/_components/ManageEmployeeForm'
 import { EmployeeCellViewer } from './EmployeeCellViewer'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type Emp = {
   id: string
@@ -20,7 +21,7 @@ type Emp = {
   phone?: string
   hireDate?: string
   jobTitle?: string
-  status: 'ACTIVE' | 'INACTIVE' | 'TERMINATED'
+  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
   department: { id: string; name: string } | null
 }
 
@@ -96,6 +97,8 @@ export const employeeColumns: ColumnDef<Emp>[] = [
 
 export default function EmployeeTable() {
   const { data, isLoading } = useEmployees()
-  if (isLoading) return <p>Loading...</p>
+  if (isLoading) {
+    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+  }
   return <DataTable data={data || []} columns={employeeColumns} schema={empSchema} typeName='Employees' />
 }

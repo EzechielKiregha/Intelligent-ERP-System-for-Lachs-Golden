@@ -10,6 +10,7 @@ import BasePopover from '@/components/BasePopover'
 import { toast } from 'react-hot-toast'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useDepartments, useSaveDepartment } from '@/lib/hooks/hr'
+import { Textarea } from '@/components/ui/textarea'
 
 export const depSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -28,7 +29,7 @@ export default function DepartmentFormPopover() {
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<Form>({
     resolver: zodResolver(depSchema),
-    defaultValues: { name: dept?.name || '' },
+    defaultValues: { name: dept?.name || '', description: dept?.description },
   })
 
   useEffect(() => {
@@ -55,6 +56,11 @@ export default function DepartmentFormPopover() {
           <Label htmlFor="name">Name</Label>
           <Input id="name" {...register('name')} />
           {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
+        </div>
+        <div className="md:col-span-2">
+          <Label htmlFor="description">Description</Label>
+          <Textarea id="description" {...register('description')} className="bg-sidebar" />
+          {errors.description && <p className="text-red-600 text-sm">{errors.description.message}</p>}
         </div>
         <Button
           type="submit"

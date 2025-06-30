@@ -8,6 +8,7 @@ import { format } from 'date-fns'
 import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { useDeleteTask, useTasks } from '@/lib/hooks/hr'
 import { z } from 'zod'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type TK = {
   id: string
@@ -21,7 +22,7 @@ const tkSchema = z.object({
   id: z.string(),
   title: z.string().min(1),
   description: z.string().optional(),
-  status: z.enum(['PENDING', 'IN_PROGRESS', 'DONE']),
+  status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'BLOCKED']),
   dueDate: z.string().nullable(),
   assigneeId: z.object({
     firstName: z.string(),
@@ -41,6 +42,8 @@ export const taskColumns: ColumnDef<TK>[] = [
 
 export default function TaskList() {
   const { data, isLoading } = useTasks()
-  if (isLoading) return <p>Loading tasks…</p>
+  if (isLoading) {
+    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+  }
   return <DataTable data={data || []} columns={taskColumns} schema={tkSchema} typeName='Tasks' />
 }

@@ -1,5 +1,5 @@
 // prisma/seed.ts
-import { PerformanceRating, PrismaClient, TaskStatus } from '@/generated/prisma';
+import { EmployeeStatus, PerformanceRating, PrismaClient, TaskStatus } from '@/generated/prisma';
 import { faker } from '@faker-js/faker';
 import { connect } from 'http2';
 
@@ -131,6 +131,7 @@ async function main() {
       const dept = await prisma.department.create({
         data: {
           name: `${faker.company.buzzAdjective()} Dept.`,
+          description: faker.company.catchPhrase(),
           companyId: comp.id,
         },
       });
@@ -146,6 +147,7 @@ async function main() {
             email: faker.internet.email({ firstName, lastName }).toLowerCase(),
             departmentId: dept.id,
             companyId: comp.id,
+            status : faker.helpers.enumValue(EmployeeStatus)
           },
         });
         employees.push({ id: emp.id, companyId: comp.id });

@@ -26,6 +26,7 @@ export async function GET(_: NextRequest) {
       id: d.id,
       name: d.name,
       employeeCount: empCount,
+      description: d.description
     }
   })
   return NextResponse.json(result)

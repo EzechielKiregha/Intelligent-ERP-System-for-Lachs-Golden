@@ -14,17 +14,17 @@ export default function HRDashboardPage() {
         <h1 className="text-3xl font-semibold text-sidebar-foreground">HR Dashboard</h1>
         <div className="flex flex-wrap gap-2">
           <Link href="/hr/employees">
-            <Button className="bg-sidebar-primary hover:bg-sidebar-accent">
+            <Button className="bg-sidebar-primary hover:bg-sidebar-accent cursor-pointer text-sidebar-accent-foreground">
               Manage Employees
             </Button>
           </Link>
           <Link href="/hr/departments">
-            <Button className="bg-sidebar-primary hover:bg-sidebar-accent">
+            <Button className="bg-sidebar-primary hover:bg-sidebar-accent cursor-pointer text-sidebar-accent-foreground">
               Departments
             </Button>
           </Link>
           <Link href="/hr/payroll">
-            <Button className="bg-sidebar-primary hover:bg-sidebar-accent">
+            <Button className="bg-sidebar-primary hover:bg-sidebar-accent cursor-pointer text-sidebar-accent-foreground">
               Payroll
             </Button>
           </Link>
