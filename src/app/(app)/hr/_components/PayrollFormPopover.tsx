@@ -12,8 +12,8 @@ import { Calendar } from '@/components/ui/calendar'
 import { ChevronDownIcon } from 'lucide-react'
 import BasePopover from '@/components/BasePopover'
 import { toast } from 'react-hot-toast'
-import { useSearchParams } from 'next/navigation'
 import { useEmployees, useSavePayroll, useSinglePayroll } from '@/lib/hooks/hr'
+import { useSearchParams } from 'next/navigation'
 
 const payrollSchema = z.object({
   employeeId: z.string(),
@@ -26,9 +26,9 @@ const payrollSchema = z.object({
 })
 type Form = z.infer<typeof payrollSchema>
 
-export default function PayrollFormPopover() {
+export default function PayrollFormPopover({ payrollId }: { payrollId?: string }) {
   const params = useSearchParams()
-  const id = params.get('id') || undefined
+  const id = payrollId ?? params.get('id') ?? undefined
   const { data: pr } = useSinglePayroll(id)
   const emps = useEmployees()
   const save = useSavePayroll()

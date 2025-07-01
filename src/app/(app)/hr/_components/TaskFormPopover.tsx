@@ -26,9 +26,9 @@ const schema = z.object({
 })
 type Form = z.infer<typeof schema>
 
-export default function TaskFormPopover() {
+export default function TaskFormPopover({ taskId }: { taskId?: string }) {
   const params = useSearchParams()
-  const id = params.get('id') || undefined
+  const id = taskId ?? params.get('id') ?? undefined
   const { data: task } = useSingleTask(id)
   const emps = useEmployees()
   const save = useSaveTask()

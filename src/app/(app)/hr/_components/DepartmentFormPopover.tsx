@@ -18,9 +18,9 @@ export const depSchema = z.object({
 })
 type Form = z.infer<typeof depSchema>
 
-export default function DepartmentFormPopover() {
+export default function DepartmentFormPopover({ departmentId }: { departmentId?: string }) {
   const params = useSearchParams()
-  const id = params.get('id') || undefined
+  const id = departmentId ?? params.get('id') ?? undefined
   const { data: list } = useDepartments()
   const dept = list?.find((d) => d.id === id)
   const save = useSaveDepartment()
@@ -65,7 +65,7 @@ export default function DepartmentFormPopover() {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+          className="w-full cursor-pointer bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
         >
           {isEdit ? 'Update' : 'Create'}
         </Button>

@@ -22,7 +22,17 @@ export async function POST(req:NextRequest){
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const companyId = session.user.companyId
+  const ownerId = session.user.id
+
   const body = await req.json()
-  const d = await prisma.document.create({ data: body })
+  const { title, fileUrl, description} = body
+  const d = await prisma.document.create({ data: {
+    title,
+    fileUrl,
+    description,
+    companyId,
+    ownerId
+  } })
   return NextResponse.json(d)
 }

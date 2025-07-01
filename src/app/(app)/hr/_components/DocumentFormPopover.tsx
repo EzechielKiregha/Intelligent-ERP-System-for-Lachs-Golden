@@ -21,9 +21,9 @@ const schema = z.object({
 
 type Form = z.infer<typeof schema>
 
-export default function DocumentFormPopover() {
+export default function DocumentFormPopover({ documentId }: { documentId?: string }) {
   const params = useSearchParams()
-  const id = params.get('id') || undefined
+  const id = documentId ?? params.get('id') ?? undefined
   const { data: doc } = useSingleDocument(id)
   const save = useSaveDocument()
 

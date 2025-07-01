@@ -6,9 +6,9 @@ import { authOptions } from '@/lib/auth';
 export async function GET(_: NextRequest) {
   const session = await getServerSession(authOptions);
         
-      if (!session?.user?.companyId) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const list = await prisma.performanceReview.findMany({
     include: {
       reviewer: { select: { name: true } },
@@ -20,7 +20,28 @@ export async function GET(_: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+        
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const companyId = session.user.companyId
+
   const body = await req.json()
-  const created = await prisma.performanceReview.create({ data: body })
+  const {
+    reviewDate,
+    rating,
+    comments,
+    reviewerId,
+    employeeId,
+  } = body
+  const created = await prisma.performanceReview.create({ data: {
+    reviewDate,
+    rating,
+    comments,
+    reviewerId,
+    employeeId,
+    companyId
+  } })
   return NextResponse.json(created)
 }

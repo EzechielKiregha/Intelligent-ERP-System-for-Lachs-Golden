@@ -23,9 +23,9 @@ const schema = z.object({
 })
 type Form = z.infer<typeof schema>
 
-export default function ReviewFormPopover() {
+export default function ReviewFormPopover({ reviewId }: { reviewId?: string }) {
   const params = useSearchParams()
-  const id = params.get('id') || undefined
+  const id = reviewId ?? params.get('id') ?? undefined
   const { data: r } = useReviews() // for single you’d use useSingleReview; here quick
   const save = useSaveReview()
   const [date, setDate] = useState<Date | undefined>(r?.find(x => x.id === id)?.reviewDate ? new Date(r.find(x => x.id === id)!.reviewDate) : undefined)

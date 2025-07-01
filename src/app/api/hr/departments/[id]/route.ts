@@ -11,15 +11,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       if (!session?.user?.companyId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
-  const { name } = await req.json()
+  const { name, description } = await req.json()
   const updated = await prisma.department.update({
     where: { id },
-    data: { name },
+    data: { name, description },
     include: { _count: { select: { employees: true } } },
   })
   return NextResponse.json({
     id: updated.id,
     name: updated.name,
+    description: updated.description,
     employeeCount: updated._count.employees,
   })
 }

@@ -47,9 +47,7 @@ export async function POST(req: NextRequest) {
     data : {
       name,
       description,
-      company : { connect : {
-        id : companyId
-      }}
+      companyId
     }
   })
 
