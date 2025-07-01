@@ -53,7 +53,7 @@ export const departmentColumns: ColumnDef<Dept>[] = [
   },
   {
     accessorKey: 'description',
-    header: 'Department',
+    header: 'Description',
     cell: ({ row }) => <span>{row.original.description || '—'}</span>,
   },
   {

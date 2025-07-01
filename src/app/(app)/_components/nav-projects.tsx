@@ -92,9 +92,8 @@ export function NavProjects({ auditLogs }: AuditLog) {
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
-            <Button variant="link" onClick={() => nav('/dashnoard/activity')}>
+            <Button variant="link" onClick={() => nav('/dashboard/activity')}>
               More
-              <MoreHorizontal className="text-sidebar-foreground/70" />
             </Button>
           </SidebarMenuButton>
         </SidebarMenuItem>

@@ -9,8 +9,12 @@ export async function GET(_: NextRequest) {
       if (!session?.user?.companyId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
+      const companyId = session.user.companyId
   // Include employee count via relation count
   const list = await prisma.department.findMany({
+    where:{
+      companyId
+    },
     include: { _count: { select: { employees: true } } },
     orderBy: { name: 'asc' },
   })
@@ -19,6 +23,7 @@ export async function GET(_: NextRequest) {
   const result = list.map(async (d) => {
     const empCount = await prisma.employee.count({
       where:{
+        companyId,
         departmentId : d.id
       }
     })
@@ -34,7 +39,6 @@ export async function GET(_: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
-        
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -51,5 +55,5 @@ export async function POST(req: NextRequest) {
     }
   })
 
-  return NextResponse.json({ id: dept.id, name: dept.name, employeeCount: 0 })
+  return NextResponse.json({ id: dept.id, name: dept.name, employeeCount: 0, description: dept.description })
 }

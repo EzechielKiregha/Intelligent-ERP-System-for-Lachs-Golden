@@ -18,9 +18,9 @@ export const depSchema = z.object({
 })
 type Form = z.infer<typeof depSchema>
 
-export default function DepartmentFormPopover({ departmentId }: { departmentId?: string }) {
+export default function DepartmentFormPopover() {
   const params = useSearchParams()
-  const id = departmentId ?? params.get('id') ?? undefined
+  const id = params.get('id') ?? undefined
   const { data: list } = useDepartments()
   const dept = list?.find((d) => d.id === id)
   const save = useSaveDepartment()

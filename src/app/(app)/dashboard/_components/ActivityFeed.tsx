@@ -21,6 +21,8 @@ const ActivityFeed = ({
   auditLogs
 }: AuditLog) => {
 
+  const nav = useNavigation()
+
   return (
     <Card className="bg-sidebar shadow">
       <CardHeader>
@@ -33,7 +35,7 @@ const ActivityFeed = ({
           <p className="text-sm text-gray-600 dark:text-gray-400">No recent activity found.</p>
         ) : (
           <><ul className="space-y-2">
-            {auditLogs && auditLogs.slice(0, 8).map((log) => (
+            {auditLogs && auditLogs.slice(0, 5).map((log) => (
               <li key={log.id} className="flex justify-between items-center">
                 <div>
                   <p className="text-sm text-gray-800 dark:text-gray-200">{log.action}</p>
@@ -45,10 +47,11 @@ const ActivityFeed = ({
                 <p className="text-sm text-gray-600 dark:text-gray-400">{log.description}</p>
               </li>
             ))}
-          </ul><Button variant="link" onClick={() => {
-            const nav = useNavigation();
-            nav('/dashnoard/activity');
-          }}>More</Button></>
+          </ul>
+            <Button variant="link" onClick={() => nav('/dashboard/activity')}>
+              More
+            </Button>
+          </>
         )}
       </CardContent>
     </Card>
