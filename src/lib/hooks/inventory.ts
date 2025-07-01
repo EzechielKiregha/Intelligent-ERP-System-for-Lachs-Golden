@@ -70,15 +70,9 @@ export function useCreateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (product: any) => axiosdb.post(API.create, product),
-    onSuccess()  {
-      queryClient.invalidateQueries({
-        queryKey : ['inventory','products'],
-      }),
-      toast.success("Created Successfully")
-    },
-    onError () {
-      toast.error("Failed")
-    }
+    onSuccess: () => queryClient.invalidateQueries({
+      queryKey : ['inventory','products'],
+    }),
   });
 }
 
@@ -86,12 +80,9 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (product: any) => axiosdb.put(API.update, product),
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey : ['inventory','products'],
-      }),
-      toast.success("Updated Successfully")
-    },
+    onSuccess: () => queryClient.invalidateQueries({
+      queryKey : ['inventory','products'],
+    }),
     onError () {
       toast.error("Failed")
     }
