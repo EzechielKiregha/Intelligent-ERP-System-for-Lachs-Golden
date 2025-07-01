@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
   async function calculateSum(type: 'INCOME' | 'EXPENSE', start: Date, end: Date) {
     const transactions = await prisma.transaction.findMany({
       where: {
-        companyId,
+        // companyId,
         category: { type },
         date: { gte: start, lte: end },
       },

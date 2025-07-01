@@ -25,7 +25,7 @@ const ActivityFeed = () => {
     <div className="p-6 space-y-6">
       {/* Page Header */}
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold text-sidebar-foreground">Reports</h1>
+        <h1 className="text-3xl font-bold text-sidebar-foreground">Activity Feed</h1>
         <p className="text-gray-600 dark:text-gray-400">
           Real time activity feed updated of your business actions and performance, very detailed transactions, revenue, and expenses.
         </p>
@@ -35,7 +35,7 @@ const ActivityFeed = () => {
         <Card className="bg-sidebar shadow">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-              Activity Feed
+
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
