@@ -9,6 +9,7 @@ export async function GET(_: NextRequest) {
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const companyId = session.user.companyId
   try {
     const [
       totalEmployees,
@@ -17,11 +18,18 @@ export async function GET(_: NextRequest) {
       documentCount,
       payrollThisMonth,
     ] = await Promise.all([
-      prisma.employee.count(),
-      prisma.department.count(),
-      prisma.task.count({ where: { status: 'PENDING' } }),
-      prisma.document.count(),
+      prisma.employee.count({
+        where:{companyId}
+      }),
+      prisma.department.count({
+        where:{companyId}
+      }),
+      prisma.task.count({ where: { companyId, status: 'PENDING' } }),
+      prisma.document.count({
+        where:{companyId}
+      }),
       prisma.payroll.findMany({
+        where:{companyId},
         select : {
           id : true,
           netAmount : true

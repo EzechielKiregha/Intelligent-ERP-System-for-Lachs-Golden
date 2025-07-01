@@ -9,7 +9,9 @@ export async function GET() {
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const companyId = session.user.companyId
   const list = await prisma.document.findMany({
+    where:{companyId},
     include:{ owner:{ select:{ firstName:true,lastName:true } } },
     orderBy:{ uploadedAt:'desc' }
   })

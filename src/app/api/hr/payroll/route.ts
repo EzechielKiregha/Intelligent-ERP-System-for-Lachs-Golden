@@ -6,10 +6,13 @@ import { authOptions } from '@/lib/auth';
 export async function GET(_: NextRequest) {
   const session = await getServerSession(authOptions);
       
-    if (!session?.user?.companyId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const companyId = session.user.companyId
+  
   const list = await prisma.payroll.findMany({
+    where:{companyId},
     include: {
       employee: { select: { firstName: true, lastName: true } }
     },

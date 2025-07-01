@@ -3,8 +3,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import DepartmentFormPopover from '../../_components/DepartmentFormPopover'
 import { ArrowLeft } from 'lucide-react'
+import DepartmentForm from '../../_components/DepartmentForm'
 
 export default function ManageDepartmentPage() {
   const params = useSearchParams()
@@ -29,7 +29,7 @@ export default function ManageDepartmentPage() {
       </p>
 
       <div className="bg-sidebar rounded-lg border-[var(--sidebar-border)] p-6">
-        <DepartmentFormPopover departmentId={id} />
+        <DepartmentForm departmentId={id} />
       </div>
     </div>
   )

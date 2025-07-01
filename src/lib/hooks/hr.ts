@@ -11,7 +11,7 @@ export function useHRSummary() {
         departmentCount: number
         pendingTasks: number
         documentCount: number
-        payrollThisMonth: number
+        totalPayrollThisMonth: number
       }
     },
   })

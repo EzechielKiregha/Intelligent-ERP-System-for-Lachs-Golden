@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const companyId = session.user.companyId
 
   const { searchParams } = new URL(req.url);
   const catId = searchParams.get("id");
@@ -18,7 +19,8 @@ export async function GET(req: NextRequest) {
   try {
     const category = await prisma.category.findUnique({
       where : {
-        id:catId
+        id:catId,
+        companyId
       },
       select: {
         id: true,

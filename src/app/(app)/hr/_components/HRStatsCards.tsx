@@ -25,7 +25,7 @@ export default function HRStatsCards() {
     departmentCount,
     pendingTasks,
     documentCount,
-    payrollThisMonth,
+    totalPayrollThisMonth,
   } = data
 
   const formatNumber = (v: number) => v.toLocaleString()
@@ -64,7 +64,7 @@ export default function HRStatsCards() {
       />
       <MetricCard
         description="Payroll (This Month)"
-        value={payrollThisMonth}
+        value={totalPayrollThisMonth}
         formatValue={formatCurrency}
         footerMessage="Net paid"
       />

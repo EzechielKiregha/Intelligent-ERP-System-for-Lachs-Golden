@@ -1,12 +1,7 @@
 "use client"
 import { useMutation,useQueryClient, useQuery } from '@tanstack/react-query';
 import axiosdb from '@/lib/axios';
-
-interface SummaryResponse {
-  totalRevenue: number;
-  totalExpenses: number;
-  netProfit: number;
-}
+import toast from 'react-hot-toast';
 
 interface SummaryPeriodResponse {
   totalRevenue: number;
@@ -97,6 +92,7 @@ export function useDeleteCategory() {
     },
     onSuccess() {
       qc.invalidateQueries({ queryKey: ['finance', 'categories'] });
+      toast.success("Created Successfully")
     },
   });
 }
@@ -109,9 +105,6 @@ interface ForecastResponse {
 }
 
 export function useFinanceForecast() {
-
-  
-
   return useQuery<ForecastResponse, Error>(
     {
       queryKey: ['finance', 'forecast'],
@@ -152,5 +145,8 @@ export function useExportFinanceReport() {
       const { data } = await axiosdb.post(`/api/finance/export`, params);
       return data;
     },
+    onSuccess () {
+      toast.success("Exported Successfully")
+    }
   });
 }

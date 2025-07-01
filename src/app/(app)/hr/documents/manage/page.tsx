@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import DocumentFormPopover from '../../_components/DocumentFormPopover'
+import DocumentForm from '../../_components/DocumentForm'
 
 export default function ManageDocumentPage() {
   const params = useSearchParams()
@@ -29,7 +30,7 @@ export default function ManageDocumentPage() {
       </p>
 
       <div className="bg-sidebar rounded-lg border-[var(--sidebar-border)] p-6">
-        <DocumentFormPopover documentId={id} />
+        <DocumentForm documentId={id} />
       </div>
     </div>
   )

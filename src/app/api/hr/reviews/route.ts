@@ -9,7 +9,9 @@ export async function GET(_: NextRequest) {
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const companyId = session.user.companyId
   const list = await prisma.performanceReview.findMany({
+    where:{companyId},
     include: {
       reviewer: { select: { name: true } },
       employee: { select: { firstName: true, lastName: true } },

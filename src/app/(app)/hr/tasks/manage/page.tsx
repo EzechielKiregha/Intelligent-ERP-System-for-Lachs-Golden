@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import TaskFormPopover from '../../_components/TaskFormPopover'
+import TaskForm from '../../_components/TaskForm'
 
 export default function ManageTaskPage() {
   const params = useSearchParams()
@@ -29,7 +30,7 @@ export default function ManageTaskPage() {
       </p>
 
       <div className="bg-sidebar rounded-lg border-[var(--sidebar-border)] p-6">
-        <TaskFormPopover taskId={id} />
+        <TaskForm taskId={id} />
       </div>
     </div>
   )

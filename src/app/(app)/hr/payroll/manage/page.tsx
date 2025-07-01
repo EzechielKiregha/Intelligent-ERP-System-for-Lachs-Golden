@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import PayrollFormPopover from '../../_components/PayrollFormPopover'
 import { ArrowLeft } from 'lucide-react'
+import PayrollForm from '../../_components/PayrollForm'
 
 export default function ManagePayrollPage() {
   const params = useSearchParams()
@@ -29,7 +30,7 @@ export default function ManagePayrollPage() {
       </p>
 
       <div className="bg-sidebar rounded-lg border-[var(--sidebar-border)] p-6">
-        <PayrollFormPopover payrollId={id} />
+        <PayrollForm payrollId={id} />
       </div>
     </div>
   )

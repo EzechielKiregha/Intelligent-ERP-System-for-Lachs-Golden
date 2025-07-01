@@ -45,7 +45,7 @@ interface AuditLog {
 
 export function NavProjects({ auditLogs }: AuditLog) {
   const { isMobile } = useSidebar();
-  const router = useRouter();
+  const nav = useNavigation()
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -73,11 +73,11 @@ export function NavProjects({ auditLogs }: AuditLog) {
                 side={isMobile ? 'bottom' : 'right'}
                 align={isMobile ? 'end' : 'start'}
               >
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => nav("/dashboard/activity")}>
                   <Folder className="text-muted-foreground" />
                   <span>View Activity</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                {/* <DropdownMenuItem >
                   <Forward className="text-muted-foreground" />
                   <span>Share Activity</span>
                 </DropdownMenuItem>
@@ -85,18 +85,17 @@ export function NavProjects({ auditLogs }: AuditLog) {
                 <DropdownMenuItem>
                   <Trash2 className="text-muted-foreground" />
                   <span>Delete Activity</span>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
-            <MoreHorizontal className="text-sidebar-foreground/70" />
-            <Button variant="link" onClick={() => {
-              const nav = useNavigation();
-              nav('/dashnoard/activity');
-            }}>More</Button>
+            <Button variant="link" onClick={() => nav('/dashnoard/activity')}>
+              More
+              <MoreHorizontal className="text-sidebar-foreground/70" />
+            </Button>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

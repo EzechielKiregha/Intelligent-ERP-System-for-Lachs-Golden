@@ -6,10 +6,12 @@ import { getServerSession } from 'next-auth';
 export async function GET() {
   const session = await getServerSession(authOptions);
           
-        if (!session?.user?.companyId) {
-          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+    if (!session?.user?.companyId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const companyId = session.user.companyId
   const list = await prisma.task.findMany({
+    where:{companyId},
     include:{ assignee:{ select:{ firstName:true,lastName:true } } },
     orderBy:{ createdAt:'desc' }
   })

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import ReviewFormPopover from '../../_components/ReviewFormPopover'
+import ReviewForm from '../../_components/ReviewForm'
 
 export default function ManageReviewPage() {
   const params = useSearchParams()
@@ -29,7 +30,7 @@ export default function ManageReviewPage() {
       </p>
 
       <div className="bg-sidebar rounded-lg border-[var(--sidebar-border)] p-6">
-        <ReviewFormPopover reviewId={id} />
+        <ReviewForm reviewId={id} />
       </div>
     </div>
   )

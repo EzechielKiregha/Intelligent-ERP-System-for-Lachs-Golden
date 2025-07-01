@@ -67,7 +67,7 @@ const navMainItems = [
     icon: Frame,
     items: [
       { title: "Inventory", url: "/inventory" },
-      { title: "Stock Management", url: "/inventory/manage" },
+      { title: "Stock", url: "/inventory/manage" },
       { title: "Low Stock Alerts", url: "/inventory/alerts" },
     ],
   },
@@ -77,9 +77,9 @@ const navMainItems = [
     icon: Map,
     items: [
       { title: "Human Resource", url: "/hr" },
-      { title: "Employee Management", url: "/hr/employees" },
-      { title: "Department Management", url: "/hr/departments" },
-      { title: "Document Management", url: "/hr/documents" },
+      { title: "Employees", url: "/hr/employees" },
+      { title: "Departments", url: "/hr/departments" },
+      { title: "Company Docs", url: "/hr/documents" },
       { title: "Performance Review", url: "/hr/reviews" },
       { title: "Task Assignment", url: "/hr/tasks" },
       { title: "Payroll", url: "/hr/payroll" },
@@ -90,7 +90,7 @@ const navMainItems = [
     url: "/crm",
     icon: Command,
     items: [
-      { title: "Customer Management", url: "/crm/customers" },
+      { title: "Customer", url: "/crm/customers" },
       { title: "Sales Pipeline", url: "/crm/sales" },
     ],
   },
