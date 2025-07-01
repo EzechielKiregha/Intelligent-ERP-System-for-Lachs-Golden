@@ -186,12 +186,12 @@ export function useDeleteDepartment() {
     mutationFn: async (id: string) => {
       await axiosdb.delete(`/api/hr/departments/${id}`)
     },
-    onSuccess: () => {qc.invalidateQueries({
-      queryKey : ['hr', 'departments']
-      
-    }),
-    toast.success("Deleted Successfully")
-  }
+    onSuccess () { 
+      qc.invalidateQueries({
+        queryKey : ['hr', 'departments']
+      }),
+      toast.success("Deleted Successfully")
+    }
   })
 }
 
