@@ -12,12 +12,14 @@ import { Skeleton } from '@/components/ui/skeleton'
 type Dept = {
   id: string
   name: string
+  description?: string
   employeeCount: number
 }
 
 const depSchema = z.object({
   id: z.string(),
   name: z.string(),
+  description: z.string().optional(),
   employeeCount: z.number()
 })
 
@@ -42,11 +44,17 @@ export const departmentColumns: ColumnDef<Dept>[] = [
   {
     accessorKey: 'name',
     header: 'Department',
+    cell: ({ row }) => <span>{row.original.name}</span>,
   },
   {
     accessorKey: 'employeeCount',
     header: 'Employees',
     cell: ({ row }) => <span>{row.original.employeeCount}</span>,
+  },
+  {
+    accessorKey: 'description',
+    header: 'Department',
+    cell: ({ row }) => <span>{row.original.description || '—'}</span>,
   },
   {
     id: 'actions',
@@ -78,7 +86,7 @@ export const departmentColumns: ColumnDef<Dept>[] = [
 export default function DepartmentTable() {
   const { data, isLoading } = useDepartments()
   if (isLoading) {
-    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+    return <Skeleton className="h-64 w-full rounded-lg bg-sidebar" />
   }
   return <DataTable data={data || []} columns={departmentColumns} schema={depSchema} typeName='Departments' />
 }

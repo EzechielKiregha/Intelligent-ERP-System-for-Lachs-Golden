@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axiosdb from '@/lib/axios'
+import toast from 'react-hot-toast'
 
 export function useHRSummary() {
   return useQuery({
@@ -149,13 +150,14 @@ export function useDeleteEmployee() {
 }
 
 // DEPARTMENTS HOOKS
+interface Dept { id: string; name: string; employeeCount: number, description?: string }
 
 export function useDepartments() {
   return useQuery({
     queryKey: ['hr', 'departments'],
     queryFn: async () => {
-      const { data } = await axiosdb.get('/api/hr/departments')
-      return data as Array<{ id: string; name: string; employeeCount: number, description?: string }>
+      const { data } = await axiosdb.get<Dept[]>('/api/hr/departments')
+      return data
     },
   })
 }
@@ -184,29 +186,34 @@ export function useDeleteDepartment() {
     mutationFn: async (id: string) => {
       await axiosdb.delete(`/api/hr/departments/${id}`)
     },
-    onSuccess: () => qc.invalidateQueries({
+    onSuccess: () => {qc.invalidateQueries({
       queryKey : ['hr', 'departments']
+      
     }),
+    toast.success("Deleted Successfully")
+  }
   })
 }
 
 // PAYROLL HOOKS
+
+interface Payroll {
+  id: string
+  employeeId: string
+  payPeriod: string | null
+  grossAmount: number
+  taxAmount: number | null
+  netAmount: number | null
+  issuedDate: string | null
+  notes: string | null
+  employee: { firstName: string; lastName: string }
+}
 export function usePayrolls() {
   return useQuery({
     queryKey: ['hr', 'payrolls'],
     queryFn: async () => {
-      const { data } = await axiosdb.get('/api/hr/payroll')
-      return data as Array<{
-        id: string
-        employeeId: string
-        payPeriod: string | null
-        grossAmount: number
-        taxAmount: number | null
-        netAmount: number | null
-        issuedDate: string | null
-        notes: string | null
-        employee: { firstName: string; lastName: string }
-      }>
+      const { data } = await axiosdb.get<Payroll[]>('/api/hr/payroll')
+      return data
     },
   })
 }
