@@ -9,6 +9,7 @@ import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { useDeleteTask, useTasks } from '@/lib/hooks/hr'
 import { z } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
+import toast from 'react-hot-toast'
 
 type TK = {
   id: string
@@ -37,7 +38,22 @@ export const taskColumns: ColumnDef<TK>[] = [
   { id: 'assignee', header: 'Assignee', cell: ({ row }) => row.original.assignee ? `${row.original.assignee.firstName} ${row.original.assignee.lastName}` : '—' },
   { accessorKey: 'status', header: 'Status' },
   { accessorKey: 'dueDate', header: 'Due', cell: ({ row }) => row.original.dueDate ? format(new Date(row.original.dueDate), 'yyyy-MM-dd') : '—' },
-  { id: 'actions', cell: ({ row }) => { const del = useDeleteTask(); return <div className="flex gap-2"><Link href={`/hr/tasks/manage?id=${row.original.id}`}><Button size="icon" variant="ghost"><Edit2 /></Button></Link><Button size="icon" variant="ghost" onClick={() => del.mutate(row.original.id)}><Trash2 /></Button></div> } }
+  {
+    id: 'actions', cell: ({ row }) => {
+      const del = useDeleteTask(); return <div className="flex gap-2"><Link href={`/hr/tasks/manage?id=${row.original.id}`}><Button size="icon" variant="ghost"><Edit2 /></Button></Link><Button
+        variant="ghost"
+        size="icon"
+        onClick={() => {
+          del.mutate(row.original.id)
+          if (del.isSuccess) toast.success("Department Deleted");
+          else toast.error("Failed to delete");
+        }}
+      >
+        <Trash2 />
+      </Button>
+      </div>
+    }
+  }
 ]
 
 export default function TaskList() {

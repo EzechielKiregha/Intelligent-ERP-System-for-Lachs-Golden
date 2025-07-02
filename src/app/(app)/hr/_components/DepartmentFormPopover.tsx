@@ -19,27 +19,17 @@ export const depSchema = z.object({
 type Form = z.infer<typeof depSchema>
 
 export default function DepartmentFormPopover() {
-  const params = useSearchParams()
-  const id = params.get('id') ?? undefined
-  const { data: list } = useDepartments()
-  const dept = list?.find((d) => d.id === id)
   const save = useSaveDepartment()
   const router = useRouter()
-  const isEdit = Boolean(dept)
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<Form>({
     resolver: zodResolver(depSchema),
-    defaultValues: { name: dept?.name || '', description: dept?.description },
   })
-
-  useEffect(() => {
-    reset({ name: dept?.name || '' })
-  }, [dept, reset])
 
   const onSubmit = async (data: Form) => {
     try {
-      await save.mutateAsync({ id, name: data.name })
-      toast.success(isEdit ? 'Department updated' : 'Department created')
+      await save.mutateAsync({ name: data.name, desc: data.description })
+      toast.success('Department created')
       router.push('/hr/departments')
     } catch {
       toast.error('Save failed')
@@ -48,8 +38,8 @@ export default function DepartmentFormPopover() {
 
   return (
     <BasePopover
-      title={isEdit ? 'Edit Department' : 'New Department'}
-      buttonLabel={isEdit ? 'Edit Dept.' : 'Add Department'}
+      title={'New Department'}
+      buttonLabel={'Add Department'}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 bg-sidebar text-sidebar-foreground rounded-lg max-w-sm">
         <div>
@@ -67,7 +57,7 @@ export default function DepartmentFormPopover() {
           disabled={isSubmitting}
           className="w-full cursor-pointer bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
         >
-          {isEdit ? 'Update' : 'Create'}
+          Create
         </Button>
       </form>
     </BasePopover>

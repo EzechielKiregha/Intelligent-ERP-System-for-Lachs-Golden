@@ -8,19 +8,20 @@ import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { useDeleteDepartment, useDepartments } from '@/lib/hooks/hr'
 import { z } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
+import toast from 'react-hot-toast'
 
 type Dept = {
   id: string
   name: string
-  description?: string
   employeeCount: number
+  description?: string
 }
 
 const depSchema = z.object({
   id: z.string(),
   name: z.string(),
-  description: z.string().optional(),
-  employeeCount: z.number()
+  employeeCount: z.number(),
+  description: z.string().optional()
 })
 
 export const departmentColumns: ColumnDef<Dept>[] = [
@@ -73,7 +74,11 @@ export const departmentColumns: ColumnDef<Dept>[] = [
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => del.mutate(row.original.id)}
+            onClick={() => {
+              del.mutate(row.original.id)
+              if (del.isSuccess) toast.success("Department Deleted");
+              else toast.error("Failed to delete");
+            }}
           >
             <Trash2 />
           </Button>

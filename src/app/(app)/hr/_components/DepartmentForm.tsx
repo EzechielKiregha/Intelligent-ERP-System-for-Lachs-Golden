@@ -33,12 +33,12 @@ export default function DepartmentForm({ departmentId }: { departmentId?: string
   })
 
   useEffect(() => {
-    reset({ name: dept?.name || '' })
+    reset({ name: dept?.name || '', description: dept?.description || '' })
   }, [dept, reset])
 
   const onSubmit = async (data: Form) => {
     try {
-      await save.mutateAsync({ id, name: data.name })
+      await save.mutateAsync({ id, name: data.name, desc: data.description })
       toast.success(isEdit ? 'Department updated' : 'Department created')
       router.push('/hr/departments')
     } catch {

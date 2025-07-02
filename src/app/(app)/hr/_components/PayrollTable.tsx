@@ -9,10 +9,10 @@ import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { useDeletePayroll, usePayrolls } from '@/lib/hooks/hr'
 import { z } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
+import toast from 'react-hot-toast'
 
 type PR = {
   id: string
-  payPeriod: string | null
   grossAmount: number
   taxAmount: number | null
   netAmount: number | null
@@ -48,7 +48,6 @@ export const payrollColumns: ColumnDef<PR>[] = [
     header: 'Employee',
     cell: ({ row }) => `${row.original.employee.firstName} ${row.original.employee.lastName}`
   },
-  { accessorKey: 'payPeriod', header: 'Period' },
   {
     accessorKey: 'issuedDate',
     header: 'Issued',
@@ -70,7 +69,15 @@ export const payrollColumns: ColumnDef<PR>[] = [
           <Link href={`/hr/payroll/manage?id=${row.original.id}`}>
             <Button size="icon" variant="ghost"><Edit2 /></Button>
           </Link>
-          <Button size="icon" variant="ghost" onClick={() => del.mutate(row.original.id)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              del.mutate(row.original.id)
+              if (del.isSuccess) toast.success("Payroll Deleted");
+              else toast.error("Failed to delete");
+            }}
+          >
             <Trash2 />
           </Button>
         </div>

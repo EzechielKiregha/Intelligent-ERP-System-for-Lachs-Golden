@@ -21,25 +21,19 @@ const schema = z.object({
 
 type Form = z.infer<typeof schema>
 
-export default function DocumentFormPopover({ documentId }: { documentId?: string }) {
-  const params = useSearchParams()
-  const id = documentId ?? params.get('id') ?? undefined
-  const { data: doc } = useSingleDocument(id)
+export default function DocumentFormPopover() {
   const save = useSaveDocument()
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<Form>({
     resolver: zodResolver(schema),
-    defaultValues: doc || {}
   })
 
-  useEffect(() => { reset(doc || {}) }, [doc, reset])
-
   const onSubmit = (d: Form) => {
-    save.mutate({ id, ...d }, { onSuccess: () => reset() })
+    save.mutate({ ...d }, { onSuccess: () => reset() })
   }
 
   return (
-    <BasePopover title={id ? 'Edit Document' : 'New Document'} buttonLabel={id ? 'Edit Doc' : 'Add Document'}>
+    <BasePopover title={'New Document'} buttonLabel={'Add Document'}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 bg-sidebar text-sidebar-foreground rounded-lg max-w-sm">
         <div>
           <Label>Title</Label>
@@ -56,7 +50,7 @@ export default function DocumentFormPopover({ documentId }: { documentId?: strin
           <Textarea {...register('description')} />
         </div>
         <Button type="submit" disabled={isSubmitting} className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
-          {id ? 'Update' : 'Create'}
+          {'Create'}
         </Button>
       </form>
     </BasePopover>

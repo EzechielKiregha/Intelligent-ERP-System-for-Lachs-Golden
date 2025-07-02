@@ -24,40 +24,30 @@ const empSchema = z.object({
   phone: z.string().optional(),
   hireDate: z.date().optional(),
   jobTitle: z.string().optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'TERMINATED']),
+  status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']),
   departmentId: z.string().optional(),
 })
 
 type EmpForm = z.infer<typeof empSchema>
 
 export default function EmployeeFormPopover() {
-  const params = useSearchParams()
-  const id = params.get('id') || undefined
-  const { data: emp } = useSingleEmployee(id)
   const deps = useDepartments()
   const save = useSaveEmployee()
-  const isEdit = Boolean(emp)
-  const [date, setDate] = useState<Date | undefined>(emp?.hireDate ? new Date(emp.hireDate) : undefined)
+  const [date, setDate] = useState<Date | undefined>()
 
   const { register, handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm<EmpForm>({
     resolver: zodResolver(empSchema),
-    defaultValues: emp ? {
-      ...emp,
-      hireDate: emp.hireDate ? new Date(emp.hireDate) : undefined
-    } : {}
+    defaultValues: {}
   })
 
-  useEffect(() => {
-    if (emp) reset({ ...emp, hireDate: emp.hireDate ? new Date(emp.hireDate) : undefined })
-  }, [emp, reset])
 
   const onSubmit = (data: EmpForm) => {
-    save.mutate({ id, ...data },
+    save.mutate({ ...data },
       { onSuccess: () => { toast.success('Saved'); reset() } })
   }
 
   return (
-    <BasePopover title={isEdit ? 'Edit Employee' : 'New Employee'} buttonLabel={isEdit ? 'Edit' : 'Add Employee'}>
+    <BasePopover title={'New Employee'} buttonLabel={'Add Employee'}>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4 p-4 bg-sidebar text-sidebar-foreground rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -113,7 +103,7 @@ export default function EmployeeFormPopover() {
               <Select onValueChange={field.onChange} value={field.value}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {['ACTIVE', 'INACTIVE', 'TERMINATED'].map(s =>
+                  {['ACTIVE', 'INACTIVE', 'SUSPENDED'].map(s =>
                     <SelectItem key={s} value={s}>{s}</SelectItem>
                   )}
                 </SelectContent>
@@ -139,7 +129,7 @@ export default function EmployeeFormPopover() {
           <Input {...register('phone')} />
         </div>
         <Button type="submit" disabled={isSubmitting} className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
-          {isEdit ? 'Update' : 'Create'}
+          {'Create'}
         </Button>
       </form>
     </BasePopover>

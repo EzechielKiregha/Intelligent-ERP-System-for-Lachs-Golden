@@ -26,18 +26,14 @@ const payrollSchema = z.object({
 })
 type Form = z.infer<typeof payrollSchema>
 
-export default function PayrollFormPopover({ payrollId }: { payrollId?: string }) {
-  const params = useSearchParams()
-  const id = payrollId ?? params.get('id') ?? undefined
-  const { data: pr } = useSinglePayroll(id)
+export default function PayrollFormPopover() {
+
   const emps = useEmployees()
   const save = useSavePayroll()
 
   const [date, setDate] = useState<Date | undefined>(
-    pr?.issuedDate ? new Date(pr.issuedDate) : undefined
   )
 
-  const isEdit = Boolean(pr)
 
   const {
     register,
@@ -47,29 +43,13 @@ export default function PayrollFormPopover({ payrollId }: { payrollId?: string }
     formState: { errors, isSubmitting },
   } = useForm<Form>({
     resolver: zodResolver(payrollSchema),
-    defaultValues: {
-      ...pr,
-      grossAmount: pr?.grossAmount ?? 0,
-      taxAmount: pr?.taxAmount ?? 0,
-      netAmount: pr?.netAmount ?? 0,
-      issuedDate: pr?.issuedDate ? new Date(pr.issuedDate) : null,
-    } as any,
   })
 
-  useEffect(() => {
-    if (pr) {
-      reset({
-        ...pr,
-        issuedDate: pr.issuedDate ? new Date(pr.issuedDate) : null,
-      } as any)
-      setDate(pr.issuedDate ? new Date(pr.issuedDate) : undefined)
-    }
-  }, [pr, reset])
 
   const onSubmit = async (data: Form) => {
     try {
-      await save.mutateAsync({ id, ...data, issuedDate: date ?? null })
-      toast.success(isEdit ? 'Payroll updated' : 'Payroll created')
+      await save.mutateAsync({ ...data, issuedDate: date ?? null })
+      toast.success('Payroll created')
     } catch {
       toast.error('Save failed')
     }
@@ -77,8 +57,8 @@ export default function PayrollFormPopover({ payrollId }: { payrollId?: string }
 
   return (
     <BasePopover
-      title={isEdit ? 'Edit Payroll' : 'New Payroll'}
-      buttonLabel={isEdit ? 'Edit Payroll' : 'Add Payroll'}
+      title={'New Payroll'}
+      buttonLabel={'Add Payroll'}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 bg-sidebar text-sidebar-foreground rounded-lg max-w-md">
         <div>
@@ -138,7 +118,7 @@ export default function PayrollFormPopover({ payrollId }: { payrollId?: string }
           disabled={isSubmitting}
           className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
         >
-          {isEdit ? 'Update Payroll' : 'Create Payroll'}
+          {'Create Payroll'}
         </Button>
       </form>
     </BasePopover>

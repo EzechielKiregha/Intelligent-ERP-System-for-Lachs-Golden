@@ -20,7 +20,7 @@ import { useEmployees, useSaveTask, useSingleTask } from '@/lib/hooks/hr'
 const schema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
-  status: z.enum(['PENDING', 'IN_PROGRESS', 'DONE']),
+  status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'BLOCKED']),
   dueDate: z.date().nullable(),
   assigneeId: z.string().optional(),
 })
@@ -64,7 +64,7 @@ export default function TaskForm({ taskId }: { taskId?: string }) {
           <Select onValueChange={field.onChange} value={field.value}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              {['PENDING', 'IN_PROGRESS', 'DONE'].map(s => (
+              {['PENDING', 'IN_PROGRESS', 'COMPLETED', 'BLOCKED'].map(s => (
                 <SelectItem key={s} value={s}>{s}</SelectItem>
               ))}
             </SelectContent>

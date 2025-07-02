@@ -26,29 +26,22 @@ const schema = z.object({
 })
 type Form = z.infer<typeof schema>
 
-export default function TaskFormPopover({ taskId }: { taskId?: string }) {
-  const params = useSearchParams()
-  const id = taskId ?? params.get('id') ?? undefined
-  const { data: task } = useSingleTask(id)
+export default function TaskFormPopover() {
+
   const emps = useEmployees()
   const save = useSaveTask()
-  const [date, setDate] = useState<Date | undefined>(task?.dueDate ? new Date(task.dueDate) : undefined)
+  const [date, setDate] = useState<Date | undefined>()
 
   const { register, control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<Form>({
     resolver: zodResolver(schema),
-    defaultValues: { ...task, dueDate: task?.dueDate ? new Date(task.dueDate) : null } as any
   })
 
-  useEffect(() => {
-    if (task) { reset({ ...task, dueDate: task.dueDate ? new Date(task.dueDate) : null } as any); setDate(task.dueDate ? new Date(task.dueDate) : undefined) }
-  }, [task, reset])
-
   const onSubmit = (d: Form) => {
-    save.mutate({ id, ...d, dueDate: date || null }, { onSuccess: () => reset() })
+    save.mutate({ ...d, dueDate: date || null }, { onSuccess: () => reset() })
   }
 
   return (
-    <BasePopover title={id ? 'Edit Task' : 'New Task'} buttonLabel={id ? 'Edit Task' : 'Add Task'}>
+    <BasePopover title={'New Task'} buttonLabel={'Add Task'}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 bg-sidebar text-sidebar-foreground rounded-lg max-w-sm">
         <div>
           <Label>Title</Label>
@@ -99,7 +92,7 @@ export default function TaskFormPopover({ taskId }: { taskId?: string }) {
           </Popover>
         </div>
         <Button type="submit" disabled={isSubmitting} className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
-          {id ? 'Update Task' : 'Create Task'}
+          {'Create Task'}
         </Button>
       </form>
     </BasePopover>

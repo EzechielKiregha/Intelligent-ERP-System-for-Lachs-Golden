@@ -12,6 +12,7 @@ import { useDeleteEmployee, useEmployees } from '@/lib/hooks/hr'
 import { empSchema } from '../employees/_components/ManageEmployeeForm'
 import { EmployeeCellViewer } from './EmployeeCellViewer'
 import { Skeleton } from '@/components/ui/skeleton'
+import toast from 'react-hot-toast'
 
 type Emp = {
   id: string
@@ -86,7 +87,15 @@ export const employeeColumns: ColumnDef<Emp>[] = [
           <Link href={`/hr/employees/manage?id=${row.original.id}`}>
             <Button size="icon" variant="ghost"><Edit2 /></Button>
           </Link>
-          <Button size="icon" variant="ghost" onClick={() => del.mutate(row.original.id)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              del.mutate(row.original.id)
+              if (del.isSuccess) toast.success("Employee Deleted");
+              else toast.error("Failed to delete");
+            }}
+          >
             <Trash2 />
           </Button>
         </div>

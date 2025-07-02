@@ -9,6 +9,7 @@ import { useDeleteReview, useReviews } from '@/lib/hooks/hr'
 import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { z } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
+import toast from 'react-hot-toast'
 
 type RV = {
   id: string
@@ -35,7 +36,31 @@ export const reviewColumns: ColumnDef<RV>[] = [
   { id: 'rev', header: 'Reviewer', cell: ({ row }) => row.original.reviewer?.name || '—' },
   { accessorKey: 'rating', header: 'Rating', cell: ({ row }) => <div className="flex items-center gap-1"><Star className="w-4 h-4 text-sidebar-primary" /> {row.original.rating}</div> },
   { accessorKey: 'comments', header: 'Comments' },
-  { id: 'actions', cell: ({ row }) => { const del = useDeleteReview(); return (<div className="flex gap-2"><Link href={`/hr/reviews/manage?id=${row.original.id}`}><Button variant="ghost" size="icon"><Edit2 /></Button></Link><Button variant="ghost" size="icon" onClick={() => del.mutate(row.original.id)}><Trash2 /></Button></div>) } }
+  {
+    id: 'actions', cell: ({ row }) => {
+      const del = useDeleteReview();
+      return (
+        <div className="flex gap-2">
+          <Link href={`/hr/reviews/manage?id=${row.original.id}`}>
+            <Button variant="ghost" size="icon">
+              <Edit2 />
+            </Button>
+          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              del.mutate(row.original.id)
+              if (del.isSuccess) toast.success("Review Deleted");
+              else toast.error("Failed to delete");
+            }}
+          >
+            <Trash2 />
+          </Button>
+        </div>
+      )
+    }
+  }
 ]
 
 export default function ReviewTable() {

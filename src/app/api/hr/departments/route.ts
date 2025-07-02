@@ -15,7 +15,6 @@ export async function GET(_: NextRequest) {
     where:{
       companyId
     },
-    include: { _count: { select: { employees: true } } },
     orderBy: { name: 'asc' },
   })
 

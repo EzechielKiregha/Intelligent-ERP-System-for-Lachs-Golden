@@ -60,12 +60,12 @@ export default function BasePopover({
           layoutId={`popover-${uniqueId}`}
           onClick={handleToggle}
         >
-          <motion.span
+          <motion.button
             layoutId={`popover-label-${uniqueId}`}
             className="hover:text-sidebar-foreground transition-all duration-300 cursor-pointer"
           >
             {buttonLabel}
-          </motion.span>
+          </motion.button>
           <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-full h-0.5 bg-sidebar-accent transition-all duration-300"></div>
         </motion.div>
 

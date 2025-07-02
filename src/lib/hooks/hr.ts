@@ -197,7 +197,6 @@ export function useDeleteDepartment() {
 interface Payroll {
   id: string
   employeeId: string
-  payPeriod: string | null
   grossAmount: number
   taxAmount: number | null
   netAmount: number | null

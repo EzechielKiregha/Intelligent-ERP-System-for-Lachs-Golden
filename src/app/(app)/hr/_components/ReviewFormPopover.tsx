@@ -23,38 +23,21 @@ const schema = z.object({
 })
 type Form = z.infer<typeof schema>
 
-export default function ReviewFormPopover({ reviewId }: { reviewId?: string }) {
-  const params = useSearchParams()
-  const id = reviewId ?? params.get('id') ?? undefined
-  const { data: r } = useReviews() // for single you’d use useSingleReview; here quick
+export default function ReviewFormPopover() {
+
   const save = useSaveReview()
-  const [date, setDate] = useState<Date | undefined>(r?.find(x => x.id === id)?.reviewDate ? new Date(r.find(x => x.id === id)!.reviewDate) : undefined)
+  const [date, setDate] = useState<Date | undefined>()
 
   const { register, control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<Form>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      reviewDate: date,
-      rating: r?.find(x => x.id === id)?.rating,
-      comments: r?.find(x => x.id === id)?.comments,
-    } as any
   })
 
-  useEffect(() => {
-    if (id && r) {
-      const existing = r.find(x => x.id === id)
-      if (existing) {
-        reset({ reviewDate: new Date(existing.reviewDate), rating: existing.rating, comments: existing.comments } as any)
-        setDate(new Date(existing.reviewDate))
-      }
-    }
-  }, [id, r, reset])
-
   const onSubmit = (data: Form) => {
-    save.mutate({ id, ...data }, { onSuccess: () => reset() })
+    save.mutate({ ...data }, { onSuccess: () => reset() })
   }
 
   return (
-    <BasePopover title={id ? 'Edit Review' : 'New Review'} buttonLabel={id ? 'Edit Review' : 'Add Review'}>
+    <BasePopover title={'New Review'} buttonLabel={'Add Review'}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 bg-sidebar text-sidebar-foreground rounded-lg max-w-sm">
         <div>
           <Label>Review Date</Label>
@@ -86,7 +69,7 @@ export default function ReviewFormPopover({ reviewId }: { reviewId?: string }) {
           {errors.comments && <p className="text-red-600 text-sm">{errors.comments.message}</p>}
         </div>
         <Button type="submit" disabled={isSubmitting} className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
-          {id ? 'Update Review' : 'Create Review'}
+          {'Create Review'}
         </Button>
       </form>
     </BasePopover>
