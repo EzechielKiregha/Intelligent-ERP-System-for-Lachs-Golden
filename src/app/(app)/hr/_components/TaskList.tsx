@@ -59,9 +59,9 @@ export const taskColumns: ColumnDef<TK>[] = [
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
           <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
             <DialogHeader>
-              <DialogTitle>You Got No Delete Permission</DialogTitle>
+              <DialogTitle>You Don't Have Delete Permission</DialogTitle>
               <DialogDescription>
-                Sorry You can not perform this action, try later with delete permission
+                Sorry, you cannot perform this action. Please try again later with delete permissions.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

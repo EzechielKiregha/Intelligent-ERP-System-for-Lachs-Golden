@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import toast from 'react-hot-toast'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React from 'react'
+import { truncateText } from '@/lib/utils'
 
 type RV = {
   id: string
@@ -37,7 +38,52 @@ export const reviewColumns: ColumnDef<RV>[] = [
   { id: 'emp', header: 'Employee', cell: ({ row }) => row.original.employee ? `${row.original.employee.firstName} ${row.original.employee.lastName}` : '—' },
   { id: 'rev', header: 'Reviewer', cell: ({ row }) => row.original.reviewer?.name || '—' },
   { accessorKey: 'rating', header: 'Rating', cell: ({ row }) => <div className="flex items-center gap-1"><Star className="w-4 h-4 text-sidebar-primary" /> {row.original.rating}</div> },
-  { accessorKey: 'comments', header: 'Comments' },
+  {
+    accessorKey: 'comments',
+    header: 'Description',
+    cell: ({ row }) => {
+      const comments = row.original.comments;
+      const [isDescriptionModalOpen, setIsDescriptionModalOpen] = React.useState(false); // State for this specific modal
+
+      const truncated = truncateText(comments, 100); // Adjust maxLength as needed
+
+      return (
+        <>
+          <span>{truncated}</span>
+          {comments && comments.length > 100 && ( // Only show "View More" if truncation occurred
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => setIsDescriptionModalOpen(true)}
+              className="p-0 h-auto ml-2" // Adjust styling as needed
+            >
+              View More
+            </Button>
+          )}
+
+          {/* Dialog for full comments */}
+          <Dialog open={isDescriptionModalOpen} onOpenChange={setIsDescriptionModalOpen}>
+            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
+              <DialogHeader>
+                <DialogTitle>Department Description</DialogTitle>
+                <DialogDescription>
+                  {comments || 'No description provided.'}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => setIsDescriptionModalOpen(false)}
+                  className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+                >
+                  Close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      );
+    },
+  },
   {
     id: 'actions', cell: ({ row }) => {
       const del = useDeleteReview();
@@ -65,9 +111,9 @@ export const reviewColumns: ColumnDef<RV>[] = [
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
             <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
               <DialogHeader>
-                <DialogTitle>You Got No Delete Permission</DialogTitle>
+                <DialogTitle>You Don't Have Delete Permission</DialogTitle>
                 <DialogDescription>
-                  Sorry You can not perform this action, try later with delete permission
+                  Sorry, you cannot perform this action. Please try again later with delete permissions.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>

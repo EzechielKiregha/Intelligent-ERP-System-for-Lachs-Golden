@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import toast from 'react-hot-toast'
 import React from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { truncateText } from '@/lib/utils'
 
 type Dept = {
   id: string
@@ -57,14 +58,74 @@ export const departmentColumns: ColumnDef<Dept>[] = [
   {
     accessorKey: 'description',
     header: 'Description',
-    cell: ({ row }) => <span>{row.original.description || '—'}</span>,
+    cell: ({ row }) => {
+      const description = row.original.description;
+      const [isDescriptionModalOpen, setIsDescriptionModalOpen] = React.useState(false); // State for this specific modal
+
+      const truncated = truncateText(description, 100); // Adjust maxLength as needed
+
+      return (
+        <>
+          <span>{truncated}</span>
+          {description && description.length > 100 && ( // Only show "View More" if truncation occurred
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => setIsDescriptionModalOpen(true)}
+              className="p-0 h-auto ml-2" // Adjust styling as needed
+            >
+              View More
+            </Button>
+          )}
+
+          {/* Dialog for full description */}
+          <Dialog open={isDescriptionModalOpen} onOpenChange={setIsDescriptionModalOpen}>
+            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
+              <DialogHeader>
+                <DialogTitle>Department Description</DialogTitle>
+                <DialogDescription>
+                  {description || 'No description provided.'}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => setIsDescriptionModalOpen(false)}
+                  className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+                >
+                  Close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      );
+    },
   },
   {
     id: 'actions',
     cell: ({ row }) => {
-      const del = useDeleteDepartment()
-      const router = useRouter()
-      const [isModalOpen, setIsModalOpen] = React.useState(false);
+      const del = useDeleteDepartment();
+      const router = useRouter();
+      const [isPermissionModalOpen, setIsPermissionModalOpen] = React.useState(false); // State for permission modal
+
+      // You can add a loading state check for 'del' mutation if needed
+      // const isDeleting = del.isLoading;
+
+      const handleDelete = async () => {
+        // Implement your actual delete logic here, potentially checking permissions first
+        // For demonstration, we'll keep the permission modal as is.
+        // If you were to enable deletion, it might look like this:
+        // try {
+        //   await del.mutateAsync(row.original.id);
+        //   toast.success("Department Deleted");
+        // } catch (error) {
+        //   toast.error("Failed to delete department.");
+        // } finally {
+        //   setIsPermissionModalOpen(false); // Close modal after action
+        // }
+        setIsPermissionModalOpen(true); // Open "no permission" modal for now
+      };
+
       return (
         <div className="flex gap-2">
           <Button
@@ -77,46 +138,48 @@ export const departmentColumns: ColumnDef<Dept>[] = [
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => {
-              // del.mutate(row.original.id)
-              // if (del.isSuccess) toast.success("Department Deleted");
-              // else toast.error("Failed to delete");
-              setIsModalOpen(true)
-            }
-            }
+            onClick={handleDelete}
+          // disabled={isDeleting} // Disable button while deleting
           >
             <Trash2 />
           </Button>
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
+          <Dialog open={isPermissionModalOpen} onOpenChange={setIsPermissionModalOpen}>
             <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
               <DialogHeader>
-                <DialogTitle>You Got No Delete Permission</DialogTitle>
+                <DialogTitle>You Don't Have Delete Permission</DialogTitle>
                 <DialogDescription>
-                  Sorry You can not perform this action, try later with delete permission
+                  Sorry, you cannot perform this action. Please try again later with delete permissions.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
                 <Button
-                  onClick={() => {
-                    setIsModalOpen(false);
-                  }}
+                  onClick={() => setIsPermissionModalOpen(false)}
                   className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
                 >
-                  close
+                  Close
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
-      )
+      );
     },
   },
-]
+];
 
 export default function DepartmentTable() {
-  const { data, isLoading } = useDepartments()
+  const { data, isLoading } = useDepartments();
+
   if (isLoading) {
-    return <Skeleton className="h-64 w-full rounded-lg bg-sidebar" />
+    return <Skeleton className="h-64 w-full rounded-lg bg-sidebar" />;
   }
-  return <DataTable data={data || []} columns={departmentColumns} schema={depSchema} typeName='Departments' />
+
+  return (
+    <DataTable
+      data={data || []}
+      columns={departmentColumns}
+      schema={depSchema}
+      typeName='Departments'
+    />
+  );
 }
