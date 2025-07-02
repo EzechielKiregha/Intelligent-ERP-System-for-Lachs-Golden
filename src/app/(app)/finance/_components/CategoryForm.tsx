@@ -93,13 +93,12 @@ export default function CategoryForm(
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="budgetLimit">Budget Limit</Label>
+        <Label htmlFor="budgetLimit">Budget Limit {existing?.budgetLimit || ''}</Label>
         <Input
           id="budgetLimit"
           type="number"
           step="0.01"
           {...register('budgetLimit', { valueAsNumber: true })}
-          value={existing?.budgetLimit}
         />
         {errors.budgetLimit && <p className="text-red-600">{errors.budgetLimit.message}</p>}
         {isEdit && (
