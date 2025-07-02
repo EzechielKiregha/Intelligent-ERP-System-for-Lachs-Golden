@@ -10,6 +10,8 @@ import { useDeletePayroll, usePayrolls } from '@/lib/hooks/hr'
 import { z } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
 import toast from 'react-hot-toast'
+import React from 'react'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 type PR = {
   id: string
@@ -64,6 +66,7 @@ export const payrollColumns: ColumnDef<PR>[] = [
     id: 'actions',
     cell: ({ row }) => {
       const del = useDeletePayroll()
+      const [isModalOpen, setIsModalOpen] = React.useState(false);
       return (
         <div className="flex gap-2">
           <Link href={`/hr/payroll/manage?id=${row.original.id}`}>
@@ -73,13 +76,35 @@ export const payrollColumns: ColumnDef<PR>[] = [
             variant="ghost"
             size="icon"
             onClick={() => {
-              del.mutate(row.original.id)
-              if (del.isSuccess) toast.success("Payroll Deleted");
-              else toast.error("Failed to delete");
-            }}
+              // del.mutate(row.original.id)
+              // if (del.isSuccess) toast.success("Payroll Deleted");
+              // else toast.error("Failed to delete");
+              setIsModalOpen(true)
+            }
+            }
           >
             <Trash2 />
           </Button>
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
+            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
+              <DialogHeader>
+                <DialogTitle>You Got No Delete Permission</DialogTitle>
+                <DialogDescription>
+                  Sorry You can not perform this action, try later with delete permission
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                  }}
+                  className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+                >
+                  close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       )
     }

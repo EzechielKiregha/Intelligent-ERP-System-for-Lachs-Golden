@@ -13,6 +13,8 @@ import { empSchema } from '../employees/_components/ManageEmployeeForm'
 import { EmployeeCellViewer } from './EmployeeCellViewer'
 import { Skeleton } from '@/components/ui/skeleton'
 import toast from 'react-hot-toast'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import React from 'react'
 
 type Emp = {
   id: string
@@ -82,6 +84,7 @@ export const employeeColumns: ColumnDef<Emp>[] = [
     id: 'actions',
     cell: ({ row }) => {
       const del = useDeleteEmployee()
+      const [isModalOpen, setIsModalOpen] = React.useState(false);
       return (
         <div className="flex gap-2">
           <Link href={`/hr/employees/manage?id=${row.original.id}`}>
@@ -91,13 +94,35 @@ export const employeeColumns: ColumnDef<Emp>[] = [
             variant="ghost"
             size="icon"
             onClick={() => {
-              del.mutate(row.original.id)
-              if (del.isSuccess) toast.success("Employee Deleted");
-              else toast.error("Failed to delete");
-            }}
+              // del.mutate(row.original.id)
+              // if (del.isSuccess) toast.success("Employee Deleted");
+              // else toast.error("Failed to delete");
+              setIsModalOpen(true)
+            }
+            }
           >
             <Trash2 />
           </Button>
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
+            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
+              <DialogHeader>
+                <DialogTitle>You Got No Delete Permission</DialogTitle>
+                <DialogDescription>
+                  Sorry You can not perform this action, try later with delete permission
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                  }}
+                  className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+                >
+                  close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       )
     }

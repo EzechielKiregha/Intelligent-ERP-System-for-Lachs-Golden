@@ -9,6 +9,8 @@ import { useDeleteDepartment, useDepartments } from '@/lib/hooks/hr'
 import { z } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
 import toast from 'react-hot-toast'
+import React from 'react'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 type Dept = {
   id: string
@@ -62,6 +64,7 @@ export const departmentColumns: ColumnDef<Dept>[] = [
     cell: ({ row }) => {
       const del = useDeleteDepartment()
       const router = useRouter()
+      const [isModalOpen, setIsModalOpen] = React.useState(false);
       return (
         <div className="flex gap-2">
           <Button
@@ -75,13 +78,35 @@ export const departmentColumns: ColumnDef<Dept>[] = [
             variant="ghost"
             size="icon"
             onClick={() => {
-              del.mutate(row.original.id)
-              if (del.isSuccess) toast.success("Department Deleted");
-              else toast.error("Failed to delete");
-            }}
+              // del.mutate(row.original.id)
+              // if (del.isSuccess) toast.success("Department Deleted");
+              // else toast.error("Failed to delete");
+              setIsModalOpen(true)
+            }
+            }
           >
             <Trash2 />
           </Button>
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
+            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
+              <DialogHeader>
+                <DialogTitle>You Got No Delete Permission</DialogTitle>
+                <DialogDescription>
+                  Sorry You can not perform this action, try later with delete permission
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                  }}
+                  className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+                >
+                  close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       )
     },
