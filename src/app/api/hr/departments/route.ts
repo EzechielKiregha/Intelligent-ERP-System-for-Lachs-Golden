@@ -26,9 +26,6 @@ export async function GET(_: NextRequest) {
         departmentId : d.id
       }
     })
-
-    console.log("Departments : ", result)
-
     return {
       id: d.id,
       name: d.name,
@@ -36,6 +33,9 @@ export async function GET(_: NextRequest) {
       description: d.description
     }
   })
+
+  console.log("Departments : ", result)
+
   return NextResponse.json(result)
 }
 
