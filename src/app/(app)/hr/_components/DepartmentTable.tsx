@@ -62,12 +62,12 @@ export const departmentColumns: ColumnDef<Dept>[] = [
       const description = row.original.description;
       const [isDescriptionModalOpen, setIsDescriptionModalOpen] = React.useState(false); // State for this specific modal
 
-      const truncated = truncateText(description, 100); // Adjust maxLength as needed
+      const truncated = truncateText(description, 10); // Adjust maxLength as needed
 
       return (
         <>
           <span>{truncated}</span>
-          {description && description.length > 100 && ( // Only show "View More" if truncation occurred
+          {description && description.length > 10 && ( // Only show "View More" if truncation occurred
             <Button
               variant="link"
               size="sm"

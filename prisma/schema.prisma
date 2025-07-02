@@ -56,6 +56,15 @@ enum TransactionStatus {
   REFUNDED
 }
 
+enum DealStage { 
+  NEW
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  WON
+  LOST
+}
+
 model Company {
   id           String  @id @default(cuid())
   name         String  @unique
@@ -82,9 +91,8 @@ model Company {
   // Workflow & documents
   tasks     Task[]
   documents Document[]
-
   reports Report[]
-
+  contacts Contact[]
 }
 
 model User {
@@ -108,12 +116,10 @@ model User {
   employeeId String?   @unique
 
   transactions Transaction[]
-
   PerformanceReview PerformanceReview[]
-
   tasks Task[]
-
   reports Report[]
+  deals Deal[]
 }
 
 model Category {
@@ -300,4 +306,44 @@ model Notification {
   type      String
   userId    String?
   createdAt DateTime @default(now())
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String   @unique
+  phone     String?
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+  deals     Deal[]
+  logs      CommunicationLog[]
+  createdAt DateTime @default(now())
+}
+
+model Deal {
+  id          String     @id @default(cuid())
+  title       String
+  amount      Float
+  stage       DealStage  @default(NEW)
+  contact     Contact    @relation(fields: [contactId], references: [id])
+  contactId   String
+  owner       User?      @relation(fields: [ownerId], references: [id])
+  ownerId     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  communicationLogs CommunicationLog[]
+}
+
+model CommunicationLog {
+  id        String   @id @default(cuid())
+  type      String   // email, sms, call
+  direction String   // inbound, outbound
+  message   String?
+  timestamp DateTime @default(now())
+  deal      Deal?    @relation(fields: [dealId], references: [id])
+  dealId    String?
+  contact   Contact? @relation(fields: [contactId], references: [id])
+  contactId String?
 }

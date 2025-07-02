@@ -45,12 +45,12 @@ export const reviewColumns: ColumnDef<RV>[] = [
       const comments = row.original.comments;
       const [isDescriptionModalOpen, setIsDescriptionModalOpen] = React.useState(false); // State for this specific modal
 
-      const truncated = truncateText(comments, 100); // Adjust maxLength as needed
+      const truncated = truncateText(comments, 10); // Adjust maxLength as needed
 
       return (
         <>
           <span>{truncated}</span>
-          {comments && comments.length > 100 && ( // Only show "View More" if truncation occurred
+          {comments && comments.length > 10 && ( // Only show "View More" if truncation occurred
             <Button
               variant="link"
               size="sm"

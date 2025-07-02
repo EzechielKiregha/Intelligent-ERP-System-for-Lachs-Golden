@@ -11,6 +11,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { truncateText } from "@/lib/utils";
+import React from "react";
 
 // Transaction schema
 const transactionSchema = z.object({
@@ -66,22 +69,78 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "description",
-    header: "Description",
-    cell: ({ row }) => (
-      <TableCellViewer item={{
-        id: row.original.id,
-        date: row.original.date,
-        description: row.original.description,
-        status: row.original.status,
-        category: row.original.category.name,
-        amount: row.original.amount,
-        user: row.original.user?.name
-      }}
-        typeName="Transactions" />
-    ),
+    accessorKey: 'description',
+    header: 'Description',
+    cell: ({ row }) => {
+      const description = row.original.description || '';
+      const [isDescriptionModalOpen, setIsDescriptionModalOpen] = React.useState(false); // State for this specific modal
+
+      const truncated = truncateText(description, 10); // Adjust maxLength as needed
+
+      return (
+        <>
+          <TableCellViewer item={{
+            id: row.original.id,
+            date: row.original.date,
+            description: truncated,
+            status: row.original.status,
+            category: row.original.category.name,
+            amount: row.original.amount,
+            user: row.original.user?.name
+          }}
+            typeName="Transactions" />
+          {description && description.length > 10 && ( // Only show "View More" if truncation occurred
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => setIsDescriptionModalOpen(true)}
+              className="p-0 h-auto ml-2" // Adjust styling as needed
+            >
+              View More
+            </Button>
+          )}
+
+          {/* Dialog for full description */}
+          <Dialog open={isDescriptionModalOpen} onOpenChange={setIsDescriptionModalOpen}>
+            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
+              <DialogHeader>
+                <DialogTitle>Department Description</DialogTitle>
+                <DialogDescription>
+                  {description || 'No description provided.'}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => setIsDescriptionModalOpen(false)}
+                  className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+                >
+                  Close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      );
+    },
     enableHiding: false,
   },
+  // {
+  //   accessorKey: "description",
+  //   header: "Description",
+  //   cell: ({ row }) => (
+  //     <TableCellViewer item={{
+  //       id: row.original.id,
+  //       date: row.original.date,
+  //       description: row.original.description,
+  //       status: row.original.status,
+  //       category: row.original.category.name,
+  //       amount: row.original.amount,
+  //       user: row.original.user?.name
+  //     }}
+  //       typeName="Transactions" />
+  //   ),
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "category",
     header: "Category",
