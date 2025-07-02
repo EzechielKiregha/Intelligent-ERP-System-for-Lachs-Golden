@@ -150,16 +150,21 @@ export function useDeleteEmployee() {
 }
 
 // DEPARTMENTS HOOKS
-interface Dept { id: string; name: string; employeeCount: number, description?: string }
+interface Dept {
+  id: string;
+  name: string;
+  employeeCount: number;
+  description?: string;
+}
 
 export function useDepartments() {
   return useQuery({
     queryKey: ['hr', 'departments'],
     queryFn: async () => {
-      const { data } = await axiosdb.get<Dept[]>('/api/hr/departments')
-      return data
+      const { data } = await axiosdb.get<Dept[]>('/api/hr/departments');
+      return data;
     },
-  })
+  });
 }
 
 export function useSaveDepartment() {
