@@ -157,7 +157,6 @@ export function useDepartments() {
     queryKey: ['hr', 'departments'],
     queryFn: async () => {
       const { data } = await axiosdb.get<Dept[]>('/api/hr/departments')
-      console.log("Departments : ", data)
       return data
     },
   })

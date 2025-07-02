@@ -6,10 +6,10 @@ import { authOptions } from '@/lib/auth';
 export async function GET(_: NextRequest) {
   const session = await getServerSession(authOptions);
         
-      if (!session?.user?.companyId) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-      const companyId = session.user.companyId
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const companyId = session.user.companyId
   // Include employee count via relation count
   const list = await prisma.department.findMany({
     where:{
@@ -26,6 +26,9 @@ export async function GET(_: NextRequest) {
         departmentId : d.id
       }
     })
+
+    console.log("Departments : ", result)
+
     return {
       id: d.id,
       name: d.name,
