@@ -9,6 +9,7 @@ import { toast } from 'react-hot-toast'
 import ManageContactForm, { contactSchema } from '../_components/ManageContactForm'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import ManageContactFormPopover from '../../_components/ManageContactFormPopover'
 
 type Contact = z.infer<typeof contactSchema> & { id: string }
 
@@ -49,7 +50,7 @@ export default function ContactsPage() {
           Leads, Contacts, Partners
         </h3>
         {/* New-contact popover */}
-        <ManageContactForm />
+        <ManageContactFormPopover />
       </div>
 
       {/* Edit-contact popover when ?id= is present */}
