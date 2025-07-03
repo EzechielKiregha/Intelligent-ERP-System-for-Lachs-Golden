@@ -35,6 +35,65 @@ export function useFinanceSummaryPeriod(period?: 'month'|'week'|'year') {
   );
 }
 
+// Define the type for the new transaction data being sent to the API
+// This now directly matches the TransactionForm type from your component
+interface NewTransactionData {
+  categoryId: string;
+  amount: number;
+  description?: string;
+  type: 'ORDER' | 'REFUND' | 'PAYMENT'; // Adapted to match your form's transactionTypes
+  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED'; // Adapted to match your form's status types
+}
+
+// Define the type for the response from the API after creating a transaction
+interface CreatedTransactionResponse {
+  id: string;
+  categoryId: string;
+  amount: number;
+  description?: string;
+  type: 'ORDER' | 'REFUND' | 'PAYMENT'; // Adapted
+  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED'; // Adapted
+}
+
+/**
+ * Custom hook for creating a new finance transaction.
+ * On successful creation, it invalidates relevant queries to refetch data.
+ */
+export function useCreateTransaction() {
+  const queryClient = useQueryClient(); // Get the query client instance
+
+  return useMutation<CreatedTransactionResponse, Error, NewTransactionData>({
+    mutationFn: async (newTransactionData) => {
+      // Send the POST request to your API endpoint
+      const { data } = await axiosdb.post<CreatedTransactionResponse>('/api/finance/transactions', newTransactionData);
+      return data;
+    },
+    onSuccess: (data) => {
+      // This function runs when the mutation is successful.
+
+      // 1. Invalidate the 'finance', 'transactions' query
+      queryClient.invalidateQueries({ queryKey: ['finance', 'transactions'] });
+
+      // 2. Invalidate the 'finance', 'categories' query
+      // This is crucial because creating a transaction updates the budgetUsed on the category.
+      queryClient.invalidateQueries({ queryKey: ['finance', 'categories'] });
+
+      // 3. Invalidate the specific single category query if it's currently active.
+      queryClient.invalidateQueries({ queryKey: ['finance', 'category', data.categoryId] });
+
+      // Optional: Show a success toast notification
+      toast.success('Transaction created successfully!');
+    },
+    onError: (error) => {
+      // This function runs if the mutation fails.
+      console.error('Error creating transaction:', error);
+      // You can parse the error message from the backend if it sends structured errors
+      const errorMessage = (error as any).response?.data?.error || 'Failed to create transaction.';
+      toast.error(errorMessage);
+    },
+  });
+}
+
 interface Transaction {
   id: string;
   date: string;

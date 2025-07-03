@@ -1,6 +1,6 @@
 'use client'
 
-import { SetStateAction, useEffect, useState } from 'react'
+import { SetStateAction, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -13,17 +13,16 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import BasePopover from '@/components/BasePopover'
-import axios from 'axios'
-import { useFinanceCategories } from '@/lib/hooks/finance'
+import { useFinanceCategories, useCreateTransaction } from '@/lib/hooks/finance' // Import useCreateTransaction
 import { toast } from 'react-hot-toast'
 import { z } from 'zod'
-import axiosdb from '@/lib/axios'
+import { useRouter } from 'next/navigation'
 
 const transactionSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be positive'),
   description: z.string().min(3, 'Description is too short'),
-  type: z.enum(['ORDER', 'REFUND', 'PAYMENT']),
-  status: z.enum(['PENDING', 'COMPLETED', 'FAILED', 'REFUNDED']),
+  type: z.enum(['ORDER', 'REFUND', 'PAYMENT']), // Matches your form's types
+  status: z.enum(['PENDING', 'COMPLETED', 'FAILED', 'REFUNDED']), // Matches your form's statuses
   categoryId: z.string().min(1, 'Category is required'),
 })
 
@@ -38,9 +37,13 @@ interface Category {
 }
 
 const transactionTypes = ['ORDER', 'REFUND', 'PAYMENT'] as const
+const transactionStatuses = ['PENDING', 'COMPLETED', 'FAILED', 'REFUNDED'] as const // Define statuses for mapping
 
 export default function NewTransactionPopover() {
-  const { data: categories } = useFinanceCategories()
+  const { data: categories, isLoading: isLoadingCategories } = useFinanceCategories();
+  const createTransactionMutation = useCreateTransaction(); // Initialize the mutation hook
+  const router = useRouter()
+
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const [type, setType] = useState<'ORDER' | 'REFUND' | 'PAYMENT'>('PAYMENT')
   const [amount, setAmount] = useState('')
@@ -58,26 +61,41 @@ export default function NewTransactionPopover() {
 
   const handleSubmit = async () => {
     try {
-      const data: TransactionForm = {
+      const dataToValidate: TransactionForm = {
         amount: parseFloat(amount),
         description,
         type,
         status,
         categoryId: selectedCategory?.id || '',
       }
-      transactionSchema.parse(data)
 
-      await axiosdb.post('/api/finance/transactions', data)
+      // Validate data using Zod before sending
+      transactionSchema.parse(dataToValidate);
 
-      toast.success('Transaction submitted!')
-      setAmount('')
-      setDescription('')
-      setSelectedCategory(null)
-      setType('PAYMENT')
-      setStatus('PENDING')
+      // Call the mutate function from the React Query hook
+      // The hook's onSuccess/onError will handle toasts and query invalidation
+      await createTransactionMutation.mutateAsync(dataToValidate); // Use mutateAsync to await the result
+
+      // Clear the form fields only on successful submission
+      setAmount('');
+      setDescription('');
+      setSelectedCategory(null);
+      setType('PAYMENT');
+      setStatus('PENDING');
+
+      // If BasePopover is a controlled component and needs to be closed
+      // You might need a prop like onClose from BasePopover if it's a modal/dialog
+      // For example: if (props.onClose) props.onClose();
+      router.refresh()
     } catch (error: any) {
-      const message = error?.errors?.[0]?.message || 'Validation error'
-      toast.error(message)
+      // Zod validation errors
+      if (error.errors && error.errors.length > 0) {
+        toast.error(error.errors[0].message);
+      } else {
+        // This catch block will now mostly handle Zod validation errors
+        // API errors are handled by the onError in useCreateTransaction hook
+        toast.error('An unexpected validation error occurred.');
+      }
     }
   }
 
@@ -112,7 +130,7 @@ export default function NewTransactionPopover() {
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent className="bg-sidebar">
-                {['PENDING', 'COMPLETED', 'FAILED', 'REFUNDED'].map((s) => (
+                {transactionStatuses.map((s) => ( // Use transactionStatuses here
                   <SelectItem
                     key={s}
                     value={s}
@@ -127,9 +145,13 @@ export default function NewTransactionPopover() {
 
           <div>
             <Label>Category</Label>
-            <Select onValueChange={handleCategorySelect}>
+            <Select onValueChange={handleCategorySelect} value={selectedCategory?.id || ''}> {/* Add value prop for controlled component */}
               <SelectTrigger className="bg-sidebar">
-                <SelectValue placeholder="Select category" />
+                {isLoadingCategories ? (
+                  <SelectValue placeholder="Loading categories..." />
+                ) : (
+                  <SelectValue placeholder="Select category" />
+                )}
               </SelectTrigger>
               <SelectContent className="bg-sidebar">
                 {categories &&
@@ -173,8 +195,12 @@ export default function NewTransactionPopover() {
         </div>
 
         <div className="pt-4">
-          <Button onClick={handleSubmit} className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
-            Submit Transaction
+          <Button
+            onClick={handleSubmit}
+            className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+            disabled={createTransactionMutation.isPending || isLoadingCategories} // Disable while creating or loading categories
+          >
+            {createTransactionMutation.isPending ? 'Submitting...' : 'Submit Transaction'}
           </Button>
         </div>
       </div>
