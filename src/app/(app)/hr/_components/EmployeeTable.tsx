@@ -106,7 +106,7 @@ export const employeeColumns: ColumnDef<Emp>[] = [
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
             <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
               <DialogHeader>
-                <DialogTitle>You Don't Have Delete Permission</DialogTitle>
+                <DialogTitle>You Don&apos;t Have Delete Permission</DialogTitle>
                 <DialogDescription>
                   Sorry, you cannot perform this action. Please try again later with delete permissions.
                 </DialogDescription>
