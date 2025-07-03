@@ -46,10 +46,12 @@ export default function ContactsPage() {
         <h1 className="text-2xl font-semibold text-sidebar-foreground">
           {editId ? 'Edit Contact' : 'New Contact'}
         </h1>
-        {/* New-contact popover */}
-        <ManageContactFormPopover />
       </div>
 
+      {/* New-contact popover */}
+      <div className="flex my-1 justify-center items-center">
+        <ManageContactFormPopover />
+      </div>
       {/* Edit-contact popover when ?id= is present */}
       {editId && !loadingEdit && contactToEdit && (
         <ManageContactForm contactToEdit={contactToEdit} />
