@@ -46,9 +46,6 @@ export default function ContactsPage() {
         <h1 className="text-2xl font-semibold text-sidebar-foreground">
           {editId ? 'Edit Contact' : 'New Contact'}
         </h1>
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          Leads, Contacts, Partners
-        </h3>
         {/* New-contact popover */}
         <ManageContactFormPopover />
       </div>
