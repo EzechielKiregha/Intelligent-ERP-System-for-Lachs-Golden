@@ -309,17 +309,24 @@ model Notification {
 }
 
 model Contact {
-  id        String   @id @default(cuid())
-  firstName String
-  lastName  String
-  email     String   @unique
-  phone     String?
-  company   Company? @relation(fields: [companyId], references: [id])
-  companyId String?
-  deals     Deal[]
-  logs      CommunicationLog[]
-  createdAt DateTime @default(now())
+  id          String               @id @default(cuid())
+  fullName    String
+  email       String               @unique
+  phone       String?
+  companyName String?              // optional free‑text, if you still want it
+  jobTitle    String?
+  notes       String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  // multi‑tenant linkage
+  companyId   String
+  company     Company              @relation(fields: [companyId], references: [id])
+
+  deals       Deal[]
+  logs        CommunicationLog[]
 }
+
 
 model Deal {
   id          String     @id @default(cuid())

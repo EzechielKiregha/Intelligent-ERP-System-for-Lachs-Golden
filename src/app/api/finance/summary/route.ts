@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
 
   // 2. Parse query parameters
   const url = new URL(req.url);
+  
   const parseResult = QuerySchema.safeParse({
     period: url.searchParams.get('period') || undefined,
     startDate: url.searchParams.get('startDate') || undefined,

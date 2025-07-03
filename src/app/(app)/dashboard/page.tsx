@@ -1,16 +1,15 @@
 'use client';
 
 import React from 'react';
-import { useDashboardStats, useRevenueAnalytics, useRecentActivities, useAIInsights, useAuditLog } from '@/lib/hooks/dashboard';
+import { useDashboardStats, useRevenueAnalytics, useAIInsights, useAuditLog } from '@/lib/hooks/dashboard';
 import SalesDistribution from './_components/SalesDistribution';
 import ActivityFeed from './_components/ActivityFeed';
 import AIInsights from './_components/AIInsights';
 // import { DollarSign } from 'react-feather';
 import SkeletonLoader from '../_components/SkeletonLoader';
 import AuthGuard from '../_components/AuthGuard';
-import FinanceSummaryCards from '../finance/_components/FinanceSummaryCards';
 import { MetricCard } from './_components/MetricCards';
-import { DollarSign, GroupIcon, ShoppingCart, Users } from 'lucide-react';
+import { DollarSign, ShoppingCart, Users } from 'lucide-react';
 import RevenueAnalytics from './_components/RevenueAnalytics';
 import FinanceForecastSection from '../finance/_components/FinanceForecastSection';
 import CategoriesList from '../finance/_components/CategoryList';

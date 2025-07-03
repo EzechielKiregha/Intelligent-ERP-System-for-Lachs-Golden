@@ -11,8 +11,9 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const companyId = session.user.companyId
   const emp = await prisma.employee.findUnique({
-    where: { id },
+    where: { id, companyId },
     include: { department: true },
   })
   return NextResponse.json(emp)
@@ -26,9 +27,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const companyId = session.user.companyId
   const data = await req.json()
   const updated = await prisma.employee.update({
-    where: { id },
+    where: { id, companyId },
     data,
   })
   return NextResponse.json(updated)
