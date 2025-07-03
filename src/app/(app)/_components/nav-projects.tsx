@@ -45,7 +45,7 @@ interface AuditLog {
 
 export function NavProjects({ auditLogs }: AuditLog) {
   const { isMobile } = useSidebar();
-  const nav = useNavigation()
+  const nav = useRouter()
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -73,7 +73,7 @@ export function NavProjects({ auditLogs }: AuditLog) {
                 side={isMobile ? 'bottom' : 'right'}
                 align={isMobile ? 'end' : 'start'}
               >
-                <DropdownMenuItem onClick={() => nav("/dashboard/activity")}>
+                <DropdownMenuItem onClick={() => nav.push("/dashboard/activity")}>
                   <Folder className="text-muted-foreground" />
                   <span>View Activity</span>
                 </DropdownMenuItem>
@@ -92,7 +92,7 @@ export function NavProjects({ auditLogs }: AuditLog) {
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
-            <Button variant="link" onClick={() => nav('/dashboard/activity')}>
+            <Button variant="link" onClick={() => nav.push('/dashboard/activity')}>
               More
             </Button>
           </SidebarMenuButton>
