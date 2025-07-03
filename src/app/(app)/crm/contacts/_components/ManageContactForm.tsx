@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { useCreateContact, useUpdateContact, useContacts } from '@/lib/hooks/crm'
+import { useCreateContact, useUpdateContact } from '@/lib/hooks/crm'
 
 // Zod schema for contact validation
 export const contactSchema = z.object({
@@ -51,7 +51,6 @@ export default function ManageContactForm({ contactToEdit }: ManageContactFormPr
         toast.success('Contact created successfully')
       }
 
-      // Reset fields only on create
       if (!isEdit) {
         setFullName('')
         setEmail('')
@@ -70,59 +69,66 @@ export default function ManageContactForm({ contactToEdit }: ManageContactFormPr
       title={isEdit ? 'Edit Contact' : 'New Contact'}
       buttonLabel={isEdit ? 'Edit Contact' : 'Add Contact'}
     >
-      <div className="w-full max-w-lg space-y-4">
-        <div>
-          <Label htmlFor="fullName">Full Name</Label>
-          <Input
-            id="fullName"
-            value={fullName}
-            onChange={e => setFullName(e.target.value)}
-            placeholder="e.g. Jane Doe"
-          />
+      <div className="w-full max-w-lg space-y-6 text-sidebar-foreground">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="fullName" className="text-sidebar-foreground">Full Name</Label>
+            <Input
+              id="fullName"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              placeholder="e.g. Jane Doe"
+              className="bg-sidebar text-sidebar-foreground"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="email" className="text-sidebar-foreground">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="e.g. jane.doe@example.com"
+              className="bg-sidebar text-sidebar-foreground"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="phone" className="text-sidebar-foreground">Phone</Label>
+            <Input
+              id="phone"
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+              placeholder="e.g. +1234567890"
+              className="bg-sidebar text-sidebar-foreground"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="jobTitle" className="text-sidebar-foreground">Job Title</Label>
+            <Input
+              id="jobTitle"
+              value={jobTitle}
+              onChange={e => setJobTitle(e.target.value)}
+              placeholder="e.g. Account Manager"
+              className="bg-sidebar text-sidebar-foreground"
+            />
+          </div>
         </div>
 
         <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="e.g. jane.doe@example.com"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="phone">Phone</Label>
-          <Input
-            id="phone"
-            value={phone}
-            onChange={e => setPhone(e.target.value)}
-            placeholder="e.g. +1234567890"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="jobTitle">Job Title</Label>
-          <Input
-            id="jobTitle"
-            value={jobTitle}
-            onChange={e => setJobTitle(e.target.value)}
-            placeholder="e.g. Account Manager"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="notes">Notes</Label>
+          <Label htmlFor="notes" className="text-sidebar-foreground">Notes</Label>
           <Textarea
             id="notes"
             value={notes}
             onChange={e => setNotes(e.target.value)}
             placeholder="Additional information..."
+            className="bg-sidebar text-sidebar-foreground"
           />
         </div>
 
-        <div className="pt-3">
+        <div className="pt-4">
           <Button
             onClick={handleSubmit}
             className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"

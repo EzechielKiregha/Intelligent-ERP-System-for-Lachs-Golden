@@ -19,14 +19,39 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) {
+  if (!session?.user?.companyId || !session.user.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  const companyId = session.user.companyId
-  const data = await req.json()
-  // ensure contact is created under this company
-  const newContact = await prisma.contact.create({
-    data: { ...data, companyId },
-  })
-  return NextResponse.json(newContact)
+
+  try {
+    const { fullName, email, phone, jobTitle, notes } = await req.json()
+
+    const contact = await prisma.contact.create({
+      data: {
+        fullName,
+        email,
+        phone,
+        jobTitle,
+        notes,
+        companyId: session.user.companyId,
+      },
+    })
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'CREATE',
+        entity: 'Contact',
+        entityId: contact.id,
+        userId: session.user.id,
+        companyId: session.user.companyId,
+        url: req.url,
+        description: `Created new contact "${contact.fullName}" (${contact.email})`,
+      },
+    })
+
+    return NextResponse.json(contact)
+  } catch (err) {
+    console.error('Contact creation error:', err)
+    return NextResponse.json({ error: 'Failed to create contact' }, { status: 500 })
+  }
 }

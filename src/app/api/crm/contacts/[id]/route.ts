@@ -27,15 +27,35 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const companyId = session.user.companyId
-  const data = await req.json()
-  const updated = await prisma.contact.updateMany({
-    where: { id, companyId },
-    data,
-  })
-  if (updated.count === 0) {
-    return NextResponse.json({ error: 'Not found or unauthorized' }, { status: 404 })
+  try {
+    const { fullName, email, phone, jobTitle, notes } = await req.json()
+
+    const updated = await prisma.contact.updateMany({
+      where: { id, companyId },
+      data: { fullName, email, phone, jobTitle, notes },
+    })
+
+    if (updated.count === 0) {
+      return NextResponse.json({ error: 'Contact not found or unauthorized' }, { status: 404 })
+    }
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'UPDATE',
+        entity: 'Contact',
+        entityId: id,
+        userId: session.user.id,
+        companyId: session.user.companyId,
+        url: req.url,
+        description: `Updated contact "${fullName}" (${email})`,
+      },
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error('Contact update error:', err)
+    return NextResponse.json({ error: 'Failed to update contact' }, { status: 500 })
   }
-  return NextResponse.json({ success: true })
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -45,11 +65,30 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const companyId = session.user.companyId
-  const deleted = await prisma.contact.deleteMany({
-    where: { id, companyId },
-  })
-  if (deleted.count === 0) {
-    return NextResponse.json({ error: 'Not found or unauthorized' }, { status: 404 })
+  try {
+    const contact = await prisma.contact.deleteMany({
+      where: { id, companyId },
+    })
+
+    if (contact.count === 0) {
+      return NextResponse.json({ error: 'Contact not found or unauthorized' }, { status: 404 })
+    }
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'DELETE',
+        entity: 'Contact',
+        entityId: id,
+        userId: session.user.id,
+        companyId,
+        url: req.url,
+        description: `Deleted a contact with ID ${id}`,
+      },
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error('Contact delete error:', err)
+    return NextResponse.json({ error: 'Failed to delete contact' }, { status: 500 })
   }
-  return NextResponse.json({ success: true })
 }
