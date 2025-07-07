@@ -1,7 +1,5 @@
-"use client"
 import { redirect } from "next/navigation";
 import WorkspaceIdSettingClientPage from "./client";
-import { useAuth } from "contents/authContext";
 import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace-by-id";
 
 interface WorkspaceIdSettingPageProps {
@@ -15,12 +13,7 @@ export default async function WorkspaceIdSettingPage({
 }: WorkspaceIdSettingPageProps) {
   const workspaceId = (await params).workspaceId;
 
-  const user = useAuth().user;
-  if (!user) {
-    return redirect("/login");
-  }
-
-  const workspace = await useGetWorkspaceById(workspaceId);
+  const workspace = useGetWorkspaceById(workspaceId);
   if (!workspace) {
     return redirect(`/workspaces/${workspaceId}`);
   }
