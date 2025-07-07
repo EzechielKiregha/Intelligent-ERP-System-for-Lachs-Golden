@@ -20,16 +20,14 @@ import { useGetWorkspaces } from '@/features/workspaces/api/use-get-workspaces'
 import { User, Workspace } from '@/generated/prisma'
 
 interface LandingScreenProps {
-  initialUser: User | null
   initialWorkspaces: Workspace[] | null
 }
 
 export default function LandingScreen({
-  initialUser,
   initialWorkspaces,
 }: LandingScreenProps) {
   const { user: authUser } = useAuth()
-  const [user, setUser] = useState<User | null>(initialUser)
+  const [user, setUser] = useState<User | null>(authUser)
   const [workspaces, setWorkspaces] = useState<Workspace[] | null>(initialWorkspaces)
 
   useEffect(() => {
@@ -67,13 +65,6 @@ export default function LandingScreen({
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link href="https://github.com/Kei-K23/task-pilot" target="_blank">
-              <Button variant="outline" size="icon">
-                <Github className="h-4 w-4" />
-                <span className="sr-only">GitHub</span>
-              </Button>
-            </Link>
-
             <Link href={workspaceUrl}>
               <Button size="sm">
                 {user ? 'Go to Workspace' : 'Get Started'}
@@ -102,11 +93,6 @@ export default function LandingScreen({
                 <Button size="lg" className="flex items-center gap-2">
                   {user ? 'Go to Workspace' : 'Get Started'}
                   {!user && <ArrowRight className="h-4 w-4" />}
-                </Button>
-              </Link>
-              <Link href="https://github.com/Kei-K23/task-pilot" target="_blank">
-                <Button size="lg" variant="outline">
-                  View on GitHub
                 </Button>
               </Link>
             </div>

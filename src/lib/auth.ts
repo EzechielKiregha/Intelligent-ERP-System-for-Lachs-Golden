@@ -3,22 +3,34 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { type NextAuthOptions } from "next-auth";
+import { Role, User } from "@/generated/prisma";
+
+// Extend NextAuth types to include additional fields in Session and JWT
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      role: string;
+      role: Role; // Use Prisma Role enum
       name?: string | null;
       email?: string | null;
       image?: string | null;
       companyId?: string | null;
+      firstName?: string | null;
+      lastName?: string | null;
+      createdAt?: Date | null;
+      employeeId?: string | null;
     };
   }
   interface JWT {
-    role?: string;
-    companyId?: string;
+    role?: Role;
+    companyId?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    createdAt?: Date | null;
+    employeeId?: string | null;
   }
 }
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -35,6 +47,18 @@ export const authOptions: NextAuthOptions = {
         }
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            firstName: true,
+            lastName: true,
+            role: true,
+            companyId: true,
+            employeeId: true,
+            createdAt: true,
+            password: true, // Needed for validation
+          },
         });
         if (!user || !user.password) {
           throw new Error("Invalid credentials");
@@ -43,12 +67,17 @@ export const authOptions: NextAuthOptions = {
         if (!isValid) {
           throw new Error("Invalid credentials");
         }
+        // Return only safe fields, combining firstName and lastName into name if needed
         return {
           id: user.id,
           email: user.email,
-          name: `${user.firstName} ${user.lastName}`,
+          name: user.name || (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : null),
           role: user.role,
           companyId: user.companyId,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          createdAt: user.createdAt,
+          employeeId: user.employeeId,
         };
       },
     }),
@@ -58,14 +87,25 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as any).role;
         token.companyId = (user as any).companyId;
+        token.firstName = (user as any).firstName;
+        token.lastName = (user as any).lastName;
+        token.createdAt = (user as any).createdAt;
+        token.employeeId = (user as any).employeeId;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub!;
-        session.user.role = token.role as string;
+        session.user.role = token.role! as Role;
         session.user.companyId = token.companyId as string;
+        session.user.firstName = token.firstName as string;
+        session.user.lastName = token.lastName as string;
+        session.user.createdAt = token.createdAt as Date;
+        session.user.employeeId = token.employeeId as string;
+        // Include name and email from token if available
+        session.user.name = token.name;
+        session.user.email = token.email;
       }
       return session;
     },

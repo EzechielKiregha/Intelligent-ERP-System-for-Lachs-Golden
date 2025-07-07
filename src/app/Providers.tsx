@@ -11,6 +11,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { SessionProvider } from 'next-auth/react'
 import { AuthProvider } from 'contents/authContext'
+import QueryProviders from '@/components/providers/query-provider'
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Toaster } from 'sonner'
 
 export default function Providers({
   children,
@@ -33,20 +36,21 @@ export default function Providers({
     <SessionProvider>
       <AuthProvider>
         <HeroUIProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <QueryClientProvider client={queryClient}>
-              {isLoading && <LoadingSpinner />}
-              {children}
-              <ReactQueryDevtools initialIsOpen={false} />
-            </QueryClientProvider>
-            <NavigationEventsWrapper />
-          </ThemeProvider>
-
+          <QueryProviders>
+            <NuqsAdapter>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {isLoading && <LoadingSpinner />}
+                {children}
+                <NavigationEventsWrapper />
+              </ThemeProvider>
+            </NuqsAdapter>
+            <Toaster />
+          </QueryProviders>
         </HeroUIProvider>
       </AuthProvider>
     </SessionProvider>
