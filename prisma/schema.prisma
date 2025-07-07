@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -17,6 +18,7 @@ datasource db {
 enum Role {
   ADMIN
   USER
+  MEMBER
 }
 
 enum CategoryType {
@@ -37,10 +39,11 @@ enum PerformanceRating {
 }
 
 enum TaskStatus {
-  PENDING
+  BACKLOG
   IN_PROGRESS
-  COMPLETED
-  BLOCKED
+  TODO
+  DONE
+  IN_REVIEW
 }
 
 enum TransactionType {
@@ -93,6 +96,8 @@ model Company {
   documents Document[]
   reports Report[]
   contacts Contact[]
+
+  Workspace Workspace[]
 }
 
 model User {
@@ -117,9 +122,10 @@ model User {
 
   transactions Transaction[]
   PerformanceReview PerformanceReview[]
-  tasks Task[]
   reports Report[]
   deals Deal[]
+
+  members Member[]
 }
 
 model Category {
@@ -192,6 +198,71 @@ model Customer {
   companyId String
 }
 
+// === Project Management Models ===
+
+// Represents a workspace (e.g., a project or team within a company)
+model Workspace {
+  id          String    @id @default(uuid())
+  name        String
+  companyId   String    // Foreign key to Company
+  company     Company   @relation(fields: [companyId], references: [id])
+  imageUrl    String?
+  fileId      String?   // Reference to an uploaded file, e.g., in a storage service
+  inviteCode  String    @unique @default(cuid()) // Unique code for joining
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  members     Member[]  // Members of this workspace
+
+  projects Project[]
+
+  tasks Task[]
+}
+
+// Represents a user's membership in a workspace
+model Member {
+  id          String    @id @default(uuid())
+  userId      String    // Foreign key to User
+  user        User      @relation(fields: [userId], references: [id])
+  workspaceId String    // Foreign key to Workspace
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  role        Role      @default(MEMBER) // Enum: ADMIN or MEMBER
+  color       String    // Random color for UI purposes
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  tasks       Task[]    @relation("TaskAssignment") // Tasks assigned to this member
+}
+
+model Project {
+  id          String    @id @default(uuid())
+  name        String
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  imageUrl    String?   // URL of the uploaded image
+  fileId      String?   // Identifier for the image in storage (e.g., S3 or Vercel Blob)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  tasks       Task[]    // One-to-many relationship with tasks
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  status      TaskStatus @default(BACKLOG)
+  createdAt   DateTime   @default(now())
+  dueDate     DateTime?
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id])
+  workspaceId String
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id])
+  assigneeId  String?   // Foreign key to Member (nullable if unassigned)
+  assignee    Member?   @relation("TaskAssignment", fields: [assigneeId], references: [id])
+  company     Company    @relation(fields: [companyId], references: [id])
+  companyId   String
+  position    Int
+}
+
+
 // === HR / Employee Management Models ===
 
 model Department {
@@ -225,7 +296,6 @@ model Employee {
 
   payrolls           Payroll[]
   performanceReviews PerformanceReview[]
-  tasks              Task[]              @relation("TaskAssignment")
   documents          Document[]          @relation("DocumentOwnership")
 }
 
@@ -256,23 +326,6 @@ model PerformanceReview {
   reviewerId String?
   company    Company           @relation(fields: [companyId], references: [id])
   companyId  String
-}
-
-model Task {
-  id          String     @id @default(cuid())
-  title       String
-  description String?
-  status      TaskStatus @default(PENDING)
-  createdAt   DateTime   @default(now())
-  dueDate     DateTime?
-  // Assigned employee(s)
-  assignee    Employee?  @relation("TaskAssignment", fields: [assigneeId], references: [id])
-  assigneeId  String?
-  // Created by user
-  createdBy   User?      @relation(fields: [createdById], references: [id])
-  createdById String?
-  company     Company    @relation(fields: [companyId], references: [id])
-  companyId   String
 }
 
 model Document {

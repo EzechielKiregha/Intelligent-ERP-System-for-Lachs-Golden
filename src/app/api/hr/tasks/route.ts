@@ -12,7 +12,7 @@ export async function GET() {
     const companyId = session.user.companyId
   const list = await prisma.task.findMany({
     where:{companyId},
-    include:{ assignee:{ select:{ firstName:true,lastName:true } } },
+    include:{ assignee:{ select:{ user:true } } },
     orderBy:{ createdAt:'desc' }
   })
   return NextResponse.json(list)
@@ -35,12 +35,15 @@ export async function POST(req:NextRequest){
     assigneeId,
   } = body
   const t = await prisma.task.create({ data: {
+    projectId : '',
     title,
     description,
     status,
     dueDate,
     assigneeId,
-    companyId
+    companyId,
+    workspaceId: '',
+    position: 1
   }})
   return NextResponse.json(t)
 }

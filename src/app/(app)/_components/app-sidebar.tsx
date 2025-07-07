@@ -30,6 +30,7 @@ import { IconAnalyze } from "@tabler/icons-react"
 import { useAuth } from "contents/authContext"
 import { useAuditLog } from "@/lib/hooks/dashboard"
 import SkeletonLoader from "./SkeletonLoader"
+import { DashboardProjects } from "./dashboard-projects"
 
 // This is sample data.
 
@@ -80,7 +81,6 @@ const navMainItems = [
       { title: "Employees", url: "/hr/employees" },
       { title: "Departments", url: "/hr/departments" },
       { title: "Performance Review", url: "/hr/reviews" },
-      { title: "Task Assignment", url: "/hr/tasks" },
       { title: "Payroll", url: "/hr/payroll" },
       { title: "Docs", url: "/hr/documents" },
     ],
@@ -133,6 +133,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMainItems} />
+        <DashboardProjects />
         {isLoading && <SkeletonLoader type="list" height={40} />}
         <NavProjects auditLogs={logs} />
       </SidebarContent>
@@ -143,6 +144,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           avatar: user?.avatar || userData.avatar,
         }} />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

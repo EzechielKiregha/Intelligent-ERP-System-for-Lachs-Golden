@@ -192,10 +192,11 @@ export default function SignUpPage() {
               </label>
             </div>
             <Button
+              disabled={signUpMutation.isPending}
               type="submit"
               className="w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
             >
-              {signUpMutation.status === "pending" ? 'Creating ...' : 'Create Account'}
+              {signUpMutation.isPending ? 'Creating ...' : 'Create Account'}
             </Button>
             <p className="text-center text-sm text-gray-800 dark:text-gray-200">
               Already have an account?{' '}

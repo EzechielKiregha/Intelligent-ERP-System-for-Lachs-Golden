@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
 
   const token = cuid2.createId();
-  const resetPasswordLink = `http://localhost:3000/reset-password?token=${token}`;
+  const resetPasswordLink = `https://intelligenterp.dpdns.org/reset-password?token=${token}`;
 
   await prisma.user.update({
     where: { email: toEmail },

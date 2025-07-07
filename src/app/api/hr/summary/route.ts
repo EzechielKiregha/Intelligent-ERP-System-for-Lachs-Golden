@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { TaskStatus } from '@/generated/prisma';
 
 export async function GET(_: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -24,7 +25,7 @@ export async function GET(_: NextRequest) {
       prisma.department.count({
         where:{companyId}
       }),
-      prisma.task.count({ where: { companyId, status: 'PENDING' } }),
+      prisma.task.count({ where: { companyId, status: TaskStatus.BACKLOG } }),
       prisma.document.count({
         where:{companyId}
       }),

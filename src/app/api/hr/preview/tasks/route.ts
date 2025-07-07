@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { TaskStatus } from '@/generated/prisma';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     const pendingTasks = await prisma.task.findMany({
       where: {
         companyId: session.user.companyId,
-        status: 'PENDING',
+        status: TaskStatus.BACKLOG,
       },
       orderBy: { createdAt: 'desc' },
       take: 5,
@@ -25,8 +26,7 @@ export async function GET(req: NextRequest) {
         dueDate: true,
         assignee: {
           select: {
-            firstName: true,
-            lastName: true,
+            user : true
           },
         },
         createdAt: true,
