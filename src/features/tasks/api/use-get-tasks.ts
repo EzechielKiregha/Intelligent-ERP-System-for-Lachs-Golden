@@ -1,3 +1,4 @@
+"use client"
 import { TASK_STATUS } from '@/hooks/type';
 import axiosdb from '@/lib/axios';
 import { useQuery } from '@tanstack/react-query';

@@ -1,4 +1,5 @@
-// lib/hooks/useMembers.ts
+"use client"
+
 import axiosdb from '@/lib/axios';
 import { useQuery } from '@tanstack/react-query';
 

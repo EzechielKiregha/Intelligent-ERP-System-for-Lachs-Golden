@@ -1,7 +1,7 @@
+"use client"
 import axiosdb from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
-// lib/hooks/useMember.ts
 export const useGetMemberById = (memberId: string, workspaceId: string) => {
   return useQuery({
     queryKey: ['member', memberId, workspaceId],

@@ -1,3 +1,4 @@
+"use client"
 import { PositionedTask } from "@/hooks/type";
 import axiosdb from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

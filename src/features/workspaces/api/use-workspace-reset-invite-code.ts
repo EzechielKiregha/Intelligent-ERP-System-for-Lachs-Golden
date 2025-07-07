@@ -1,3 +1,4 @@
+"use client"
 import axiosdb from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 

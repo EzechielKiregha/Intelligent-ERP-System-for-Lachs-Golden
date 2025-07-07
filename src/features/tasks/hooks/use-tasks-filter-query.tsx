@@ -1,3 +1,4 @@
+"use client"
 import { TASK_STATUS } from "@/hooks/type";
 import { parseAsString, parseAsStringEnum, useQueryStates } from "nuqs";
 

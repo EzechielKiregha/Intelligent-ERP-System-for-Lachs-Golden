@@ -1,4 +1,5 @@
-// lib/hooks/useProjects.ts
+"use client"
+
 import axiosdb from '@/lib/axios';
 import { useQuery } from '@tanstack/react-query';
 
@@ -12,7 +13,7 @@ export const useGetProjects = (workspaceId: string) => {
     enabled: !!workspaceId,
   });
 };
-// lib/hooks/useProject.ts
+
 export const useGetProjectById = (projectId: string) => {
   return useQuery({
     queryKey: ['project', projectId],

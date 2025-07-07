@@ -1,7 +1,7 @@
+"use client"
 import axiosdb from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-// lib/hooks/useUpdateProject.ts
 export const useUpdateProject = (workspaceId: string) => {
   const queryClient = useQueryClient();
   return useMutation({

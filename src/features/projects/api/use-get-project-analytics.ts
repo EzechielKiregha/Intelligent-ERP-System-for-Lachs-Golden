@@ -1,7 +1,7 @@
+"use client"
 import axiosdb from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
-// lib/hooks/useProjectAnalytics.ts
 export const useGetProjectAnalytics = (projectId: string, workspaceId: string) => {
   return useQuery({
     queryKey: ['project-analytics', projectId, workspaceId],
