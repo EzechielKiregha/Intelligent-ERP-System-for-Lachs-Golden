@@ -1,3 +1,4 @@
+"use client"
 import { redirect } from "next/navigation";
 import WorkspaceIdSettingClientPage from "./client";
 import { useAuth } from "contents/authContext";

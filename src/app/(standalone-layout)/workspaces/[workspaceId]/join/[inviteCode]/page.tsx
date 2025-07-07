@@ -12,7 +12,7 @@ export default async function WorkspaceJoinPage({
   params,
 }: WorkspaceJoinPageProps) {
   const workspaceId = (await params).workspaceId;
-  const { data: workspace } = await useGetWorkspaceById(workspaceId);
+  const { data: workspace } = useGetWorkspaceById(workspaceId);
 
   if (!workspace) {
     return <PageNotFound />;

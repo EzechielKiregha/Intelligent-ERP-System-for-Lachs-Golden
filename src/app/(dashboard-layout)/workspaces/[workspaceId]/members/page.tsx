@@ -1,3 +1,4 @@
+"use client"
 import MemberListScreen from "@/features/members/components/member-list-screen";
 import { useAuth } from "contents/authContext";
 import { redirect } from "next/navigation";
