@@ -23,12 +23,11 @@ interface LandingScreenProps {
   initialWorkspaces: Workspace[] | null
 }
 
-export default function LandingScreen({
-  initialWorkspaces,
-}: LandingScreenProps) {
+export default function LandingScreen() {
   const { user: authUser } = useAuth()
+  const { data } = useGetWorkspaces();
   const [user, setUser] = useState<User | null>(authUser)
-  const [workspaces, setWorkspaces] = useState<Workspace[] | null>(initialWorkspaces)
+  const [workspaces, setWorkspaces] = useState<Workspace[] | null>(data)
 
   useEffect(() => {
     setUser(authUser || null)
