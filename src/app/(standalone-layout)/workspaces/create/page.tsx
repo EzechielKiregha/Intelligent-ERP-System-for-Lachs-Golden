@@ -1,6 +1,4 @@
 import CreateWorkspacesForm from "@/features/workspaces/components/create-workspaces-form";
-import { useAuth } from "contents/authContext";
-import { redirect } from "next/navigation";
 
 export default async function WorkspaceCreatePage() {
 

@@ -1,5 +1,5 @@
 
-import { UserButton } from "@/components/UserButton";
+import { UserButton } from "@/app/(app)/_components/UserButton";
 import { LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import React from "react";
