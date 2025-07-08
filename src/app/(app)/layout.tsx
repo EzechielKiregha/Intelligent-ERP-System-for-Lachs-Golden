@@ -9,17 +9,17 @@ import AuthGuard from "./_components/AuthGuard";
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <AuthGuard>
-
-      <div className="flex h-screen">
-        <AppSidebar />
-        <SidebarInset>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Topbar />
-            <main className="overflow-y-auto">{children}</main>
-          </div>
-        </SidebarInset>
-      </div>
-
+      <SidebarProvider>
+        <div className="flex h-screen">
+          <AppSidebar />
+          <SidebarInset>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <Topbar />
+              <main className="overflow-y-auto">{children}</main>
+            </div>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
     </AuthGuard>
   );
 };
