@@ -2,7 +2,7 @@ import { CheckCircle2, Home, LayoutDashboard, Settings, Users } from "lucide-rea
 
 export const NAV_ITEMS = [
   {
-    name: "Task Pilot",
+    name: "My Workspaces",
     link: "",
     icon: LayoutDashboard,
   },

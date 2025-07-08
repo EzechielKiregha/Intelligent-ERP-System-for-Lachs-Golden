@@ -1,4 +1,3 @@
-
 import { UserButton } from "@/app/(app)/_components/UserButton";
 import { LayoutDashboard } from "lucide-react";
 import Link from "next/link";
@@ -11,17 +10,16 @@ export default function StandaloneLayout({
 }) {
   return (
     <main className="pb-10">
-      <nav className="max-w-5xl mx-auto">
-        <div className="px-4 flex items-center justify-between gap-x-4 py-4">
-          <Link href={"/"} className="flex items-center gap-x-2">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-x-4 py-4">
+          <Link href="/" className="flex items-center gap-x-2">
             <LayoutDashboard className="h-6 w-6" />
             <span className="text-xl font-bold">Intelligent ERP Task</span>
           </Link>
-
           <UserButton />
         </div>
       </nav>
-      <div className="px-4">{children}</div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
     </main>
   );
 }

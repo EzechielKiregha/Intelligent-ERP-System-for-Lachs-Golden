@@ -1,4 +1,3 @@
-// components/landing-screen.tsx
 'use client'
 
 import React, { useEffect, useState } from 'react'
@@ -19,10 +18,6 @@ import { useAuth } from 'contents/authContext'
 import { useGetWorkspaces } from '@/features/workspaces/api/use-get-workspaces'
 import { User, Workspace } from '@/generated/prisma'
 
-interface LandingScreenProps {
-  initialWorkspaces: Workspace[] | null
-}
-
 export default function LandingScreen() {
   const { user: authUser } = useAuth()
   const { data } = useGetWorkspaces();
@@ -39,7 +34,7 @@ export default function LandingScreen() {
     ? workspaces && workspaces.length > 0
       ? `/workspaces/${workspaces[0].id}`
       : '/workspaces/create'
-    : '/sign-in'
+    : '/login'
 
   return (
     <div className="flex flex-col min-h-screen bg-sidebar text-sidebar-foreground">
