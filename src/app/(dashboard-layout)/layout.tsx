@@ -17,18 +17,16 @@ export default function DashboardLayout({
     <AuthGuard>
       <div className="flex h-screen">
         {/* Sidebar */}
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            {/* Main Content */}
-            <div className="">
-              <Topbar />
-              <main className="overflow-y-auto">
-                {children}
-              </main>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          {/* Main Content */}
+          <div className="">
+            <Topbar />
+            <main className="overflow-y-auto">
+              {children}
+            </main>
+          </div>
+        </SidebarInset>
       </div>
     </AuthGuard>
   );

@@ -28,8 +28,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useNavigation } from "@/hooks/use-navigation";
 
 interface AuditLog {
   auditLogs: {

@@ -15,7 +15,7 @@ export default function StandaloneLayout({
         <div className="px-4 flex items-center justify-between gap-x-4 py-4">
           <Link href={"/"} className="flex items-center gap-x-2">
             <LayoutDashboard className="h-6 w-6" />
-            <span className="text-xl font-bold">TaskPilot</span>
+            <span className="text-xl font-bold">Intelligent ERP Task</span>
           </Link>
 
           <UserButton />
