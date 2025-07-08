@@ -16,7 +16,7 @@ export default function StandaloneLayout({
             <LayoutDashboard className="h-6 w-6" />
             <span className="text-xl font-bold">Intelligent ERP Task</span>
           </Link>
-          <UserButton />
+          {/* <UserButton /> */}
         </div>
       </nav>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
