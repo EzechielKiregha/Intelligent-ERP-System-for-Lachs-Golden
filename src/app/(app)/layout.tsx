@@ -13,7 +13,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <AppSidebar />
         <SidebarInset>
           <Topbar />
-          <div className="overflow-y-auto flex items-center justify-between px-6 h-16">{children}</div>
+          <main className="overflow-y-auto flex items-center justify-between max-w-7xl mx-auto">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </AuthGuard>
