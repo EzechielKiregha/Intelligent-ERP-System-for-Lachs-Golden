@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma  from '@/lib/prisma';
-
-// app/api/workspaces/[workspaceId]/analytics/route.ts
+import { authOptions } from '@/lib/auth';
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ workspaceId: string }> }) {
 
   const workspaceId = (await params).workspaceId
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({

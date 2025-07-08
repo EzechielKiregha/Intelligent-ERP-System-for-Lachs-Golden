@@ -2,11 +2,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma  from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ workspaceId: string }> }) {
 
   const workspaceId = (await params).workspaceId
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ work
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ workspaceId: string }> }) {
 
   const workspaceId = (await params).workspaceId
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({
@@ -58,7 +59,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ wo
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ workspaceId: string }> }) {
 
   const workspaceId = (await params).workspaceId
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({

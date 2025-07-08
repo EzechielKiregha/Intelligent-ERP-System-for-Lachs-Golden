@@ -2,9 +2,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const workspaces = await prisma.workspace.findMany({
@@ -20,8 +21,8 @@ export async function GET(req: NextRequest) {
 
 // app/api/workspaces/route.ts
 export async function POST(req: NextRequest) {
-  const session = await getServerSession();
-  
+ const session = await getServerSession(authOptions);;
+
   console.log("[SESSION] ", session?.user)
 
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

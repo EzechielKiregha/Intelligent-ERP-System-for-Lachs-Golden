@@ -4,11 +4,12 @@ import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { TaskStatus } from '@/generated/prisma';
+import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
 
   const projectId = (await params).projectId
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

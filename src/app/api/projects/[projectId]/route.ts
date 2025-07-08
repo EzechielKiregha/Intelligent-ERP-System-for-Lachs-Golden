@@ -2,11 +2,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
 
   const projectId = (await params).projectId
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ proj
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
 
   const projectId = (await params).projectId
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -89,7 +90,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ pr
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
 
   const projectId = (await params).projectId
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

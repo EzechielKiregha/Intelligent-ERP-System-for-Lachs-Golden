@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma  from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
 
-// app/api/workspaces/[workspaceId]/reset-invite-code/route.ts
 export async function POST(req: NextRequest, { params }: { params: Promise<{ workspaceId: string }> }) {
 
   const workspaceId = (await params).workspaceId
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({

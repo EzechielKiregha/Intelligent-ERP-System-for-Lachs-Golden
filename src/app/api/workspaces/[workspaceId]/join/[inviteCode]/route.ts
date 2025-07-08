@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma  from '@/lib/prisma';
-// app/api/workspaces/[workspaceId]/join/[inviteCode]/route.ts
+import { authOptions } from '@/lib/auth';
+
 export async function POST(req: NextRequest, { params }: { params:  Promise<{ workspaceId: string; inviteCode: string }> }) {
 
   const workspaceId = (await params).workspaceId
   const inviteCode = (await params).inviteCode
-  const session = await getServerSession();
+ const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const workspace = await prisma.workspace.findUnique({
