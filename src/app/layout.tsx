@@ -5,6 +5,7 @@ import Providers from "./Providers";
 import { LoadingProvider } from "@/contexts/loadingContext";
 import ToastProvider from "@/components/providers/toaster-provider";
 import { Suspense } from "react";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,11 @@ export default function RootLayout({
         <LoadingProvider>
           <Providers>
             <ToastProvider />
-            <Suspense>{children}</Suspense>
+            <Suspense>
+              <SidebarProvider>
+                {children}
+              </SidebarProvider>
+            </Suspense>
           </Providers>
         </LoadingProvider>
       </body>
