@@ -17,34 +17,30 @@ export default function FinancePage() {
   const { data: transactions, isLoading, error } = useFinanceTransactions();
 
   return (
-    <AuthGuard>
-      <div className="flex flex-col min-h-full">
+    <div className="flex flex-col min-h-full">
 
-        <main className="p-4 space-y-6">
-          {/* Finance Cards */}
-          <section>
-            <FinanceSummaryCards />
-          </section>
+      <main className="p-4 space-y-6">
+        {/* Finance Cards */}
+        <section>
+          <FinanceSummaryCards />
+        </section>
 
-          {/* Forecast Chart & Budget Section */}
-          <section>
-            <FinanceForecastSection />
-          </section>
+        {/* Forecast Chart & Budget Section */}
+        <section>
+          <FinanceForecastSection />
+        </section>
 
-          {/* Transaction List */}
-          <section>
-            <CategoriesList />
-          </section>
+        {/* Transaction List */}
+        <section>
+          <CategoriesList />
+        </section>
 
-          {/* Financial Insights */}
-          <section className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-            <FinancialInsights />
-            <BudgetSection />
-          </section>
-        </main>
-
-
-      </div>
-    </AuthGuard>
+        {/* Financial Insights */}
+        <section className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          <FinancialInsights />
+          <BudgetSection />
+        </section>
+      </main>
+    </div>
   );
 }

@@ -7,7 +7,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ work
 
   const workspaceId = (await params).workspaceId
   const session = await getServerSession();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({
     where: { workspaceId: workspaceId, userId: session.user.id },
@@ -27,7 +27,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ wo
 
   const workspaceId = (await params).workspaceId
   const session = await getServerSession();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({
     where: { workspaceId: workspaceId, userId: session.user.id, role: 'ADMIN' },
@@ -59,7 +59,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ w
 
   const workspaceId = (await params).workspaceId
   const session = await getServerSession();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({
     where: { workspaceId: workspaceId, userId: session.user.id, role: 'ADMIN' },

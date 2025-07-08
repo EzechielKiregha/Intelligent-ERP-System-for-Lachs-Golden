@@ -53,7 +53,7 @@ export function WorkspaceSwitcher() {
             )}
           </SelectTrigger>
           <SelectContent>
-            {data?.documents.map((workspace: any) => (
+            {data && data?.documents.map((workspace: any) => (
               <SelectItem key={workspace.$id} value={workspace.$id}>
                 <div className="flex items-center gap-x-2">
                   <Avatar className="size-8 rounded-lg">

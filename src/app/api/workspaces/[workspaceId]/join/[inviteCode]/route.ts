@@ -7,7 +7,7 @@ export async function POST(req: NextRequest, { params }: { params:  Promise<{ wo
   const workspaceId = (await params).workspaceId
   const inviteCode = (await params).inviteCode
   const session = await getServerSession();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const workspace = await prisma.workspace.findUnique({
     where: { id: workspaceId },

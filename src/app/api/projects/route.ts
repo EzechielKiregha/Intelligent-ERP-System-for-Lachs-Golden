@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession();
-  if (!session?.user?.id) {
+  if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 // app/api/projects/route.ts
 export async function POST(req: NextRequest) {
   const session = await getServerSession();
-  if (!session?.user?.id) {
+  if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

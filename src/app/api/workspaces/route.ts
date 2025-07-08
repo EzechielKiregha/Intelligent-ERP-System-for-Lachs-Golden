@@ -5,10 +5,13 @@ import prisma from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const workspaces = await prisma.workspace.findMany({
-    where: { members: { some: { userId: session.user.id } } },
+    where: {
+      members: { some: { userId: session.user.id } },
+      companyId : session.user.companyId
+    },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -18,7 +21,7 @@ export async function GET(req: NextRequest) {
 // app/api/workspaces/route.ts
 export async function POST(req: NextRequest) {
   const session = await getServerSession();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const formData = await req.formData();
   const name = formData.get('name') as string;

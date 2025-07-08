@@ -134,10 +134,11 @@ export default function LoginPage() {
             </div>
 
             <Button
+              disabled={loginMutation.isPending}
               type="submit"
               className="w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
             >
-              {loginMutation.status === "pending" ? 'Signing in...' : 'Sign In'}
+              {loginMutation.isPending ? 'Signing in...' : 'Sign In'}
             </Button>
             <div className="mt-4 flex justify-between text-sm text-gray-800 dark:text-gray-200">
               <Link href="/forgot-password" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">

@@ -9,7 +9,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ proj
 
   const projectId = (await params).projectId
   const session = await getServerSession();
-  if (!session?.user?.id) {
+  if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

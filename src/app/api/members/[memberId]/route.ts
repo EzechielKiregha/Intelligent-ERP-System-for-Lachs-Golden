@@ -6,7 +6,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ memb
 
   const memberId = (await params).memberId
   const session = await getServerSession();
-  if (!session?.user?.id) {
+  if (!session?.user?.companyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
@@ -45,7 +45,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ m
 
   const memberId = (await params).memberId
   const session = await getServerSession();
-  if (!session?.user?.id) {
+  if (!session?.user?.companyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
@@ -94,7 +94,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ me
 
   const memberId = (await params).memberId
   const session = await getServerSession();
-  if (!session?.user?.id) {
+  if (!session?.user?.companyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
-import { Prisma } from '@/generated/prisma';
+import { Prisma, TaskStatus } from '@/generated/prisma';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession();
-  if (!session?.user?.id) {
+  if (!session?.user?.companyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
@@ -34,9 +34,10 @@ export async function GET(req: NextRequest) {
     workspaceId,
     ...(projectId && { projectId }),
     ...(assigneeId && { assigneeId }),
-    ...(status && { status }),
+    ...(status && { TaskStatus }),
     ...(dueDate && { dueDate: new Date(dueDate) }),
     ...(search && { title: { contains: search } }),
+    companyId
   };
 
   // Define type for tasks with relations
@@ -49,9 +50,7 @@ export async function GET(req: NextRequest) {
 
   const tasks = await prisma.task.findMany({
     relationLoadStrategy:"join",
-    where :{
-      companyId
-    },
+    where,
     include: {
       project: true,
       assignee: {
@@ -80,7 +79,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession();
-  if (!session?.user?.id || !session?.user?.companyId) {
+  if (!session?.user?.companyId || !session?.user?.companyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
   const companyId = session.user.companyId
