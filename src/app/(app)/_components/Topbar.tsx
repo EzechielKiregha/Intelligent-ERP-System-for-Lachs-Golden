@@ -8,6 +8,14 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { NavUser } from './nav-user';
 import { useAuth } from 'contents/authContext';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 const Topbar: React.FC = () => {
   const pathname = usePathname();
@@ -18,16 +26,25 @@ const Topbar: React.FC = () => {
 
   return (
     <header className="flex items-center justify-between px-6 h-16 bg-sidebar text-sidebar-foreground  border-b border-gray-200 dark:border-[#374151]">
-      {/* Left: Page Title */}
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
         <Separator
           orientation="vertical"
           className="mr-2 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 capitalize">
-          {activePage}
-        </h1>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="/dashboard">
+                Intelligent ERP
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{activePage}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
 
       {/* Right: Topbar Links and Notifications */}
