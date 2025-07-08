@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select'
 import BasePopover from '@/components/BasePopover'
 import { useFinanceCategories, useCreateTransaction } from '@/lib/hooks/finance' // Import useCreateTransaction
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 

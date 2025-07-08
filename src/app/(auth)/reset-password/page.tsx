@@ -8,7 +8,7 @@ import { resetPasswordSchema, ResetPasswordInput } from '@/lib/validations/reset
 import { useMutation } from '@tanstack/react-query';
 import axiosdb from '@/lib/axios';
 import { useLoading } from '@/contexts/loadingContext';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export default function ResetPasswordPageWrapper() {
   return (

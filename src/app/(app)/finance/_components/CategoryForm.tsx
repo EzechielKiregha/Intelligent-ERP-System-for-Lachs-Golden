@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { useRouter } from 'next/navigation'
 import axiosfb from 'axios'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 import axiosdb from '@/lib/axios'
 import { useSingleCategory } from '@/lib/hooks/finance'
 

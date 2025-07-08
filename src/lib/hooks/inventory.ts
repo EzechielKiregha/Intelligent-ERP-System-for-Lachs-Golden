@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axiosdb from 'axios';
-import toast from 'react-hot-toast';
+import {toast} from 'sonner';
 
 const API = {
   fetch: '/api/inventory/products',

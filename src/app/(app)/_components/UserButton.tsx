@@ -31,9 +31,10 @@ import {
 } from "@/components/ui/sidebar"
 import { useAuth } from "contents/authContext"
 import { useNavigation } from "@/hooks/use-navigation"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export function UserButton() {
-  const { isMobile } = useSidebar()
+  const isMobile = useIsMobile()
   const logout = useAuth().logout
 
   let user = useAuth().user

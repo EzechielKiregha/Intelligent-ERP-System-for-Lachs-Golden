@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar'
 import { ChevronDownIcon } from 'lucide-react'
 import BasePopover from '@/components/BasePopover'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 import { useEmployees, useSavePayroll, useSinglePayroll } from '@/lib/hooks/hr'
 import { useSearchParams } from 'next/navigation'
 

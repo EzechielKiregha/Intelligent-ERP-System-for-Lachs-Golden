@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import BasePopover from '@/components/BasePopover'
 import axiosdb from '@/lib/axios'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 
 // Zod schema
 const productSchema = z.object({

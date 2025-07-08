@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import axiosdb from '@/lib/axios';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import Link from 'next/link';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useState } from 'react';
 
 export default function SignUpPage() {

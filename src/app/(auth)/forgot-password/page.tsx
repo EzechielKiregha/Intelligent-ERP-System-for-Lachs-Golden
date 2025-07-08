@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axiosdb from '@/lib/axios';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useState } from 'react';
 
 import {

@@ -13,7 +13,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar'
 import { ChevronDownIcon } from 'lucide-react'
 import BasePopover from '@/components/BasePopover'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 import { useSearchParams } from 'next/navigation'
 import { useEmployees, useSaveTask, useSingleTask } from '@/lib/hooks/hr'
 

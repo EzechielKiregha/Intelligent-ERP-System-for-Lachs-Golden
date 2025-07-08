@@ -1,7 +1,7 @@
 "use client"
 import { useMutation,useQueryClient, useQuery } from '@tanstack/react-query';
 import axiosdb from '@/lib/axios';
-import toast from 'react-hot-toast';
+import {toast} from 'sonner';
 
 interface SummaryPeriodResponse {
   totalRevenue: number;

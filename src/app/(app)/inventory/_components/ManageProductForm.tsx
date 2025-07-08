@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { Product, useSingleProduct } from '@/lib/hooks/inventory'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 import axiosdb from '@/lib/axios'
 
 const productSchema = z.object({

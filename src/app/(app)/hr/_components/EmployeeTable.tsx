@@ -12,7 +12,7 @@ import { useDeleteEmployee, useEmployees } from '@/lib/hooks/hr'
 import { empSchema } from '../employees/_components/ManageEmployeeForm'
 import { EmployeeCellViewer } from './EmployeeCellViewer'
 import { Skeleton } from '@/components/ui/skeleton'
-import toast from 'react-hot-toast'
+import toast from 'sonner'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React from 'react'
 

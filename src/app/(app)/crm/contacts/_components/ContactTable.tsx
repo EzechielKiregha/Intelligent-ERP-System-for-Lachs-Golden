@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Edit2, Trash2, User } from 'lucide-react'
 import { useContacts, useDeleteContact } from '@/lib/hooks/crm'
 import { Skeleton } from '@/components/ui/skeleton'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import z from 'zod'
 import {
   Dialog,

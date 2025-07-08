@@ -9,7 +9,7 @@ import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { useDeletePayroll, usePayrolls } from '@/lib/hooks/hr'
 import { z } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
-import toast from 'react-hot-toast'
+import toast from 'sonner'
 import React from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 

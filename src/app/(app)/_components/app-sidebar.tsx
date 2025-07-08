@@ -31,6 +31,7 @@ import { useAuth } from "contents/authContext"
 import { useAuditLog } from "@/lib/hooks/dashboard"
 import SkeletonLoader from "./SkeletonLoader"
 import { DashboardProjects } from "./dashboard-projects"
+import dynamic from "next/dynamic"
 
 // This is sample data.
 
@@ -120,7 +121,7 @@ const userData = {
   avatar: "https://github.com/shadcn.png",
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const { data: logs, isLoading } = useAuditLog();
 
@@ -148,3 +149,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
+
+const AppSidebar = dynamic(() => Promise.resolve(AppSidebarContent), { ssr: false });
+
+export { AppSidebar };
