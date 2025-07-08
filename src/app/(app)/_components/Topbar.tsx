@@ -25,7 +25,7 @@ const Topbar: React.FC = () => {
   const activePage = (pathname.split('/')[1] || 'dashboard');
 
   return (
-    <header className="flex items-center justify-between px-6 h-16 bg-sidebar text-sidebar-foreground  border-b border-gray-200 dark:border-[#374151]">
+    <header className="flex items-center justify-between px-6 h-16 bg-sidebar text-sidebar-foreground  border-b border-gray-200">
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
         <Separator

@@ -10,15 +10,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <AuthGuard>
       <SidebarProvider>
-        <div className="flex h-screen">
-          <AppSidebar />
-          <SidebarInset>
-            <div className="max-w-7xl mx-auto">
-              <Topbar />
-              <main className="overflow-y-auto w-full">{children}</main>
-            </div>
-          </SidebarInset>
-        </div>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="max-w-7xl mx-auto">
+            <Topbar />
+            <main className="overflow-y-auto">{children}</main>
+          </div>
+        </SidebarInset>
       </SidebarProvider>
     </AuthGuard>
   );
