@@ -36,9 +36,17 @@ export function UserButton() {
   const { isMobile } = useSidebar()
   const logout = useAuth().logout
 
-  const user = useAuth().user
+  let user = useAuth().user
 
   const nav = useNavigation()
+
+  if (!user) {
+    user = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      avatar: "https://github.com/shadcn.png",
+    };
+  }
 
   return (
     <SidebarMenu>
