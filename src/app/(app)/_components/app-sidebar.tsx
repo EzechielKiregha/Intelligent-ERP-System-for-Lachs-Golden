@@ -32,6 +32,7 @@ import { useAuditLog } from "@/lib/hooks/dashboard"
 import SkeletonLoader from "./SkeletonLoader"
 import { DashboardProjects } from "./dashboard-projects"
 import dynamic from "next/dynamic"
+import { usePathname } from "next/navigation"
 
 // This is sample data.
 
@@ -124,6 +125,13 @@ const userData = {
 function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const { data: logs, isLoading } = useAuditLog();
+  const path = usePathname();
+  const [pm, setPm] = React.useState(false)
+
+  React.useEffect(() => {
+    if (path.startsWith("/workspaces")) setPm(true)
+    else setPm(false)
+  })
 
   const user = useAuth().user;
 
@@ -133,8 +141,11 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher company={company} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMainItems} />
-        <DashboardProjects />
+        {pm ? (
+          <DashboardProjects />
+        ) : (
+          <NavMain items={navMainItems} />
+        )}
         {isLoading && <SkeletonLoader type="list" height={40} />}
         <NavProjects auditLogs={logs} />
       </SidebarContent>
