@@ -23,7 +23,7 @@ import { useAuth } from "contents/authContext";
 import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 import { User, Workspace } from "@/generated/prisma";
 import { useEffect, useState } from "react";
-import { WorkspaceSwitcher } from "@/features/workspaces/components/workspace-switcher";
+import { WorkspaceSwitcher } from "@/app/(app)/_components/workspace-switcher";
 
 export function DashboardProjects({
   ...props

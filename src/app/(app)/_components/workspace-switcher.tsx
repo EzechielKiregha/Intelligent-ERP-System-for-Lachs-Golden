@@ -3,9 +3,9 @@
 import { Plus } from "lucide-react";
 
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
-import { useGetWorkspaces } from "../api/use-get-workspaces";
+import { useGetWorkspaces } from "../../../features/workspaces/api/use-get-workspaces";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useGetWorkspaceIdParam } from "../hooks/use-get-workspace-param";
+import { useGetWorkspaceIdParam } from "../../../features/workspaces/hooks/use-get-workspace-param";
 import {
   Select,
   SelectContent,
@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCreateWorkspace } from "../hooks/use-create-workspace";
+import { useCreateWorkspace } from "../../../features/workspaces/hooks/use-create-workspace";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
