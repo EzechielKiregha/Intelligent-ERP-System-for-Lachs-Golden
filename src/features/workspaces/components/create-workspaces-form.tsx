@@ -77,7 +77,7 @@ export default function CreateWorkspacesForm({
   const isInStandaloneLayout = pathname === "/workspaces/create";
 
   return (
-    <Card className={cn(isInStandaloneLayout ? "border mt-10" : "border-none")}>
+    <Card className={cn(isInStandaloneLayout ? "border mt-10 bg-sidebar" : "border-none bg-sidebar")}>
       <CardHeader>
         <CardTitle className="text-lg text-center">
           Create a new Workspace

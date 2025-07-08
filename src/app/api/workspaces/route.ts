@@ -21,6 +21,9 @@ export async function GET(req: NextRequest) {
 // app/api/workspaces/route.ts
 export async function POST(req: NextRequest) {
   const session = await getServerSession();
+  
+  console.log("[SESSION] ", session?.user)
+
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const formData = await req.formData();
@@ -50,6 +53,8 @@ export async function POST(req: NextRequest) {
       inviteCode: Math.random().toString(36).substring(2, 8), // Simple random code
     },
   });
+
+  console.log("[WORKSPACE] ", workspace)
 
   await prisma.member.create({
     data: {
