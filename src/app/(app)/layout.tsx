@@ -13,9 +13,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="flex h-screen">
           <AppSidebar />
           <SidebarInset>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
               <Topbar />
-              <main className="overflow-y-auto">{children}</main>
+              <main className="overflow-y-auto w-full">{children}</main>
             </div>
           </SidebarInset>
         </div>
