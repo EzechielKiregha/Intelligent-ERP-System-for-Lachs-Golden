@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     orderBy: [{ role: 'asc' }, { createdAt: 'desc' }],
   });
 
-  let populatedMembers = new Array
+  let populatedMembers = []
 
   if (!members) {
     populatedMembers.push(member)
