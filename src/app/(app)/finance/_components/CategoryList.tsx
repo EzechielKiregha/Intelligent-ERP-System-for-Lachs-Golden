@@ -8,9 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { IconDotsVertical } from "@tabler/icons-react";
-import SkeletonLoader from "../../_components/SkeletonLoader";
 import { Skeleton } from "@/components/ui/skeleton";
-import toast from "react-hot-toast";
+import { toast } from 'sonner'
 
 // Category schema
 export const categorySchema = z.object({
@@ -127,7 +126,7 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
           {/* <DropdownMenuItem>Duplicate</DropdownMenuItem> */}
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => {
-            toast.error("Sorry! You have no delete permission")
+            toast.error("Sorry! You Don't Have Delete Permission")
           }} variant="destructive">Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

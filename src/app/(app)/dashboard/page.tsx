@@ -7,7 +7,6 @@ import ActivityFeed from './_components/ActivityFeed';
 import AIInsights from './_components/AIInsights';
 // import { DollarSign } from 'react-feather';
 import SkeletonLoader from '../_components/SkeletonLoader';
-import AuthGuard from '../_components/AuthGuard';
 import { MetricCard } from './_components/MetricCards';
 import { DollarSign, ShoppingCart, Users } from 'lucide-react';
 import RevenueAnalytics from './_components/RevenueAnalytics';
@@ -26,17 +25,12 @@ export default function DashboardPage() {
   const { data: auditLogs, isLoading: logsLoading } = useAuditLog()
 
   return (
-    <div className="flex">
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col ">
-        <main className="flex-1 overflow-auto p-6 pt-4">
-          {/* Show Skeleton Loader if loading */}
+    <div className="flex flex-1 flex-col">
+      <div className="@container/main flex flex-1 flex-col gap-2">
+        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
           {statsLoading && <SkeletonLoader height={40} type="card" count={3} />}
-
-          {/* Metric Cards */}
           {!statsLoading && stats && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-              {/* Total Revenue */}
               <MetricCard
                 icon={<DollarSign className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Revenue"
@@ -47,7 +41,6 @@ export default function DashboardPage() {
                 footerSubtext=""
               />
 
-              {/* Total Orders */}
               <MetricCard
                 icon={<ShoppingCart className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Orders"
@@ -58,7 +51,6 @@ export default function DashboardPage() {
                 footerSubtext=""
               />
 
-              {/* Total Customers */}
               <MetricCard
                 icon={<Users className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Customers"
@@ -71,13 +63,13 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Forecast Chart & Budget Section */}
-          <div className="grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6">
+          <div className="mb-6 lg:px-6">
             <FinanceForecastSection />
+          </div>
+          <div className="lg:px-6">
             <CategoriesList />
           </div>
 
-          {/* Revenue Analytics & Sales Distribution */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {revenueLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
             {!revenueLoading && revenueData && (
@@ -92,19 +84,19 @@ export default function DashboardPage() {
               }} />
             )}
           </div>
-          <div className="grid grid-rows-1 lg:grid-rows-2 gap-6 mb-6">
-
+          <div className="hidden lg:px-6">
             {logsLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
-            {/* Recent Activities */}
             {!logsLoading && auditLogs && (
               <ActivityFeed auditLogs={auditLogs} />
             )}
-            {/* AI Insights Section */}
+          </div>
+          <div className="lg:px-6">
+            {insightsLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
             {!insightsLoading && insightsData && (
               <FinancialInsights />
             )}
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

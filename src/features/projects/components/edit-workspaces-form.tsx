@@ -55,7 +55,7 @@ export default function EditProjectForm({
 
     mutate(
       {
-        projectId: initialValue.$id,
+        projectId: initialValue.id,
         data,
       },
       {
@@ -63,7 +63,7 @@ export default function EditProjectForm({
           toast.success(message);
           form.reset();
           router.push(
-            `/workspaces/${workspaceId}/projects/${initialValue.$id}`
+            `/workspaces/${workspaceId}/projects/${initialValue.id}`
           );
         },
         onError: ({ message }) => {

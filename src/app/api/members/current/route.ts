@@ -24,11 +24,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
-  const populatedMember = {
-    ...member,
-    name: member.user.name || member.user.email.split('@')[0],
-    email: member.user.email,
-  };
-
-  return NextResponse.json({ success: true, message: 'Success', data: populatedMember });
+  return NextResponse.json({ success: true, message: 'Success', data: member });
 }

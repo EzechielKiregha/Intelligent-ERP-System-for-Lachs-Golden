@@ -26,6 +26,8 @@ export async function POST(req: NextRequest, { params }: { params:  Promise<{ wo
     data: {
       userId: session.user.id,
       workspaceId: workspaceId,
+      name : session.user.name || "Anonymous Member",
+      email : session.user.email || "anonymous.email@example.com",
       role: 'MEMBER',
       color: '#' + Math.floor(Math.random()*16777215).toString(16),
     },

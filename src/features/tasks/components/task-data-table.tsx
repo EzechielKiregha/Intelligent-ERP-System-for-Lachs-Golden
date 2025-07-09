@@ -56,7 +56,7 @@ export function TaskDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex bg-sidebar items-center py-4">
         <Input
           placeholder="Filter task name..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -66,7 +66,7 @@ export function TaskDataTable<TData, TValue>({
           className="max-w-sm"
         />
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border bg-sidebar">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -77,9 +77,9 @@ export function TaskDataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}

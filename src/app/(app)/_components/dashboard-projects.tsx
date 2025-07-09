@@ -34,13 +34,7 @@ export function DashboardProjects({
   const { user: authUser } = useAuth()
   const { data } = useGetWorkspaces();
   const [user, setUser] = useState<User | null>(authUser)
-  const [workspaces, setWorkspaces] = useState<Workspace[] | null>(data)
-
-  useEffect(() => {
-    setUser(authUser || null)
-    const { data } = useGetWorkspaces();
-    setWorkspaces(data)
-  }, [authUser])
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(data)
 
   const workspaceUrl = user
     ? workspaces && workspaces.length > 0
@@ -52,20 +46,20 @@ export function DashboardProjects({
     <>
       <CreateWorkspacesModal />
       <CreateProjectModal />
-      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroup >
         <SidebarGroupLabel>ERP Task Pilot</SidebarGroupLabel>
-        <SidebarMenuItem className="pt-4">
+        <SidebarMenuItem>
           <WorkspaceSwitcher />
         </SidebarMenuItem>
 
         <SidebarMenu>
           {NAV_ITEMS.map(({ name, link, icon: Icon }) => {
-            const fullHrefPath = `/workspaces/${workspaceId}${link}`;
+            const fullHrefPath = name === 'Workplace' ? `/workspaces/${workspaceId}` : `/workspaces/${workspaceId}${link}`;
             const isActive = pathname === fullHrefPath;
             return (
               <SidebarMenuItem key={name}>
                 <SidebarMenuButton asChild isActive={isActive} className={`${isActive ? "bg-sidebar-accent text-sidebar-foreground" : ""}`}>
-                  <Link href={user && link === "" ? workspaceUrl : fullHrefPath}>
+                  <Link href={fullHrefPath}>
                     <Icon /> {name}
                   </Link>
                 </SidebarMenuButton>

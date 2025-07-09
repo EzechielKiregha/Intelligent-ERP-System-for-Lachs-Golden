@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 interface ProjectAvatarProps {
-  imageUrl?: string;
+  imageUrl: string;
   name: string;
   className?: string;
   textClassName?: string;

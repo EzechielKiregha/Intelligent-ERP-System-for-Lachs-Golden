@@ -46,7 +46,7 @@ export const taskColumns: ColumnDef<Task>[] = [
         <div className="flex items-center gap-x-2">
           <ProjectAvatar
             name={project.name}
-            imageUrl={project.imageUrl}
+            imageUrl={project.imageUrl as string}
             className="size-7"
             showName={false}
           />

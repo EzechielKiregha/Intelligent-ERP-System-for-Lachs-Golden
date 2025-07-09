@@ -1,13 +1,19 @@
 "use client"
+
+import { Member } from "@/generated/prisma";
 import axiosdb from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetMembers = (workspaceId: string) => {
+interface MemberWithUserData {
+  members : Member[]
+} 
+
+export function useGetMembers(workspaceId: string){
   return useQuery({
     queryKey: ['members', workspaceId],
     queryFn: async () => {
-      const { data } = await axiosdb.get(`/api/members?workspaceId=${workspaceId}`);
-      return data.data;
+      const response = await axiosdb.get<MemberWithUserData>(`/api/members?workspaceId=${workspaceId}`);
+      return response.data.members;
     },
     enabled: !!workspaceId,
   });

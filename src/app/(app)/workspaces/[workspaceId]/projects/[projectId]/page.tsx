@@ -12,11 +12,5 @@ interface ProjectIdPageProps {
 export default async function ProjectIdPage({ params }: ProjectIdPageProps) {
   const { projectId } = await params;
 
-  const { data: project } = useGetProjectById(projectId);
-
-  if (!project) {
-    return <PageNotFound />;
-  }
-
-  return <ProjectScreen project={project} />;
+  return <ProjectScreen projectId={projectId} />;
 }

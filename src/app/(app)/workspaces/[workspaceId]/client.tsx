@@ -18,6 +18,7 @@ import { useOpenCreateTaskModal } from "@/features/tasks/hooks/use-open-create-t
 import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace-by-id";
 import { useGetWorkspaceAnalytics } from "@/features/workspaces/hooks/use-get-workspace-analytics";
 import { useGetWorkspaceIdParam } from "@/features/workspaces/hooks/use-get-workspace-param";
+import { Member } from "@/generated/prisma";
 import { MEMBER_ROLE, MemberWithUserData, Project, Task, TASK_STATUS } from "@/hooks/type";
 import { getGreeting } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -54,7 +55,6 @@ export default function WorkspaceIdClientPage() {
     (!workspaceAnalyticsData ||
       !tasksData ||
       !projectsData ||
-      !membersData ||
       !currentMemberData ||
       !workspaceData)
   ) {
@@ -87,7 +87,7 @@ export default function WorkspaceIdClientPage() {
           workspaceId={workspaceId}
         />
         <MembersContainer
-          members={membersData?.data || []}
+          members={membersData || []}
           workspaceId={workspaceId}
         />
       </div>
@@ -106,7 +106,7 @@ const TasksContainer = ({ tasks, workspaceId }: TasksContainerProps) => {
   return (
     <>
       <CreateTaskModal />
-      <div className="p-4 rounded-lg border">
+      <div className="p-4 rounded-lg border bg-sidebar">
         <div className="flex items-center justify-between gap-x-4">
           <span className="text-lg font-bold">
             Total Tasks ({tasks?.length})
@@ -114,6 +114,7 @@ const TasksContainer = ({ tasks, workspaceId }: TasksContainerProps) => {
           <Button
             variant={"outline"}
             size={"sm"}
+            className="bg-sidebar-accent"
             onClick={() => {
               openCreateTaskModal({
                 openCreateTaskModal: true,
@@ -186,7 +187,7 @@ const ProjectsContainer = ({
   return (
     <>
       <CreateProjectModal />
-      <div className="p-4 rounded-lg border">
+      <div className="p-4 rounded-lg border bg-sidebar">
         <div className="flex items-center justify-between gap-x-4">
           <span className="text-lg font-bold">
             Projects ({projects?.length})
@@ -194,6 +195,7 @@ const ProjectsContainer = ({
           <Button
             variant={"outline"}
             size={"sm"}
+            className="bg-sidebar-accent"
             onClick={() => {
               openCreateProjectModal(true);
             }}
@@ -203,19 +205,19 @@ const ProjectsContainer = ({
         </div>
         <DotdotSeparator className="my-3" />
         <ul className="grid grid-cols-1 lg:grid-cols-2 gap-x-5 gap-y-3">
-          {projects.map((project) => (
+          {projects && projects?.map((project) => (
             <li
-              key={project.$id}
+              key={project.id}
               className="rounded-md flex items-center justify-between gap-x-4 group border transition-colors"
             >
               <Link
                 className="w-full h-full p-4 group-hover:bg-neutral-100/50 dark:group-hover:bg-neutral-800/50 transition-colors rounded-md"
-                href={`/workspaces/${workspaceId}/projects/${project.$id}`}
+                href={`/workspaces/${workspaceId}/projects/${project.id}`}
               >
                 <div>
                   <ProjectAvatar
                     name={project.name}
-                    imageUrl={project.imageUrl}
+                    imageUrl={project.imageUrl as string | ''}
                     textClassName="text-base"
                   />
                 </div>
@@ -232,19 +234,20 @@ const ProjectsContainer = ({
 };
 
 interface MembersContainerProps {
-  members: MemberWithUserData[];
+  members: Member[];
   workspaceId: string;
 }
 
 const MembersContainer = ({ members, workspaceId }: MembersContainerProps) => {
+
   return (
-    <div className="p-4 rounded-lg border">
+    <div className="p-4 rounded-lg border bg-sidebar">
       <div className="flex items-center justify-between gap-x-4">
-        <span className="text-lg font-bold">Members ({members?.length})</span>
+        <span className="text-lg font-bold">Members ({members ? members?.length : '0'})</span>
       </div>
       <DotdotSeparator className="my-3" />
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-3">
-        {members.slice(0, 6).map((member: any) => {
+        {members && members?.slice(0, 6).map((member: any) => {
           return (
             <li
               key={member.id}
@@ -272,7 +275,7 @@ const MembersContainer = ({ members, workspaceId }: MembersContainerProps) => {
         </li>
       </ul>
       <Link href={`/workspaces/${workspaceId}/members`}>
-        <Button className="w-full mt-4" variant={"outline"}>
+        <Button className="w-full mt-4 bg-sidebar-accent" variant={"outline"}>
           Show All
         </Button>
       </Link>

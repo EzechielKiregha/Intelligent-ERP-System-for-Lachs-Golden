@@ -4,7 +4,7 @@ export interface TaskCalendarEventCard {
   status: TASK_STATUS;
   start: Date;
   end: Date;
-  assignee: MemberWithUserData;
+  assignee: Member;
   project: Project;
 }
 
@@ -24,16 +24,15 @@ export type Member = {
   color: string;
 };
 
-export type MemberWithUserData = Member & {
-  name: string;
-  email: string;
-};
+export interface MemberWithUserData {
+  members : Member[]
+} 
 
 export type Project = {
-  $id: string;
+  id: string;
   name: string;
-  imageUrl: string;
-  fileId: string;
+  imageUrl?: string | null;
+  fileId: string | null;
   workspaceId: string;
 };
 
@@ -68,7 +67,7 @@ export type Task =  {
   dueDate: string;
   description?: string;
   project: Project;
-  assignee: MemberWithUserData;
+  assignee: Member;
   position: number;
   relatedTasks?: Task[];
   $createdAt?: string

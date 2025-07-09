@@ -34,7 +34,7 @@ export default function TaskKanbanItem({ task }: TaskKanbanItemProps) {
         <div>
           <ProjectAvatar
             name={task.project.name}
-            imageUrl={task.project.imageUrl}
+            imageUrl={task.project.imageUrl as string}
             className="size-8"
             textClassName="text-sm"
           />

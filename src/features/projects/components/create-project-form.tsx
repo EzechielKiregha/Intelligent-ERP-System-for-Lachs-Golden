@@ -70,7 +70,7 @@ export default function CreateProjectForm({
     }
   };
   return (
-    <Card className="border-none">
+    <Card className="border-none bg-sidebar">
       <CardHeader>
         <CardTitle className="text-lg text-center">
           Create a new Project
@@ -182,7 +182,7 @@ export default function CreateProjectForm({
                   Cancel
                 </Button>
               )}
-              <Button disabled={isPending} type="submit" className="font-bold">
+              <Button disabled={isPending} type="submit" className="font-bold bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
                 Create Project
               </Button>
             </div>

@@ -27,9 +27,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from './toggleTheme';
 import { Menu, LogOut, Sparkles, Bell, CreditCard, BadgeCheck, ChevronsUpDown, Cpu } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function Navbar() {
-  const nav = useNavigation();
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const user = useAuth().user;
   const logout = useAuth().logout;
@@ -106,7 +107,7 @@ export function Navbar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem className="hover:bg-sidebar-accent" onClick={() => nav("/dashboard")}>
+                  <DropdownMenuItem className="hover:bg-sidebar-accent" onClick={() => router.push("/dashboard")}>
                     <Sparkles />
                     Dashboard
                   </DropdownMenuItem>
@@ -145,7 +146,7 @@ export function Navbar() {
               <Link href="/login" className="text-gray-800 dark:text-gray-200 hover:text-[#80410e] dark:hover:text-[#D4AF37]">
                 Login
               </Link>
-              <Button onClick={() => nav('/signup')} className="bg-sidebar-accent text-sidebar-accent-foreground">
+              <Button onClick={() => router.push('/signup')} className="bg-sidebar-accent text-sidebar-accent-foreground">
                 Register
               </Button>
             </>
@@ -190,7 +191,7 @@ export function Navbar() {
                         <p className="text-xs">{user.email}</p>
                       </div>
                     </div>
-                    <Button variant="ghost" className="w-full mt-2" onClick={() => nav('/dashboard')}>
+                    <Button variant="ghost" className="w-full mt-2" onClick={() => router.push('/dashboard')}>
                       Dashboard
                     </Button>
                     <Button variant="ghost" className="w-full" onClick={logout}>
@@ -199,10 +200,10 @@ export function Navbar() {
                   </>
                 ) : (
                   <>
-                    <Button variant="outline" className="w-full" onClick={() => nav('/login')}>
+                    <Button variant="outline" className="w-full" onClick={() => router.push('/login')}>
                       Login
                     </Button>
-                    <Button className="w-full bg-sidebar-accent text-sidebar-accent-foreground" onClick={() => nav('/signup')}>
+                    <Button className="w-full bg-sidebar-accent text-sidebar-accent-foreground" onClick={() => router.push('/signup')}>
                       Register
                     </Button>
                   </>

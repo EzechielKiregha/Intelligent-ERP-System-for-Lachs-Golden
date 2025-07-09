@@ -11,8 +11,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import UpdateRoleDialog from "./update-role-dialog";
 import useConfirmDialog from "@/hooks/use-confirm-dialog";
-import { Member } from "@/hooks/type";
 import { toast } from "sonner";
+import { Member } from "@/generated/prisma";
 
 export default function MemberListScreen() {
   const [openRoleUpdateDialog, setOpenRoleUpdateDialog] = useState(false);
@@ -83,7 +83,7 @@ export default function MemberListScreen() {
         workspaceId={workspaceId}
       />
       <DeleteConfirmDialog />
-      <Card className="mt-4">
+      <Card className="mt-4 bg-sidebar">
         <CardHeader className="flex items-center flex-row gap-x-4">
           <CardTitle className="text-lg text-center">Member List</CardTitle>
         </CardHeader>
@@ -91,7 +91,7 @@ export default function MemberListScreen() {
           <div className="space-y-5">
             {isLoading
               ? [1, 2, 3].map((i) => <MemberListItemSkeleton key={i} />)
-              : membersList?.data?.map((member: any) => (
+              : membersList?.map((member) => (
                 <MemberListItem
                   workspaceId={workspaceId}
                   setOpenRoleUpdateDialog={setOpenRoleUpdateDialog}
@@ -101,7 +101,7 @@ export default function MemberListScreen() {
                   currentMember={currentMember?.data}
                   onDeleteMember={handleDeleteMember}
                   isMutationLoading={
-                    deleteMemberLoading && memberToDelete === member.$id
+                    deleteMemberLoading && memberToDelete === member.id
                   }
                 />
               ))}

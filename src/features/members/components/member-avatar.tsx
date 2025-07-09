@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 interface MemberAvatarProps {
-  name: string;
+  name?: string | null;
   img?: string;
   color: string;
   className?: string;
@@ -23,14 +23,14 @@ export default function MemberAvatar({
         className
       )}
     >
-      <AvatarImage src={img} alt={name} />
+      <AvatarImage src={img} alt={name as string} />
       <AvatarFallback
         style={{
           backgroundColor: color,
         }}
         className={cn("font-bold text-lg", textClassName)}
       >
-        {name.charAt(0).toUpperCase()}
+        {name?.charAt(0).toUpperCase()}
       </AvatarFallback>
     </Avatar>
   );

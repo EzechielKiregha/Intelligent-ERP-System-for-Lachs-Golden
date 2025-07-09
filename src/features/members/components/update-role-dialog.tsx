@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/select";
 import { useUpdateMemberRole } from "../api/use-update-member-role";
 import { toast } from "sonner";
-import { Member, MEMBER_ROLE } from "@/hooks/type";
+import { MEMBER_ROLE } from "@/hooks/type";
+import { Member } from "@/generated/prisma";
 
 interface UpdateRoleDialogProps {
   open: boolean;

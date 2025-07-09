@@ -17,6 +17,7 @@ import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { TASK_STATUS } from "@/hooks/type";
+import { Member } from "@/generated/prisma";
 
 interface DataFilterProps {
   showProjectFilter?: boolean;
@@ -32,8 +33,8 @@ export default function DataFilter({
   const { data: projectOptions, isLoading: projectOptionLoading } =
     useGetProjects(workspaceId);
 
-  const members = memberOptions?.data?.map((member: any) => ({
-    id: member.$id,
+  const members = memberOptions?.map((member: Member) => ({
+    id: member.id,
     name: member.name,
     color: member.color,
   }));
@@ -73,7 +74,7 @@ export default function DataFilter({
   };
 
   return (
-    <div className="flex flex-col items-start lg:flex-row lg:items-center lg:justify-between gap-x-2 gap-y-3">
+    <div className="flex flex-col bg-sidebar items-start lg:flex-row lg:items-center lg:justify-between gap-x-2 gap-y-3">
       <ScrollArea className="w-full shrink-0 lg:w-auto whitespace-nowrap">
         <div className="flex w-max flex-row gap-x-2">
           <Select onValueChange={handleStatusFilter} value={status ?? "all"}>
@@ -181,7 +182,7 @@ export default function DataFilter({
         variant={"outline"}
         onClick={clearFilters}
         size="sm"
-        className="font-semibold w-full lg:w-auto"
+        className="font-semibold w-full lg:w-auto bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
       >
         Clear filter
       </Button>

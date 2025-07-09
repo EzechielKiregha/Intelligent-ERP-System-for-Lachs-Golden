@@ -22,7 +22,7 @@ export default function LandingScreen() {
   const { user: authUser } = useAuth()
   const { data } = useGetWorkspaces();
   const [user, setUser] = useState<User | null>(authUser)
-  const [workspaces, setWorkspaces] = useState<Workspace[] | null>(data)
+  const [workspaces, setWorkspaces] = useState<Workspace[] | null | undefined>(data)
 
   useEffect(() => {
     setUser(authUser || null)

@@ -12,18 +12,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import PageError from "@/components/page-error";
 import AnalyticsContainer from "@/components/analysis-container";
 import { Project } from "@/hooks/type";
+import { useGetProjectById } from "../api/use-get-projects";
+import PageNotFound from "@/components/page-not-found";
 
 interface ProjectScreenProps {
-  project: Project;
+  projectId: string;
 }
 
-export default function ProjectScreen({ project }: ProjectScreenProps) {
+export default function ProjectScreen({ projectId }: ProjectScreenProps) {
+
+  const { data: project } = useGetProjectById(projectId);
+
   const workspaceId = useGetWorkspaceIdParam();
-  const fullHref = `/workspaces/${workspaceId}/projects/${project.$id}`;
+  const fullHref = `/workspaces/${workspaceId}/projects/${project?.id}`;
   const {
     data: projectAnalyticsData,
     isLoading: isLoadingProjectAnalyticsData,
-  } = useGetProjectAnalytics(project.$id, workspaceId);
+  } = useGetProjectAnalytics(project?.id, workspaceId);
 
   if (!isLoadingProjectAnalyticsData && !projectAnalyticsData) {
     return <PageError />;
@@ -32,9 +37,9 @@ export default function ProjectScreen({ project }: ProjectScreenProps) {
   return (
     <div className="w-full mx-auto space-y-6 overflow-hidden">
       <div className="flex items-center justify-between gap-x-4">
-        <ProjectAvatar imageUrl={project.imageUrl} name={project.name} />
+        <ProjectAvatar imageUrl={project.imageUrl as string | ''} name={project.name} />
         <Link href={`${fullHref}/settings`}>
-          <Button variant={"outline"}>
+          <Button variant={"outline"} className="bg-sidebar-accent">
             <Edit /> <span className="font-semibold">Edit</span>
           </Button>
         </Link>
@@ -42,7 +47,7 @@ export default function ProjectScreen({ project }: ProjectScreenProps) {
       {isLoadingProjectAnalyticsData ? (
         <div className="grid grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((number) => (
-            <Skeleton key={number} className="w-full h-[100px] rounded-lg" />
+            <Skeleton key={number} className="w-full h-[100px] bg-sidebar rounded-lg" />
           ))}
         </div>
       ) : (
@@ -50,7 +55,7 @@ export default function ProjectScreen({ project }: ProjectScreenProps) {
           <AnalyticsContainer analyticsData={projectAnalyticsData} />
         )
       )}
-      <Card>
+      <Card className="bg-sidebar">
         <CardContent className="mt-4">
           <TaskViewSwitcher />
         </CardContent>

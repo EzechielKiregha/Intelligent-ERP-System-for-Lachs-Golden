@@ -24,6 +24,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { workspacesCreateSchema } from "../schemas";
 import { useAuth } from "contents/authContext";
+import { Workspace } from "@/generated/prisma";
 
 interface CreateWorkspacesFormProps {
   onCancel?: () => void;
@@ -55,10 +56,10 @@ export default function CreateWorkspacesForm({
     mutate(
       data,
       {
-        onSuccess: ({ data }) => {
+        onSuccess: (data) => {
           toast.success("Successfully created workspace");
           form.reset();
-          router.push(`/workspaces/${data.$id}`);
+          router.push(`/workspaces/${data.id}`);
         },
         onError: () => {
           toast.error("Failed to create workspace");
@@ -141,6 +142,7 @@ export default function CreateWorkspacesForm({
                       ref={fileInputRef}
                       type="file"
                       className="hidden"
+                      accept="image/jpeg, image/png, image/webp"
                       onChange={handleImageChange}
                     />
                     {field.value ? (
@@ -189,7 +191,7 @@ export default function CreateWorkspacesForm({
                   Cancel
                 </Button>
               )}
-              <Button disabled={isPending} type="submit" className="font-bold">
+              <Button disabled={isPending} type="submit" className="font-bold bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
                 Create Workspace
               </Button>
             </div>

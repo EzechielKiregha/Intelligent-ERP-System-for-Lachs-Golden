@@ -24,17 +24,23 @@ export async function GET(req: NextRequest) {
   }
 
   const members = await prisma.member.findMany({
-    relationLoadStrategy:"join",
     where: { workspaceId },
-    include: { user: { select: { name: true, email: true } } },
+    // include: { user: { select: { name: true, email: true } } },
     orderBy: [{ role: 'asc' }, { createdAt: 'desc' }],
   });
 
-  // const populatedMembers = members.map(m => ({
-  //   ...m,
-  //   name: m.user.name || m.user.email.split('@')[0],
-  //   email: m.user.email,
-  // }));
+  let populatedMembers = new Array
 
-  return NextResponse.json({ success: true, message: 'Success', data: members });
+  if (!members) {
+    populatedMembers.push(member)
+  }
+  else {
+    members.map( m => ( 
+      populatedMembers.push({ ...m })
+    ));
+  }
+
+  if (!populatedMembers) return NextResponse.json({ success: false, message: 'Members not found', data: null }, { status: 404 });
+
+  return NextResponse.json({ data : populatedMembers }, {status:200});
 }

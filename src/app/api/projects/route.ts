@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
+import { z } from 'zod';
 
 export async function GET(req: NextRequest) {
  const session = await getServerSession(authOptions);;
@@ -28,50 +29,75 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: 'desc' },
   });
 
-  return NextResponse.json({ data: { documents: projects, total: projects.length } });
+  if (!projects) return NextResponse.json({ error: 'Not Found' }, { status: 404 });
+
+  return NextResponse.json({ documents: projects, total: projects.length });
 }
-// app/api/projects/route.ts
+
+const createProjectSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  workspaceId: z.string().min(1, 'Workspace ID is required'),
+  imageUrl: z.string().url().optional(),
+  fileId: z.string().optional(),
+});
+
 export async function POST(req: NextRequest) {
- const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id || !session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const formData = await req.formData();
-  const name = formData.get('name') as string;
-  const workspaceId = formData.get('workspaceId') as string;
-  const imageUrl = formData.get('imageUrl');
+  try {
+    const body = await req.json();
+    const parsed = createProjectSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid data', details: parsed.error.errors },
+        { status: 400 }
+      );
+    }
 
-  if (!name || !workspaceId) {
-    return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+    const { name, workspaceId, imageUrl, fileId } = parsed.data;
+
+    // Verify user is a member of the workspace
+    const member = await prisma.member.findFirst({
+      where: { workspaceId, userId: session.user.id },
+    });
+    if (!member) {
+      return NextResponse.json({ error: 'Unauthorized: Not a workspace member' }, { status: 401 });
+    }
+
+    // Verify workspace belongs to the user's company
+    const workspace = await prisma.workspace.findUnique({
+      where: { id: workspaceId },
+      select: { companyId: true },
+    });
+    if (!workspace || workspace.companyId !== session.user.companyId) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Invalid workspace' },
+        { status: 401 }
+      );
+    }
+
+    const project = await prisma.project.create({
+      data: {
+        name,
+        workspaceId,
+        imageUrl,
+        fileId,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Project created',
+      data: project,
+    });
+  } catch (error) {
+    console.error('Error creating project:', error);
+    return NextResponse.json(
+      { error: 'Failed to create project' },
+      { status: 500 }
+    );
   }
-
-  const member = await prisma.member.findFirst({
-    where: { workspaceId, userId: session.user.id },
-  });
-  if (!member) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  let imageUrlString: string | undefined;
-  let fileId: string | undefined;
-  if (imageUrl instanceof File) {
-    // Placeholder: Upload to storage (e.g., S3 or Vercel Blob)
-    // const uploadedFile = await uploadFile(imageUrl);
-    // imageUrlString = uploadedFile.url;
-    // fileId = uploadedFile.id;
-  } else if (typeof imageUrl === 'string' && imageUrl) {
-    imageUrlString = imageUrl;
-  }
-
-  const project = await prisma.project.create({
-    data: {
-      name,
-      workspaceId,
-      imageUrl: imageUrlString,
-      fileId,
-    },
-  });
-
-  return NextResponse.json({ data: project });
 }

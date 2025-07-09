@@ -89,12 +89,12 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
             user: row.original.user?.name
           }}
             typeName="Transactions" />
-          {description && description.length > 10 && ( // Only show "View More" if truncation occurred
+          {description && description.length > 20 && ( // Only show "View More" if truncation occurred
             <Button
               variant="link"
               size="sm"
               onClick={() => setIsDescriptionModalOpen(true)}
-              className="p-0 h-auto ml-2" // Adjust styling as needed
+              className="p-0 h-auto  ml-2" // Adjust styling as needed
             >
               View More
             </Button>
@@ -124,23 +124,6 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
     },
     enableHiding: false,
   },
-  // {
-  //   accessorKey: "description",
-  //   header: "Description",
-  //   cell: ({ row }) => (
-  //     <TableCellViewer item={{
-  //       id: row.original.id,
-  //       date: row.original.date,
-  //       description: row.original.description,
-  //       status: row.original.status,
-  //       category: row.original.category.name,
-  //       amount: row.original.amount,
-  //       user: row.original.user?.name
-  //     }}
-  //       typeName="Transactions" />
-  //   ),
-  //   enableHiding: false,
-  // },
   {
     accessorKey: "category",
     header: "Category",
@@ -148,9 +131,9 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
       <div className="w-32">
         <Badge
           variant="outline"
-          className={`text-muted-foreground px-1.5 ${row.original.category.type === "INCOME"
-            ? "bg-green-100 dark:bg-green-900"
-            : "bg-red-100 dark:bg-red-900"
+          className={`px-1.5 border-[var(--sidebar-border)] text-[var(--sidebar-foreground)] ${row.original.category.type === "INCOME"
+            ? "bg-[var(--sidebar-primary)] dark:bg-[var(--sidebar-primary)]"
+            : "bg-red-500 dark:bg-red-700"
             }`}
         >
           {row.original.category.name} ({row.original.category.type})
@@ -158,23 +141,6 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
       </div>
     ),
   },
-  // {
-  //   accessorKey: "status",
-  //   header: "Status",
-  //   cell: ({ row }) => (
-  //     <Badge
-  //       variant="outline"
-  //       className="px-1.5 border-[var(--sidebar-border)] text-[var(--sidebar-foreground)]"
-  //     >
-  //       {row.original.status === "Done" ? (
-  //         <IconCircleCheckFilled className="fill-[var(--sidebar-primary)] dark:fill-[var(--sidebar-primary)]" />
-  //       ) : (
-  //         <IconLoader className="text-[var(--sidebar-foreground)]" />
-  //       )}
-  //       {row.original.status}
-  //     </Badge>
-  //   ),
-  // },
   {
     accessorKey: "amount",
     header: () => <div className="w-full text-right">Amount</div>,
@@ -241,11 +207,11 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
 export default function TransactionsPage() {
   const { data: transactions, isLoading, error } = useFinanceTransactions();
 
-  if (isLoading) return <Skeleton className={`p-4 m-4 h-90 w-full rounded-lg bg-sidebar`} />;
+  if (isLoading) return <Skeleton className={`h-90 w-full rounded-lg bg-sidebar`} />;
   if (error) return <div>Error loading transactions</div>;
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6">
       <Card className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] ">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Financial Overview & Transactions Visualization</CardTitle>

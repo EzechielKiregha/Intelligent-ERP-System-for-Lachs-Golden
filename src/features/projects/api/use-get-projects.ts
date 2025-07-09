@@ -7,8 +7,8 @@ export const useGetProjects = (workspaceId: string) => {
   return useQuery({
     queryKey: ['projects', workspaceId],
     queryFn: async () => {
-      const { data } = await axiosdb.get(`/api/projects?workspaceId=${workspaceId}`);
-      return data.data.documents;
+      const response = await axiosdb.get(`/api/projects?workspaceId=${workspaceId}`);
+      return response.data;
     },
     enabled: !!workspaceId,
   });

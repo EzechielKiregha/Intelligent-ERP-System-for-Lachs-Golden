@@ -110,6 +110,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import NewTransactionPopover from "../finance/_components/TransactioForm"
 import { useNavigation } from "@/hooks/use-navigation"
 import ProductFormPopover from "../inventory/_components/ProductForm"
+import { useRouter } from "next/navigation"
 
 // Generic interface for data with required id
 interface DataWithId {
@@ -245,7 +246,7 @@ export function DataTable<TData extends DataWithId>({
     }
   }
 
-  const nav = useNavigation()
+  const router = useRouter()
 
   return (
     <Tabs
@@ -338,7 +339,7 @@ export function DataTable<TData extends DataWithId>({
               <DialogFooter>
                 <Button
                   onClick={() => {
-                    nav(`/finance/budget`)
+                    router.push(`/finance/budget`)
                     setIsModalOpen(false);
                   }}
                   className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
@@ -566,7 +567,7 @@ export function TableCellViewer<TData extends DataWithId>({ item, typeName }: { 
   }, [typeName]);
 
   // Dynamic title and description
-  const title = typeName === "Categories" ? (item as any).category : (item as any).description ?? typeName === "Products" ? (item as any).category : `Unnamed ${typeName.slice(0, -1)}`;
+  const title = typeName === "Categories" ? (item as any).category : (item as any).description ?? typeName === "Products" ? (item as any).description : `Unnamed ${typeName.slice(0, -1)}`;
   const description = `Details for ${typeName.toLowerCase()}`;
 
   return (

@@ -74,7 +74,7 @@ export default function EditWorkspacesForm({
     }
   };
   return (
-    <Card className="mt-4">
+    <Card className="mt-4 bg-sidebar">
       <CardHeader className="flex items-center flex-row gap-x-4">
         <CardTitle className="text-lg">
           Edit &quot;{initialValue.name}&quot; workspace
@@ -111,11 +111,8 @@ export default function EditWorkspacesForm({
                         <div className="relative size-20 rounded-full">
                           <Image
                             alt="Logo"
-                            src={
-                              field.value instanceof File
-                                ? URL.createObjectURL(field.value)
-                                : field.value
-                            }
+                            loader={() => `${field.value}`}
+                            src={`${field.value}`}
                             fill
                             className="object-cover rounded-full"
                           />
@@ -191,7 +188,7 @@ export default function EditWorkspacesForm({
                   Cancel
                 </Button>
               )}
-              <Button disabled={isPending} type="submit" className="font-bold">
+              <Button disabled={isPending} type="submit" className="font-bold bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
                 Save Workspace
               </Button>
             </div>

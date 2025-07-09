@@ -19,7 +19,7 @@ export default function AnalyticsCard({
   const VariantIcon = variant === "up" ? TrendingUp : TrendingDown;
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-sidebar">
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-x-8">
           <span className="text-muted-foreground">{label}</span>

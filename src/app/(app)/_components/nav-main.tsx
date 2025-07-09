@@ -19,6 +19,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useCreateWorkspace } from "@/features/workspaces/hooks/use-create-workspace";
 import CreateWorkspacesModal from "@/features/workspaces/components/create-workspaces-modal";
+import { WorkspaceSwitcher } from "./workspace-switcher";
 
 export function NavMain({
   items,
@@ -85,12 +86,13 @@ export function NavMain({
               </Collapsible>
             );
           })}
-          <div className="flex items-center justify-between mb-2">
+          {/* <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] text-muted-foreground">WORKSPACE</span>
             <Plus
               onClick={openCreateWorkspace}
               className="size-4 p-0.5 bg-neutral-500 hover:bg-neutral-500/80 cursor-pointer transition-all text-white rounded-full" />
-          </div>
+          </div> */}
+          <WorkspaceSwitcher />
         </SidebarMenu>
       </SidebarGroup></>
   );

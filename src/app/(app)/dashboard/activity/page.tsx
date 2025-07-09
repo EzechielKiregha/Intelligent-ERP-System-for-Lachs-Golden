@@ -22,7 +22,7 @@ const ActivityFeed = () => {
   const { data: auditLogs, isLoading: logsLoading } = useAuditLog()
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-2 space-y-6">
       {/* Page Header */}
       <header className="space-y-2">
         <h1 className="text-3xl font-bold text-sidebar-foreground">Activity Feed</h1>
@@ -44,11 +44,11 @@ const ActivityFeed = () => {
             ) : (
               <ul className="space-y-2">
                 {auditLogs && auditLogs.map((log: any) => (
-                  <li key={log.id} className="flex justify-between items-center">
+                  <li key={log.id} className="flex justify-between items-center border-b border-s-amber-200">
                     <div>
                       <p className="text-sm text-gray-800 dark:text-gray-200">{log.action}</p>
                       <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {log.entity} (ID: {log.entityId})
+                        {log.entity}
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400">{log.timestamp}</p>
                     </div>

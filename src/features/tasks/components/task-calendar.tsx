@@ -41,7 +41,7 @@ const CustomToolbar = ({
   handleDateNavigation: (action: "NEXT" | "PREV" | "TODAY") => void;
 }) => {
   return (
-    <div className="flex items-center justify-between gap-x-4 mb-4 bg-muted py-2 px-4 rounded-lg">
+    <div className="flex items-center bg-sidebar justify-between gap-x-4 mb-4 py-2 px-4 rounded-lg">
       <Button
         size={"icon"}
         variant={"outline"}
@@ -51,9 +51,9 @@ const CustomToolbar = ({
       >
         <ChevronLeft />
       </Button>
-      <div className="text-muted-foreground flex items-center gap-x-2">
+      <div className=" bg-sidebar flex items-center gap-x-2">
         <CalendarDays
-          className="size-5 cursor-pointer"
+          className="size-5 cursor-pointer "
           onClick={() => {
             handleDateNavigation("TODAY");
           }}
@@ -115,7 +115,7 @@ export default function TaskCalendar({ data }: TaskCalendarProps) {
         defaultView="month"
         toolbar
         showAllEvents
-        className="h-full"
+        className="h-full bg-sidebar"
         max={addYears(new Date().getFullYear(), 1)}
         formats={{
           weekdayFormat: (date, culture, localizer) =>

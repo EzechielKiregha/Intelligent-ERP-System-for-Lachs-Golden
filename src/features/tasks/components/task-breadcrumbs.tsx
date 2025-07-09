@@ -61,7 +61,7 @@ export default function TaskBreadcrumbs({
           >
             <ProjectAvatar
               name={project.name}
-              imageUrl={project.imageUrl}
+              imageUrl={project.imageUrl as string}
               className="size-8"
               textClassName="text-[14px] text-muted-foreground group-hover:text-black transition-colors"
             />

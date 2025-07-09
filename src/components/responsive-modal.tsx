@@ -20,7 +20,7 @@ export default function ResponsiveModal({
   if (isDesktop) {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="w-full sm:max-w-lg p-0 border-none overflow-y-auto hide-scroll-bar max-h-[85vh]">
+        <DialogContent className="w-full bg-sidebar sm:max-w-lg p-0 border-none overflow-y-auto hide-scroll-bar max-h-[85vh]">
           <DialogTitle className="hidden"></DialogTitle>
           {children}
         </DialogContent>
@@ -32,7 +32,7 @@ export default function ResponsiveModal({
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerContent>
         <DrawerTitle className="hidden"></DrawerTitle>
-        <div className="overflow-y-auto hide-scroll-bar max-h-[85vh]">
+        <div className="overflow-y-auto bg-sidebar hide-scroll-bar max-h-[85vh]">
           {children}
         </div>
       </DrawerContent>

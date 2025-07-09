@@ -6,12 +6,13 @@ import { useNavigation } from '@/hooks/use-navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from 'contents/authContext';
+import { useRouter } from 'next/navigation';
 
 export function HeroSection() {
 
   const user = useAuth().user
 
-  const nav = useNavigation();
+  const router = useRouter();
   return (
     <section className="pt-16 bg-white dark:bg-[#0f1522]">
       <div className="min-h-[calc(100vh-4rem)] max-w-screen-xl mx-auto flex flex-col md:flex-row justify-center items-center px-4 gap-4 text-center">
@@ -24,8 +25,8 @@ export function HeroSection() {
           </p>
           <div className="flex space-x-4">
             <Button onClick={() => {
-              if (!user) { nav('/signup') }
-              else { nav('/dashboard') }
+              if (!user) { router.push('/signup') }
+              else { router.push('/dashboard') }
 
             }} className="border-sidebar-border text-sidebar-accent-foreground bg-sidebar-accent hover:bg-sidebar-primary rounded-lg px-6 py-3 shadow transition">
               {user ? 'Dashboard' : 'Request Demo'}

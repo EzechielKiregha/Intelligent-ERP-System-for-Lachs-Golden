@@ -16,6 +16,7 @@ import {
 import { useCreateWorkspace } from "../../../features/workspaces/hooks/use-create-workspace";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { Workspace } from "@/generated/prisma";
 
 export function WorkspaceSwitcher() {
   const queryClient = useQueryClient();
@@ -27,11 +28,11 @@ export function WorkspaceSwitcher() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-3">
           <span className="text-[11px] text-muted-foreground">WORKSPACE</span>
           <Plus
             onClick={openCreateWorkspace}
-            className="size-4 p-0.5 bg-neutral-500 hover:bg-neutral-500/80 cursor-pointer transition-all text-white rounded-full"
+            className="size-5 p-0.5 hover:bg-sidebar-accent bg-sidebar-primary cursor-pointer transition-all text-white rounded-full"
           />
         </div>
         <Select
@@ -53,12 +54,12 @@ export function WorkspaceSwitcher() {
             )}
           </SelectTrigger>
           <SelectContent>
-            {data && data?.documents.map((workspace: any) => (
-              <SelectItem key={workspace.$id} value={workspace.$id}>
+            {data && data?.documents?.map((workspace: Workspace) => (
+              <SelectItem key={workspace.id} value={workspace.id}>
                 <div className="flex items-center gap-x-2">
                   <Avatar className="size-8 rounded-lg">
                     <AvatarImage
-                      src={workspace?.imageUrl}
+                      src={workspace?.imageUrl as string}
                       alt="Workspace logo"
                     />
                     <AvatarFallback className="bg-black text-white rounded-lg font-bold text-lg">

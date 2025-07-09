@@ -73,18 +73,18 @@ export default function TaskViewSwitcher({
       <Tabs defaultValue={tasksView} onValueChange={setTasksView}>
         <div className="flex items-center gap-x-4 gap-y-2 justify-between flex-col lg:flex-row">
           <TabsList className="w-full lg:w-auto">
-            <TabsTrigger className="w-full lg:w-auto" value="table">
+            <TabsTrigger className="w-full bg-sidebar lg:w-auto" value="table">
               Table
             </TabsTrigger>
-            <TabsTrigger className="w-full lg:w-auto" value="kanban">
+            <TabsTrigger className="w-full bg-sidebar lg:w-auto" value="kanban">
               Kanban
             </TabsTrigger>
-            <TabsTrigger className="w-full lg:w-auto" value="calender">
+            <TabsTrigger className="w-full bg-sidebar lg:w-auto" value="calender">
               Calender
             </TabsTrigger>
           </TabsList>
           <Button
-            className="w-full lg:w-auto font-semibold"
+            className="w-full lg:w-auto font-semibold bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
             onClick={() => {
               setIsOpen({ openCreateTaskModal: true });
             }}

@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 const ReportsPage = () => {
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-2 space-y-6">
       {/* Page Header */}
       <header className="space-y-2">
         <h1 className="text-3xl font-bold text-sidebar-foreground">Reports</h1>

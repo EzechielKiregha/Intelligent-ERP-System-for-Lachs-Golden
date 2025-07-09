@@ -8,7 +8,8 @@ import {
 import { Gavel, LogOut, MoreHorizontal, Shield, User } from "lucide-react";
 
 import Link from "next/link";
-import { Member, MEMBER_ROLE } from "@/hooks/type";
+import { MEMBER_ROLE } from "@/hooks/type";
+import { Member } from "@/generated/prisma";
 
 interface MemberActionsProps {
   member: Member;

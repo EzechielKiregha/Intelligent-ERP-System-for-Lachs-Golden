@@ -91,7 +91,7 @@ export function MetricCard({
       <CardHeader>
         <CardDescription>{title}</CardDescription>
         <CardTitle className="text-2xl flex flex-row pt-2 justify-between font-semibold tabular-nums @[250px]/card:text-3xl">
-          <div className="p-2 w-12 h-12 justify-center flex items-center bg-sidebar-primary rounded-full">
+          <div className="hidden p-2 w-12 h-12 justify-center items-center bg-sidebar-primary rounded-full">
             {icon}
           </div>
           <div className="">{value}</div>

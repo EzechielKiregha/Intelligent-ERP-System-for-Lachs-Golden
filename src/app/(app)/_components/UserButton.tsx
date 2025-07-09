@@ -32,6 +32,7 @@ import {
 import { useAuth } from "contents/authContext"
 import { useNavigation } from "@/hooks/use-navigation"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useRouter } from "next/navigation"
 
 export function UserButton() {
   const isMobile = useIsMobile()
@@ -39,7 +40,7 @@ export function UserButton() {
 
   let user = useAuth().user
 
-  const nav = useNavigation()
+  const router = useRouter()
 
   if (!user) {
     user = {
@@ -89,7 +90,7 @@ export function UserButton() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="hover:bg-sidebar-accent" onClick={() => nav("/")}>
+              <DropdownMenuItem className="hover:bg-sidebar-accent" onClick={() => router.push("/")}>
                 <Sparkles />
                 Home
               </DropdownMenuItem>

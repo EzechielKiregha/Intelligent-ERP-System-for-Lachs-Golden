@@ -8,8 +8,8 @@ const LoadingSpinner = () => {
   if (!isLoading) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-[#0f1522] bg-opacity-50">
-      <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-[#80410e] dark:border-t-[#D4AF37] border-gray-900 dark:border-gray-200"></div>
+    <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50">
+      <div className="h-full bg-amber-700 animate-loading-bar"></div>
     </div>
   );
 };

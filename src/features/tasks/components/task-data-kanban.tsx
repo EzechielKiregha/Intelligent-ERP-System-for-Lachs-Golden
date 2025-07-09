@@ -164,7 +164,7 @@ export default function TaskDataKanban({
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
-      <div className="flex overflow-x-auto gap-x-4 items-start flex-nowrap w-full">
+      <div className="flex overflow-x-auto gap-x-4 items-start bg-sidebar flex-nowrap w-full">
         {boards.map((board) => (
           <div key={board} className="overflow-x-auto min-w-[250px]">
             <TaskKanbanHeader board={board} tasksCount={tasks[board].length} />
@@ -173,7 +173,7 @@ export default function TaskDataKanban({
                 <div
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  className="min-h-[300px] py-2 px-3 bg-muted mt-2 space-y-2"
+                  className="min-h-[300px] py-2 px-3 bg-sidebar border rounded-medium mt-2 space-y-2"
                 >
                   {tasks[board].map((task, index) => (
                     <Draggable

@@ -10,16 +10,16 @@ export default function Home() {
     <main className="flex flex-col bg-white dark:bg-[#0f1522] text-gray-800 dark:text-gray-200 font-sans">
       <Navbar />
       <div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div >
           <HeroSection />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div >
           <FeaturesSection />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div >
           <StatsSection />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div >
           <Footer />
         </div>
       </div>

@@ -5,17 +5,26 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useLoading } from '@/contexts/loadingContext';
 import { Suspense } from 'react';
 
-export function NavigationEventsWrapper() {
+// Top Bar Loading Component
+function TopBarLoading({ isLoading }: { isLoading: boolean }) {
+  if (!isLoading) return null;
   return (
-    <Suspense
-      fallback={
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-[#A17E25] dark:border-t-[#D4AF37] border-gray-200"></div>
-        </div>
-      }
-    >
-      <NavigationEvents />
-    </Suspense>
+    <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50">
+      <div className="h-full bg-sidebar-primary animate-loading-bar"></div>
+    </div>
+  );
+}
+
+// Navigation Events Wrapper
+export function NavigationEventsWrapper() {
+  const { isLoading } = useLoading();
+  return (
+    <>
+      <TopBarLoading isLoading={isLoading} />
+      <Suspense fallback={null}>
+        <NavigationEvents />
+      </Suspense>
+    </>
   );
 }
 
@@ -28,15 +37,14 @@ function NavigationEvents() {
   useEffect(() => {
     const currentUrl = pathname + '?' + searchParams.toString();
 
-    // Only log and update loading state if the URL has changed
     if (previousUrlRef.current !== currentUrl) {
-      setIsLoading(true); // Trigger loading state
+      setIsLoading(true);
       console.log('Route changed to: ', currentUrl);
       previousUrlRef.current = currentUrl;
 
-      // Simulate loading completion after a short delay
-      const timeout = setTimeout(() => setIsLoading(false), 500);
-      return () => clearTimeout(timeout); // Cleanup timeout
+      // Simulate loading completion after a delay
+      const timeout = setTimeout(() => setIsLoading(false), 1000); // Increased to 1000ms for better sync
+      return () => clearTimeout(timeout);
     }
   }, [pathname, searchParams, setIsLoading]);
 

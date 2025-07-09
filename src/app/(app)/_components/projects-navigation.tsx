@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Project } from "@/generated/prisma";
 
 export default function ProjectsNavigation() {
   const workspaceId = useGetWorkspaceIdParam();
@@ -22,35 +23,35 @@ export default function ProjectsNavigation() {
         <span className="text-[11px] text-muted-foreground">PROJECTS</span>
         <Plus
           onClick={openCreateProjectModal}
-          className="size-4 p-0.5 bg-neutral-500 hover:bg-neutral-500/80  cursor-pointer transition-all text-white rounded-full"
+          className="size-5 p-0.5 hover:bg-sidebar-accent bg-sidebar-primary cursor-pointer transition-all text-white rounded-full"
         />
       </div>
       <div className="space-y-1">
         {isLoading ? (
           [1, 2, 3].map((i) => (
             <div key={i} className="w-full h-[30px] flex items-center gap-x-2">
-              <Skeleton className="bg-neutral-200 dark:bg-neutral-700 w-[35px] h-full" />
-              <Skeleton className="bg-neutral-200 dark:bg-neutral-700 flex-1 w-full h-full" />
+              <Skeleton className="bg-sidebar w-[35px] h-full" />
+              <Skeleton className="bg-sidebar flex-1 w-full h-full" />
             </div>
           ))
-        ) : data?.total === 0 ? (
+        ) : data && data?.total === 0 ? (
           <div className="text-muted-foreground flex items-center justify-center gap-x-1">
             <span>No project create yet!</span>{" "}
             <Folder className="size-4 text-muted-foreground" />
           </div>
         ) : (
-          data?.documents.map((project: any) => {
-            const fullHrefPath = `/workspaces/${workspaceId}/projects/${project.$id}`;
+          data && data.documents.map((project: Project) => {
+            const fullHrefPath = `/workspaces/${workspaceId}/projects/${project.id}`;
             const isActive = pathname === fullHrefPath;
 
             return (
-              <SidebarMenuItem key={project.$id}>
+              <SidebarMenuItem key={project.id}>
                 <SidebarMenuButton asChild isActive={isActive} className="h-10">
                   <Link href={fullHrefPath}>
                     <div className="flex items-center gap-x-2">
                       <Avatar className="size-8 rounded-lg">
                         <AvatarImage
-                          src={project?.imageUrl}
+                          src={project.imageUrl || ''}
                           alt="Project logo"
                         />
                         <AvatarFallback className="bg-primary text-white rounded-lg font-bold text-lg">

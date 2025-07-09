@@ -70,14 +70,14 @@ export default function CreateTaskForm({ onCancel }: CreateTaskFormProps) {
   );
   const { data: projectOptions, isLoading: projectOptionLoading } = useGetProjects(workspaceId);
 
-  const members = memberOptions?.data?.map((member: any) => ({
-    id: member.$id,
+  const members = memberOptions?.map((member: any) => ({
+    id: member.id,
     name: member.name,
     color: member.color,
   }));
 
   const projects = projectOptions?.documents?.map((project: any) => ({
-    id: project.$id,
+    id: project.id,
     name: project.name,
     imageUrl: project.imageUrl,
   }));
@@ -104,7 +104,7 @@ export default function CreateTaskForm({ onCancel }: CreateTaskFormProps) {
   }
 
   return (
-    <Card className="border-none">
+    <Card className="border-none bg-sidebar">
       <CardHeader>
         <CardTitle className="text-lg text-center">Create a new Task</CardTitle>
       </CardHeader>
@@ -319,7 +319,7 @@ export default function CreateTaskForm({ onCancel }: CreateTaskFormProps) {
               <Button
                 disabled={isPending || isFetchingAssociatedDate}
                 type="submit"
-                className="font-bold"
+                className="font-bold bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
               >
                 Create Task
               </Button>

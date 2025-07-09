@@ -3,9 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
+import { z } from 'zod';
 
 export async function GET(req: NextRequest) {
- const session = await getServerSession(authOptions);;
+  const session = await getServerSession(authOptions);
+
   if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const workspaces = await prisma.workspace.findMany({
@@ -16,55 +18,74 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: 'desc' },
   });
 
-  return NextResponse.json({ data: { documents: workspaces, total: workspaces.length } });
+  if (!workspaces) return NextResponse.json({ error: 'Not Found' }, { status: 404 });
+
+  return NextResponse.json({ documents: workspaces, total: workspaces.length });
 }
 
-// app/api/workspaces/route.ts
+// Define schema for JSON payload
+const createWorkspaceSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  companyId: z.string().min(1, 'Company ID is required'),
+  imageUrl: z.string().url().optional(),
+  fileId: z.string().optional(),
+});
+
 export async function POST(req: NextRequest) {
- const session = await getServerSession(authOptions);;
 
-  console.log("[SESSION] ", session?.user)
+  const session = await getServerSession(authOptions);
 
-  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const formData = await req.formData();
-  const name = formData.get('name') as string;
-  const imageUrl = formData.get('imageUrl');
-  const companyId = formData.get('companyId') as string; // Assume passed from frontend
-
-  // Validation (use Zod or similar)
-  if (!name || !companyId) return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
-
-  let imageUrlString: string | undefined;
-  let fileId: string | undefined;
-  if (imageUrl instanceof File) {
-    // Handle file upload (e.g., to Vercel Blob or S3)
-    // imageUrlString = uploadedUrl;
-    // fileId = uploadedFileId;
-  } else if (typeof imageUrl === 'string') {
-    imageUrlString = imageUrl;
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const workspace = await prisma.workspace.create({
-    data: {
-      name,
-      companyId,
-      imageUrl: imageUrlString,
-      fileId,
-      inviteCode: Math.random().toString(36).substring(2, 8), // Simple random code
-    },
-  });
+  try {
+    const body = await req.json();
+    const parsed = createWorkspaceSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid data', details: parsed.error.errors },
+        { status: 400 }
+      );
+    }
 
-  console.log("[WORKSPACE] ", workspace)
+    const { name, companyId, imageUrl, fileId } = parsed.data;
 
-  await prisma.member.create({
-    data: {
-      userId: session.user.id,
-      workspaceId: workspace.id,
-      role: 'ADMIN',
-      color: '#' + Math.floor(Math.random()*16777215).toString(16), // Random hex color
-    },
-  });
+    if (companyId !== session.user.companyId) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Invalid companyId' },
+        { status: 401 }
+      );
+    }
 
-  return NextResponse.json({ data: workspace });
+    const workspace = await prisma.workspace.create({
+      data: {
+        name,
+        companyId,
+        imageUrl,
+        fileId,
+        members: {
+          create: {
+            userId: session.user.id,
+            name : session.user.name || "Anonymous Member",
+            email : session.user.email || "anonymous.email@example.com",
+            role: 'ADMIN',
+            color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Workspace created',
+      data: workspace,
+    });
+  } catch (error) {
+    console.error('Error creating workspace:', error);
+    return NextResponse.json(
+      { error: 'Failed to create workspace' },
+      { status: 500 }
+    );
+  }
 }

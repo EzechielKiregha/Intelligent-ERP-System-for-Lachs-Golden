@@ -71,7 +71,7 @@ export default function EditTaskForm({
   const { data: projectOptions, isLoading: projectOptionLoading } =
     useGetProjects(workspaceId);
 
-  const members = memberOptions?.data?.map((member: any) => ({
+  const members = memberOptions?.map((member: any) => ({
     id: member.id,
     name: member.name,
     color: member.color,
@@ -114,7 +114,7 @@ export default function EditTaskForm({
   }
 
   return (
-    <Card className="border-none">
+    <Card className="border-none bg-sidebar">
       <CardHeader>
         <CardTitle className="text-lg text-center">Edit the Task</CardTitle>
       </CardHeader>
@@ -330,7 +330,7 @@ export default function EditTaskForm({
               <Button
                 disabled={isPending || isFetchingAssociatedDate}
                 type="submit"
-                className="font-bold"
+                className="font-bold bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
               >
                 Save Task
               </Button>

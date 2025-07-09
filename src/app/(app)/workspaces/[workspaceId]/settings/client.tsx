@@ -25,10 +25,10 @@ export default function WorkspaceIdSettingClientPage() {
       <div className="w-full mx-auto space-y-6">
         <EditWorkspacesForm initialValue={data} />
         <WorkspaceInvitationSection
-          workspaceId={data.$id}
+          workspaceId={data.id}
           inviteCode={data.inviteCode}
         />
-        <DeleteWorkspaceSection workspaceId={data.$id} />
+        <DeleteWorkspaceSection workspaceId={data.id} />
       </div>
     </div>
   );

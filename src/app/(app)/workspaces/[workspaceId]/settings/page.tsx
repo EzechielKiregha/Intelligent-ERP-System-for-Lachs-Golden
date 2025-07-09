@@ -13,10 +13,10 @@ export default async function WorkspaceIdSettingPage({
 }: WorkspaceIdSettingPageProps) {
   const workspaceId = (await params).workspaceId;
 
-  const workspace = useGetWorkspaceById(workspaceId);
-  if (!workspace) {
-    return redirect(`/workspaces/${workspaceId}`);
-  }
+  // const workspace = useGetWorkspaceById(workspaceId);
+  // if (!workspace) {
+  //   return redirect(`/workspaces/${workspaceId}`);
+  // }
 
   return <WorkspaceIdSettingClientPage />;
 }

@@ -131,7 +131,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
   React.useEffect(() => {
     if (path.startsWith("/workspaces")) setPm(true)
     else setPm(false)
-  })
+  }, [path])
 
   const user = useAuth().user;
 

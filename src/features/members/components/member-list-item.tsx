@@ -1,8 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import MemberAvatar from "./member-avatar";
-import { MEMBER_ROLE, type Member } from "@/hooks/type";
+import { MEMBER_ROLE } from "@/hooks/type";
 import { Skeleton } from "@/components/ui/skeleton";
 import MemberActions from "./member-actions";
+import { Member } from "@/generated/prisma";
 
 interface MemberListItemProps {
   member: Member;
@@ -73,12 +74,12 @@ export default function MemberListItem({
 export const MemberListItemSkeleton = () => (
   <div className="w-full h-[60px] border-b pb-4 last:border-b-0 last:pb-0 flex gap-x-2 justify-between">
     <div className="flex gap-x-2">
-      <Skeleton className="size-12 rounded-full" />
+      <Skeleton className="size-12 rounded-full bg-sidebar-accent" />
       <div className="space-y-2">
-        <Skeleton className="w-[100px] h-4" />
-        <Skeleton className="w-[140px] h-4" />
+        <Skeleton className="w-[100px] h-4 bg-sidebar-accent" />
+        <Skeleton className="w-[140px] h-4 bg-sidebar-accent" />
       </div>
     </div>
-    <Skeleton className="size-10" />
+    <Skeleton className="size-10 bg-sidebar-accent" />
   </div>
 );

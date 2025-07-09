@@ -77,7 +77,7 @@ export default function WorkspaceInvitationSection({
   return (
     <>
       <ResetInvitationConfirmDialog />
-      <Card className="mt-4">
+      <Card className="mt-4 bg-sidebar">
         <CardHeader>
           <CardTitle className="text-lg">Invite Members</CardTitle>
           <CardDescription className="text-muted-foreground text-base">

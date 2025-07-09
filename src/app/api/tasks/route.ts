@@ -21,65 +21,51 @@ export async function GET(req: NextRequest) {
   const search = searchParams.get('search');
 
   if (!workspaceId || !companyId) {
-    return NextResponse.json({ success: false, message: 'Missing workspaceId', data: null }, { status: 400 });
+    return NextResponse.json({ success: false, message: 'Missing workspaceId or ProjectID', data: null }, { status: 400 });
   }
 
   const member = await prisma.member.findFirst({
-    where: { workspaceId },
+    where: { workspaceId, userId: session.user.id },
+    include:{
+      tasks: true
+    }
   });
   if (!member) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
-  const where = {
-    workspaceId,
-    ...(projectId && { projectId }),
-    ...(assigneeId && { assigneeId }),
-    ...(status && { TaskStatus }),
-    ...(dueDate && { dueDate: new Date(dueDate) }),
-    ...(search && { title: { contains: search } }),
-    companyId
-  };
-
-  // Define type for tasks with relations
-  type TaskWithRelations = Prisma.TaskGetPayload<{
-    include: {
-      project: true;
-      assignee: true; // Only include Member fields
-    };
-  }>;
+  // const where = {
+  //   workspaceId,
+  //   ...(projectId && { projectId }),
+  //   ...(assigneeId && { assigneeId }),
+  //   ...(status && { TaskStatus }),
+  //   ...(dueDate && { dueDate: new Date(dueDate) }),
+  //   ...(search && { title: { contains: search } }),
+  //   companyId
+  // };
 
   const tasks = await prisma.task.findMany({
-    relationLoadStrategy:"join",
-    where,
+    where : {
+      companyId, assigneeId : member.id
+    },
     include: {
       project: true,
-      assignee: {
-        include : {
-          user : true
-        }
-      } // Fetch Member data
+      assignee: true, // Fetch Member data
     },
     orderBy: { createdAt: 'desc' },
   });
 
-  // const populatedTasks = tasks.map(task => ({
-  //   ...task,
-  //   assignee: task.assignee
-  //     ? {
-  //         ...task.assignee,
-  //         // Use Member fields directly or fall back to userId if name/email are unavailable
-  //         name: task.assignee.name || 'Unknown',
-  //         email: task.assignee.email || 'No email',
-  //       }
-  //     : null,
-  // }));
+  // console.log("[Member Tasks] :", member.tasks )
+
+  if (!tasks) return NextResponse.json({ data : member.tasks});
+
+  // console.log("[ Tasks] :", tasks )
 
   return NextResponse.json({ data: tasks });
 }
 
 export async function POST(req: NextRequest) {
- const session = await getServerSession(authOptions);;
+  const session = await getServerSession(authOptions);;
   if (!session?.user?.companyId || !session?.user?.companyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }

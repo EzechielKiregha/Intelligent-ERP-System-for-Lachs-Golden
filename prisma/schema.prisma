@@ -221,6 +221,8 @@ model Workspace {
 // Represents a user's membership in a workspace
 model Member {
   id          String    @id @default(uuid())
+  name        String?
+  email       String?
   userId      String    // Foreign key to User
   user        User      @relation(fields: [userId], references: [id])
   workspaceId String    // Foreign key to Workspace
