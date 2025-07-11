@@ -107,7 +107,7 @@ export default function SignUpPage() {
               {step === 2 && (
                 <div className="space-y-4">
                   <Label className="text-sm text-gray-800 dark:text-gray-200">Select Your Company</Label>
-                  <ScrollArea className="h-64 w-full border rounded-md p-2">
+                  <ScrollArea className="h-72 w-full border rounded-md p-2">
                     {isLoading ? (
                       <p>Loading companies...</p>
                     ) : companies?.length ? (
@@ -117,8 +117,14 @@ export default function SignUpPage() {
                           onClick={() => setSelectedCompany(company.id)}
                           className={`p-4 mb-2 cursor-pointer ${selectedCompany === company.id ? 'bg-[#80410e] text-white' : 'bg-white dark:bg-[#1F2A44]'}`}
                         >
-                          <h3 className="font-medium">{company.name}</h3>
-                          <p className="text-sm">{company.industry}</p>
+                          <CardHeader>
+                            <CardTitle>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <h3 className="font-medium">{company.name}</h3>
+                            <p className="text-sm">{company.industry}</p>
+                          </CardContent>
                         </Card>
                       ))
                     ) : (
