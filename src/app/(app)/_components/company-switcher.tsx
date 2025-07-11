@@ -43,7 +43,7 @@ export function CompanySwitcher() {
         }
       }
     }
-  }, [companies, activeCompany]);
+  }, [companies, activeCompany, user?.companyId, user?.currentCompanyId]);
 
   if (isLoading) {
     return (
