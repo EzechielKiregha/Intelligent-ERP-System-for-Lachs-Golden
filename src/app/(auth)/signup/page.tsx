@@ -69,7 +69,6 @@ export default function SignUpPage() {
     <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg">
       <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
         <LeftAuthPanel />
-
         {/* <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg"> */}
         <Card className="w-full max-w-lg bg-white dark:bg-[#111827] shadow-lg rounded-2xl">
           <CardHeader>
@@ -135,6 +134,23 @@ export default function SignUpPage() {
                     Create a new company
                   </Link>
                   {selectedCompany === null && <p className="text-xs text-[#E53E3E] dark:text-[#FC8181]">Please select a company</p>}
+                  <div className="flex items-center">
+                    <input
+                      id="terms"
+                      type="checkbox"
+                      className="h-4 w-4 text-[#A17E25] dark:text-[#D4AF37] border-gray-300 dark:border-[#374151] rounded"
+                    />
+                    <label htmlFor="terms" className="ml-2 text-sm text-gray-800 dark:text-gray-200">
+                      I agree to the{' '}
+                      <a href="/terms-of-service" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+                        Terms of Service
+                      </a>{' '}
+                      and{' '}
+                      <a href="/privacy-policy" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+                        Privacy Policy
+                      </a>
+                    </label>
+                  </div>
                 </div>
               )}
 
@@ -160,27 +176,7 @@ export default function SignUpPage() {
               </p>
             </form>
           </CardContent>
-          <CardFooter className="flex justify-center">
-            <div className="flex items-center">
-              <input
-                id="terms"
-                type="checkbox"
-                className="h-4 w-4 text-[#A17E25] dark:text-[#D4AF37] border-gray-300 dark:border-[#374151] rounded"
-              />
-              <label htmlFor="terms" className="ml-2 text-sm text-gray-800 dark:text-gray-200">
-                I agree to the{' '}
-                <a href="/terms-of-service" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
-                  Terms of Service
-                </a>{' '}
-                and{' '}
-                <a href="/privacy-policy" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
-                  Privacy Policy
-                </a>
-              </label>
-            </div>
-          </CardFooter>
         </Card>
-        {/* </div> */}
       </div>
     </div>
   );
