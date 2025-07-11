@@ -13,7 +13,7 @@ export const companySchema = z.object({
   state: z.string().optional(),
   postalCode: z.string().optional(),
   country: z.string().optional(),
-  foundedDate: z.date().optional(),
+  foundedDate: z.union([z.string().min(1, 'Founded date is required'), z.date()]).optional(),
   employeeCount: z.number().int().positive().optional(),
   taxId: z.string().optional(),
   timezone: z.string().min(1, 'Timezone is required'),

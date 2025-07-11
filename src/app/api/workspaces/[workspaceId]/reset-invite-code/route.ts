@@ -7,7 +7,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ wor
 
   const workspaceId = (await params).workspaceId
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.currentCompanyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({
     where: { workspaceId: workspaceId, userId: session.user.id, role: 'ADMIN' },

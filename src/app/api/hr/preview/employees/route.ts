@@ -6,13 +6,13 @@ import prisma from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const recentEmployees = await prisma.employee.findMany({
-      where: { companyId: session.user.companyId },
+      where: { companyId: session.user.currentCompanyId },
       orderBy: { createdAt: 'desc' },
       take: 5,
       select: {

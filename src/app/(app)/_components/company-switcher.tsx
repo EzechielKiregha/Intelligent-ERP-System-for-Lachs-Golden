@@ -20,6 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from 'contents/authContext';
 import { useRouter } from 'next/navigation';
 import { useOpenCreateCompanyModal } from '@/hooks/use-open-create-company-modal';
+import { Role } from '@/generated/prisma';
 
 // Company Switcher Component
 export function CompanySwitcher() {
@@ -80,11 +81,11 @@ export function CompanySwitcher() {
               <div className=" flex aspect-square size-8 items-center justify-center rounded-lg">
                 <Avatar className="size-8 rounded-lg">
                   <AvatarImage
-                    src={activeCompany?.images[0].url as string}
+                    src={activeCompany?.images[0] ? activeCompany?.images[0].url : "https://github.com/shadcn.png"}
                     alt="Workspace logo"
                   />
                   <AvatarFallback className="bg-black text-white rounded-lg font-bold text-lg">
-                    {activeCompany?.name.charAt(0).toUpperCase()}
+                    {activeCompany ? activeCompany?.name.charAt(0).toUpperCase() : "No Company"}
                   </AvatarFallback>
                 </Avatar>
               </div>
@@ -108,18 +109,18 @@ export function CompanySwitcher() {
               <DropdownMenuItem
                 key={company.name}
                 onClick={() => {
-                  // if (user?.role === 'ADMIN' || user?.role === 'OWNER') {
-                  handleSwitch(company.id);
-                  // } else {
-                  //   toast.error('You do not have permission to switch companies.');
-                  // }
+                  if (user?.role === 'ADMIN' || user?.role === 'OWNER') {
+                    handleSwitch(company.id);
+                  } else {
+                    toast.error('You do not have permission to switch companies.');
+                  }
                 }}
                 className="gap-2 p-2 hover:bg-sidebar-accent"
               >
                 <div className="flex size-6 items-center justify-center rounded-md border">
                   <Avatar className="size-8 rounded-lg">
                     <AvatarImage
-                      src={company?.images[0].url as string}
+                      src={company?.images[0] ? company?.images[0].url : "https://github.com/shadcn.png"}
                       alt="company logo"
                     />
                     <AvatarFallback className="bg-black text-white rounded-lg font-bold text-lg">
@@ -132,26 +133,18 @@ export function CompanySwitcher() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            {/* <DropdownMenuItem
-              onClick={openCreateCompany
-                // () => {
-                // if (user?.role === 'ADMIN') {
-                // Redirect to company creation page
-                // } else {
-                //   toast.error('You do not have permission to add a company.');
-                // }
-                // }
-              }
-              className="gap-2 p-2 text-muted-foreground hover:bg-sidebar-accent cursor-pointer hover:text-sidebar-foreground">
-              <div className="flex size-6  items-center justify-center  rounded-md border bg-transparent">
-                <Plus className="size-4 " />
-              </div>
-              <div className=" font-medium ">Add Company</div>
-            </DropdownMenuItem> */}
             <div className="px-2 flex items-center justify-between mb-1">
               <span className="text-[11px] text-muted-foreground">Add Company</span>
               <Plus
-                onClick={openCreateCompany}
+                onClick={
+                  () => {
+                    if (user?.role === Role.OWNER) {
+                      openCreateCompany();
+                    } else {
+                      toast.error('You do not have permission to add a company.');
+                    }
+                  }
+                }
                 className="size-5 p-0.5 hover:bg-sidebar-accent bg-sidebar-primary cursor-pointer transition-all text-white rounded-full"
               />
             </div>

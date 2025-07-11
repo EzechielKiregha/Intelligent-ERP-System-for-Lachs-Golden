@@ -35,30 +35,30 @@ export default function DashboardPage() {
                 icon={<DollarSign className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Revenue"
                 value={`$${stats.totalRevenue.toLocaleString()}`}
-                delta="132%" // Replace with actual delta if available
-                deltaType="increase" // Replace with 'increase' or 'decrease' if applicable
+                delta={`${stats.revPercentage}%`} // Replace with actual delta if available
+                deltaType={`${stats.revPercentage > 20 ? "increase" : stats.revPercentage < 20 ? "decrease" : "neutral"}`} // Replace with 'increase' or 'decrease' if applicable
                 footerMessage="Revenue generated so far"
-                footerSubtext=""
+                footerSubtext="This is over all transactions made in the company"
               />
 
               <MetricCard
                 icon={<ShoppingCart className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Orders"
                 value={stats.totalOrders.toLocaleString()}
-                delta="12%" // Replace with actual delta if available
-                deltaType="increase" // Replace with 'increase' or 'decrease' if applicable
+                delta={`${stats.orderPercentage}`} // Replace with actual delta if available
+                deltaType={`${stats.orderPercentage > 20 ? "increase" : stats.orderPercentage < 20 ? "decrease" : "neutral"}`} // Replace with 'increase' or 'decrease' if applicable
                 footerMessage="Orders processed so far"
-                footerSubtext=""
+                footerSubtext="This is over number of orders made in the company"
               />
 
               <MetricCard
-                icon={<Users className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
+                icon={<Users className="w-6 h-6 text-[#f20eadb] dark:text-[#f3edd8]" />}
                 title="Total Customers"
                 value={stats.totalCustomers.toLocaleString()}
-                delta="2.3%" // Replace with actual delta if available
-                deltaType="decrease" // Replace with 'increase' or 'decrease' if applicable
+                delta={`${stats.customerPercentage}`} // Replace with actual delta if available
+                deltaType={`${stats.customerPercentage > 20 ? "increase" : stats.customer < 20 ? "decrease" : "neutral"}`} // Replace with 'increase' or 'decrease' if applicable
                 footerMessage="Customers served so far"
-                footerSubtext=""
+                footerSubtext="This is over number of users registered in the company"
               />
             </div>
           )}

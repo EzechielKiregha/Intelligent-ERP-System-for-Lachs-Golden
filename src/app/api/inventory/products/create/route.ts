@@ -8,11 +8,11 @@ export async function POST(req: NextRequest) {
 
   const session = await getServerSession(authOptions);
   
-    if (!session?.user?.companyId) {
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   
-    const companyId = session.user.companyId;
+    const companyId = session.user.currentCompanyId;
   
   try {
     const body = await req.json();

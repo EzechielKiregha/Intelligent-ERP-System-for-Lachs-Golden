@@ -6,10 +6,10 @@ import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const companyId = session.user.companyId;
+  const companyId = session.user.currentCompanyId;
   try {
     const categories = await prisma.category.findMany({
       where: { companyId },
@@ -37,10 +37,10 @@ const categorySchema = z.object({
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const companyId = session.user.companyId;
+  const companyId = session.user.currentCompanyId;
   try {
     const body = await req.json();
     const parse = categorySchema.safeParse(body);
@@ -96,10 +96,10 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const companyId = session.user.companyId;
+  const companyId = session.user.currentCompanyId;
 
   // Extract the `id` parameter from the URL
   const { searchParams } = new URL(req.url);
@@ -163,10 +163,10 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const session = await getServerSession(authOptions)
-    if (!session?.user?.companyId) {
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    const companyId = session.user.companyId
+    const companyId = session.user.currentCompanyId
 
     // Extract the `id` parameter from the URL
     const { searchParams } = new URL(req.url);

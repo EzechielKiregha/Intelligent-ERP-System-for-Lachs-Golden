@@ -6,14 +6,10 @@ import { authOptions } from '@/lib/auth';
 export async function GET(req: NextRequest) {
   // 1. Auth check
   const session = await getServerSession(authOptions);
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const companyId = session.user.companyId;
-
-  if (!companyId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const companyId = session.user.currentCompanyId;
 
   try {
     // Fetch all transactions for the company
@@ -24,22 +20,28 @@ export async function GET(req: NextRequest) {
 
     // Calculate total revenue manually
     const totalRevenue = transactions.reduce((sum, tx) => sum + tx.amount, 0);
+    const revPercentage = totalRevenue > 0 ? (totalRevenue / 100) * 100 : 0;
 
     // Count total orders
     const totalOrders = await prisma.transaction.count({
       where: { type: 'ORDER', companyId },
     });
+    const orderPercentage = totalOrders > 0 ? (totalOrders / 100) * 100 : 0;
 
     // Count total customers
     const totalCustomers = await prisma.user.count({
       where: { companyId },
     });
+    const customerPercentage = totalCustomers > 0 ? (totalCustomers / 100) * 100 : 0;
 
     // Return the aggregated stats
     return NextResponse.json({
       totalRevenue,
       totalOrders,
       totalCustomers,
+      revPercentage,
+      orderPercentage,
+      customerPercentage,
     });
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);

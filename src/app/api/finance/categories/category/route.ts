@@ -6,10 +6,10 @@ import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
 
   const { searchParams } = new URL(req.url);
   const catId = searchParams.get("id");

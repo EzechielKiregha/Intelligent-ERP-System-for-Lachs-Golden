@@ -7,7 +7,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ task
 
   const taskId = (await params).taskId
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
@@ -51,7 +51,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ ta
 
   const taskId = (await params).taskId
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
@@ -84,7 +84,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ t
 
   const taskId = (await params).taskId
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 

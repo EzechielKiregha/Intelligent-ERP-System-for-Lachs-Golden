@@ -6,10 +6,10 @@ import { authOptions } from '@/lib/auth'
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
   const contacts = await prisma.contact.findMany({
     where: { companyId },
     orderBy: { createdAt: 'desc' },
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId || !session.user.id) {
+  if (!session?.user?.currentCompanyId || !session.user.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         phone,
         jobTitle,
         notes,
-        companyId: session.user.companyId,
+        companyId: session.user.currentCompanyId,
       },
     })
 
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         entity: 'Contact',
         entityId: contact.id,
         userId: session.user.id,
-        companyId: session.user.companyId,
+        companyId: session.user.currentCompanyId,
         url: req.url,
         description: `Created new contact "${contact.fullName}" (${contact.email})`,
       },

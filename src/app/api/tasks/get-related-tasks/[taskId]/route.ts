@@ -7,7 +7,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ task
 
   const taskId = (await params).taskId
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 

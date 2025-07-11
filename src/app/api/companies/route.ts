@@ -13,14 +13,28 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
+
+    // console.log("[Server Data] ", body);
+
     const data = companySchema.parse(body); // Server-side validation
 
     const company = await prisma.company.create({
       data: {
         ...data,
-        owners: { connect: { id: session.user.id, role: Role.OWNER } },
+        users: { connect: { id: session.user.id } },
       },
     });
+
+    if (company) {
+      // Update user's current company
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: {
+          currentCompanyId: company.id,
+          role: Role.OWNER, // Set the user as ADMIN for the new company
+        },
+      });
+    }
 
     return NextResponse.json(company, { status: 201 });
   } catch (error) {

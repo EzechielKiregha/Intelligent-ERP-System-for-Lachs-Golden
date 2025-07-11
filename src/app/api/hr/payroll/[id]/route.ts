@@ -8,7 +8,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
    const id = (await params).id; 
   const session = await getServerSession(authOptions);
       
-    if (!session?.user?.companyId) {
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   const item = await prisma.payroll.findUnique({
@@ -23,7 +23,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
    const id = (await params).id; 
   const session = await getServerSession(authOptions);
       
-    if (!session?.user?.companyId) {
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   const body = await req.json()

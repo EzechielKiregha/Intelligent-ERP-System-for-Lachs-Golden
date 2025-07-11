@@ -124,7 +124,7 @@ export default function CreateCompanyForm({
                   <SelectTrigger>
                     <SelectValue placeholder="Select industry" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className=" bg-sidebar" >
                     {['Technology', 'Finance', 'Healthcare', 'Retail', 'Manufacturing', 'Education', 'Other'].map((ind) => (
                       <SelectItem key={ind} value={ind}>{ind}</SelectItem>
                     ))}
@@ -266,7 +266,7 @@ export default function CreateCompanyForm({
                 <p className='border-b'><strong>Phone:</strong> {formData.contactPhone || 'N/A'}</p>
                 <p className='border-b'><strong>Website:</strong> {formData.website || 'N/A'}</p>
                 <p className='border-b'><strong>Address:</strong> {formData.addressLine1 || ''} {formData.addressLine2 || ''} {formData.city || ''} {formData.state || ''} {formData.postalCode || ''} {formData.country || ''}</p>
-                <p className='border-b'><strong>Founded Date:</strong> {formData.foundedDate?.toLocaleDateString() || 'N/A'}</p>
+                <p className='border-b'><strong>Founded Date:</strong> {formData.foundedDate?.toLocaleString() || 'N/A'}</p>
                 <p className='border-b'><strong>Employee Count:</strong> {formData.employeeCount || 'N/A'}</p>
                 <p className='border-b'><strong>Tax ID:</strong> {formData.taxId || 'N/A'}</p>
                 <p className='border-b'><strong>Timezone:</strong> {formData.timezone}</p>
@@ -297,7 +297,7 @@ export default function CreateCompanyForm({
               {step > 1 && <Button type="button" onClick={prevStep} variant="outline">Previous</Button>}
               {step < 4 && <Button type="button" onClick={nextStep}>Next</Button>}
               {step === 4 && (
-                <Button type="submit" onClick={nextStep} disabled={createCompanyMutation.isPending} >
+                <Button type="submit" disabled={createCompanyMutation.isPending} >
                   {(createCompanyMutation.isPending ? 'Creating...' : 'Create Company')}
                 </Button>
               )}

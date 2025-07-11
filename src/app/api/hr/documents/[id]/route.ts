@@ -8,7 +8,7 @@ export async function GET(_:NextRequest,{ params }: { params: Promise<{ id: stri
    const id = (await params).id;
   const session = await getServerSession(authOptions);
     
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const d = await prisma.document.findUnique({ where:{id} })
@@ -20,7 +20,7 @@ export async function PUT(req:NextRequest,{ params }: { params: Promise<{ id: st
    const id = (await params).id;
   const session = await getServerSession(authOptions);
     
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const data = await req.json()
@@ -33,7 +33,7 @@ export async function DELETE(_:NextRequest,{ params }: { params: Promise<{ id: s
    const id = (await params).id;
   const session = await getServerSession(authOptions);
     
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   await prisma.document.delete({ where:{id} })

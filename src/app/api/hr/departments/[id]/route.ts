@@ -8,7 +8,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
    const id = (await params).id; 
   const session = await getServerSession(authOptions);
         
-      if (!session?.user?.companyId) {
+      if (!session?.user?.currentCompanyId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
   const { name, description } = await req.json()
@@ -30,7 +30,7 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
    const id = (await params).id; 
   const session = await getServerSession(authOptions);
         
-      if (!session?.user?.companyId) {
+      if (!session?.user?.currentCompanyId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
   await prisma.department.delete({ where: { id} })

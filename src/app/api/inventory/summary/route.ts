@@ -1,14 +1,23 @@
 // app/api/inventory/summary/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
+  // 1. Auth check
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.currentCompanyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const companyId = session.user.currentCompanyId;
+
   try {
     // 1. Top metrics
     const [totalProducts, lowStockCount, products] = await Promise.all([
-      prisma.product.count(),
-      prisma.product.count({ where: { quantity: { lt:  100 } } }),
-      prisma.product.findMany({ select: { quantity: true, unitPrice: true, createdAt: true } }),
+      prisma.product.count({ where: { companyId } }),
+      prisma.product.count({ where: { companyId, quantity: { lt:  100 } } }),
+      prisma.product.findMany({ where:{ companyId }, select: { quantity: true, unitPrice: true, createdAt: true } }),
     ])
 
     // Compute total inventory cost

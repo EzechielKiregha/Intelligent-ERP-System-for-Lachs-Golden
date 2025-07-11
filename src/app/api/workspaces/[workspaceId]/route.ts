@@ -9,7 +9,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ work
 
   const workspaceId = (await params).workspaceId
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.currentCompanyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({
     where: { workspaceId: workspaceId, userId: session.user.id },
@@ -38,7 +38,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ wo
   const workspaceId = (await params).workspaceId
 
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.currentCompanyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
     const parsed = createWorkspaceSchema.safeParse(body);
@@ -53,7 +53,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ wo
       // url, pathname, contentType, size
     } = parsed.data;
 
-    if (companyId !== session.user.companyId) {
+    if (companyId !== session.user.currentCompanyId) {
       return NextResponse.json(
         { error: 'Unauthorized: Invalid companyId' },
         { status: 401 }
@@ -83,7 +83,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ w
 
   const workspaceId = (await params).workspaceId
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.currentCompanyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await prisma.member.findFirst({
     where: { workspaceId: workspaceId, userId: session.user.id, role: 'ADMIN' },

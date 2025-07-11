@@ -6,11 +6,11 @@ import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
 
   const { searchParams } = new URL(req.url);
   const workspaceId = searchParams.get('workspaceId');
@@ -66,10 +66,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId || !session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId || !session?.user?.currentCompanyId) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
   const body = await req.json();
   const { workspaceId, title, projectId, assigneeId, status, dueDate, description } = body;
 

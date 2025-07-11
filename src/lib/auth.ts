@@ -103,7 +103,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.sub!;
         session.user.role = token.role! as Role;
-        session.user.companyId = token.companyId as string;
+        session.user.currentCompanyId = token.companyId as string;
         session.user.firstName = token.firstName as string;
         session.user.lastName = token.lastName as string;
         session.user.createdAt = token.createdAt as Date;

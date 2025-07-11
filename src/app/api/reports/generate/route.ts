@@ -7,10 +7,10 @@ export async function POST(req: NextRequest) {
 
   // 1. Auth check
     const session = await getServerSession(authOptions)
-      if (!session?.user?.companyId) {
+      if (!session?.user?.currentCompanyId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
-      const companyId = session.user.companyId
+      const companyId = session.user.currentCompanyId
   
     if (!companyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

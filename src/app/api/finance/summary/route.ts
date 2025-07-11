@@ -14,10 +14,10 @@ const QuerySchema = z.object({
 export async function GET(req: NextRequest) {
   // 1. Authentication
   const session = await getServerSession(authOptions);
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const companyId = session.user.companyId;
+  const companyId = session.user.currentCompanyId;
 
   // 2. Parse query parameters
   const url = new URL(req.url);

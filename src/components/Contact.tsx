@@ -33,7 +33,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div id="contact" className="flex items-center justify-center min-h-screen bg-transparent px-4 shadow-lg">
+    <div id="contact" className="flex items-center justify-center min-h-screen bg-transparent px-4 pt-4 shadow-lg">
       <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
         {/* Google Map Section */}
         <div className="w-full md:w-1/2 h-[200px] md:h-full">
@@ -87,7 +87,7 @@ export default function ContactPage() {
               />
               {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
             </div>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full bg-sidebar-accent text-white" disabled={isSubmitting}>
               {isSubmitting ? "Sending..." : "Send Message"}
             </Button>
           </form>

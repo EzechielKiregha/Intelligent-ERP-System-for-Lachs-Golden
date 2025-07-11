@@ -8,10 +8,10 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
    const id = (await params).id; 
   const session = await getServerSession(authOptions);
       
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
   const emp = await prisma.employee.findUnique({
     where: { id, companyId },
     include: { department: true },
@@ -24,10 +24,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
    const id = (await params).id; 
   const session = await getServerSession(authOptions);
       
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
   const data = await req.json()
   const updated = await prisma.employee.update({
     where: { id, companyId },
@@ -41,7 +41,7 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
    const id = (await params).id; 
   const session = await getServerSession(authOptions);
       
-    if (!session?.user?.companyId) {
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   await prisma.employee.delete({ where: { id } })

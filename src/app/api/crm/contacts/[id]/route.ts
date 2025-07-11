@@ -7,10 +7,10 @@ import { authOptions } from '@/lib/auth'
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id; 
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
   const contact = await prisma.contact.findFirst({
     where: { id, companyId }
   })
@@ -23,10 +23,10 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id; 
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
   try {
     const { fullName, email, phone, jobTitle, notes } = await req.json()
 
@@ -45,7 +45,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         entity: 'Contact',
         entityId: id,
         userId: session.user.id,
-        companyId: session.user.companyId,
+        companyId: session.user.currentCompanyId,
         url: req.url,
         description: `Updated contact "${fullName}" (${email})`,
       },
@@ -61,10 +61,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id; 
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
   try {
     const contact = await prisma.contact.deleteMany({
       where: { id, companyId },

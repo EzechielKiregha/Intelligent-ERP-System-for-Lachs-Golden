@@ -10,7 +10,7 @@ export async function GET(req:NextRequest,{ params }: { params: Promise<{ id: st
   if(!id) return NextResponse.json({"message": "Missing product ID"}, {status: 400})
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const prod = await prisma.product.findUnique({ where:{id : id} })
@@ -23,7 +23,7 @@ export async function PATCH(req:NextRequest,{ params }: { params: Promise<{ id: 
   const session = await getServerSession(authOptions);
 
   if(!id) return NextResponse.json({"message": "Missing product ID"}, {status: 400})
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const body = await req.json()
@@ -39,7 +39,7 @@ export async function PATCH(req:NextRequest,{ params }: { params: Promise<{ id: 
                 entity: 'Product',
                 entityId: updated.id,
                 userId: session.user.id,
-                companyId: session.user.companyId,
+                companyId: session.user.currentCompanyId,
                 url: req.url,
                 description: `Updated a ${updated.name} product of $${updated.unitPrice} each among ${updated.quantity} in Stock`,
               },
@@ -56,7 +56,7 @@ export async function DELETE(req : NextRequest,{ params }: { params: Promise<{ i
 
   const session = await getServerSession(authOptions);
   
-    if (!session?.user?.companyId) {
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   
@@ -70,7 +70,7 @@ export async function DELETE(req : NextRequest,{ params }: { params: Promise<{ i
               entity: 'Product',
               entityId: product.id,
               userId: session.user.id,
-              companyId: session.user.companyId,
+              companyId: session.user.currentCompanyId,
               url: req.url,
               description: `Delete a ${product.name} product`,
             },

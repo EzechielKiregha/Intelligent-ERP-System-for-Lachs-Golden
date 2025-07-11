@@ -6,10 +6,10 @@ import { authOptions } from '@/lib/auth';
 export async function GET(_: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const companyId = session.user.companyId;
+  const companyId = session.user.currentCompanyId;
 
   const list = await prisma.department.findMany({
     where: {
@@ -41,10 +41,10 @@ export async function GET(_: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const companyId = session.user.companyId;
+  const companyId = session.user.currentCompanyId;
 
   const { name, description } = await req.json();
   if (!name) return NextResponse.json({ message: "Department Name missing" }, { status: 400 });

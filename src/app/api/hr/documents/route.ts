@@ -6,10 +6,10 @@ import { authOptions } from '@/lib/auth';
 export async function GET() {
   const session = await getServerSession(authOptions);
     
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
   const list = await prisma.document.findMany({
     where:{companyId},
     include:{ owner:{ select:{ firstName:true,lastName:true } } },
@@ -21,10 +21,10 @@ export async function GET() {
 export async function POST(req:NextRequest){
   const session = await getServerSession(authOptions);
     
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const companyId = session.user.companyId
+  const companyId = session.user.currentCompanyId
   const ownerId = session.user.id
 
   const body = await req.json()

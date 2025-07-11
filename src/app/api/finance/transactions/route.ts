@@ -6,10 +6,10 @@ import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
-    if (!session?.user?.companyId) {
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    const companyId = session.user.companyId
+    const companyId = session.user.currentCompanyId
   try {
     const transactions = await prisma.transaction.findMany({
       where: { companyId },
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.companyId) {
+  if (!session || !session.user || !session.user.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const transaction = await prisma.transaction.create({
       data: {
         category: { connect: { id: categoryId } },
-        company: { connect: { id: session.user.companyId } },
+        company: { connect: { id: session.user.currentCompanyId } },
         user: { connect: { id: session.user.id } },
         amount: parseFloat(amount),
         description,
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
         entity: 'Transaction',
         entityId: transaction.id,
         userId: session.user.id,
-        companyId: session.user.companyId,
+        companyId: session.user.currentCompanyId,
         url: req.url,
         description: `Created a ${type} transaction of $${amount} in category ${transaction.category.name}`,
       },

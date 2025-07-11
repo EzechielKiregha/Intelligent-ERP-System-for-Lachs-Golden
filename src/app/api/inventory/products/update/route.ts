@@ -8,7 +8,7 @@ export async function PUT(req: NextRequest) {
 
   const session = await getServerSession(authOptions);
   
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -28,7 +28,7 @@ export async function PUT(req: NextRequest) {
               entity: 'Product',
               entityId: product.id,
               userId: session.user.id,
-              companyId: session.user.companyId,
+              companyId: session.user.currentCompanyId,
               url: req.url,
               description: `Updated a ${product.name} product of $${product.unitPrice} each among ${product.quantity} in Stock`,
             },

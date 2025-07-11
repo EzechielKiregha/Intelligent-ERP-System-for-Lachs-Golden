@@ -7,14 +7,14 @@ import { TaskStatus } from '@/generated/prisma';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const pendingTasks = await prisma.task.findMany({
       where: {
-        companyId: session.user.companyId,
+        companyId: session.user.currentCompanyId,
         status: TaskStatus.BACKLOG,
       },
       orderBy: { createdAt: 'desc' },

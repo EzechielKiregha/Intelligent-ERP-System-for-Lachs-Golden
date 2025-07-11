@@ -8,12 +8,12 @@ import { z } from 'zod';
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.companyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.currentCompanyId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const workspaces = await prisma.workspace.findMany({
     where: {
       members: { some: { userId: session.user.id } },
-      companyId : session.user.companyId
+      companyId : session.user.currentCompanyId
     },
     include:{
       images : {
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
 
     const { name, companyId, url, pathname, contentType, size} = parsed.data;
 
-    if (companyId !== session.user.companyId) {
+    if (companyId !== session.user.currentCompanyId) {
       return NextResponse.json(
         { error: 'Unauthorized: Invalid companyId' },
         { status: 401 }

@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 export async function GET(req: NextRequest) {
  const session = await getServerSession(authOptions);;
-  if (!session?.user?.companyId) {
+  if (!session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -48,7 +48,7 @@ const createProjectSchema = z.object({
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || !session?.user?.companyId) {
+  if (!session?.user?.id || !session?.user?.currentCompanyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
       where: { id: workspaceId },
       select: { companyId: true },
     });
-    if (!workspace || workspace.companyId !== session.user.companyId) {
+    if (!workspace || workspace.companyId !== session.user.currentCompanyId) {
       return NextResponse.json(
         { error: 'Unauthorized: Invalid workspace' },
         { status: 401 }
