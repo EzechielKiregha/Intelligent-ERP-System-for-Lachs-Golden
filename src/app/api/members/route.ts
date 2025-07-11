@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
   const members = await prisma.member.findMany({
     where: { workspaceId },
     // include: { user: { select: { name: true, email: true } } },
-    orderBy: [{ role: 'asc' }, { createdAt: 'desc' }],
+    orderBy:{ createdAt: 'desc' },
   });
 
   let populatedMembers = []
