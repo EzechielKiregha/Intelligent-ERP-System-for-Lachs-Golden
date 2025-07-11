@@ -16,9 +16,15 @@ datasource db {
 }
 
 enum Role {
+  OWNER
   ADMIN
   USER
   MEMBER
+}
+enum UserStatus {
+  ACCEPTED
+  PENDING
+  BLOCKED
 }
 
 enum CategoryType {
@@ -69,169 +75,125 @@ enum DealStage {
 }
 
 model Company {
-  id           String  @id @default(cuid())
-  name         String  @unique
-  description  String?
-  contactEmail String?
-  timezone     String
-  dateFormat   String
-
+  id                String   @id @default(cuid())
+  name              String   @unique
+  description       String?
+  contactEmail      String?
+  contactPhone      String?   // New: Company phone number
+  website           String?   // New: Company website URL
+  timezone          String
+  dateFormat        String
+  industry          String?   // New: e.g., "Technology", "Finance"
+  foundedDate       DateTime? // New: Date company was founded
+  employeeCount     Int?      // New: Approximate number of employees
+  taxId             String?   // New: Tax identification number
+  addressLine1      String?   // New: Street address
+  addressLine2      String?   // New: Additional address info
+  city              String?   // New: City
+  state             String?   // New: State/Province
+  postalCode        String?   // New: ZIP/Postal code
+  country           String?   // New: Country
   forecastedRevenue Float?
   forecastedExpenses Float?
 
-  users        User[]
-  categories   Category[]
-  transactions Transaction[]
-  products     Product[]
-  customers    Customer[]
+  // logoImageId         String?    // New: Foreign key to Image
+  // logoImage         Image?    @relation("CompanyLogo", fields: [logoImageId], references: [id])
 
-  // HR models
-  departments        Department[]
-  employees          Employee[]
-  payrolls           Payroll[]
+  owners            User[]    @relation("CompanyOwners") // New: Owners linked to Users
+  users             User[]    @relation("CompanyUsers")
+  categories        Category[]
+  transactions      Transaction[]
+  products          Product[]
+  customers         Customer[]
+  departments       Department[]
+  employees         Employee[]
+  payrolls          Payroll[]
   performanceReviews PerformanceReview[]
+  tasks             Task[]
+  documents         Document[]
+  reports           Report[]
+  contacts          Contact[]
+  workspaces        Workspace[]
 
-  // Workflow & documents
-  tasks     Task[]
-  documents Document[]
-  reports Report[]
-  contacts Contact[]
+  images Image[] @relation("CompanyLogo")
+}
 
-  Workspace Workspace[]
+model Image {
+  id          String    @id @default(cuid())
+  url         String    // URL from Vercel Blob
+  pathname    String?   // Pathname from Vercel Blob
+  contentType String?   // e.g., "image/jpeg"
+  size        Int?      // File size in bytes
+  uploadedAt  DateTime  @default(now())
+  companyId   String?
+  company     Company?  @relation("CompanyLogo", fields: [companyId], references: [id])
+  workspaceId String?
+  workspace   Workspace? @relation("WorkspaceImage", fields: [workspaceId], references: [id])
+  projectId String?
+  project   Project? @relation("ProjectImage", fields: [projectId], references: [id])
+  userId      String?
+  user        User?            @relation("UserImage",fields: [userId], references: [id])
+
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String?
-  firstName String?
-  lastName  String?
-  role      Role     @default(USER)
-  company   Company? @relation(fields: [companyId], references: [id])
-  companyId String?
-
-  otpSecret  String? @unique
-  resetToken String? @unique
-
-  createdAt DateTime @default(now())
-
-  // If you treat login users as employees, you can link to Employee:
-  employee   Employee? @relation(fields: [employeeId], references: [id])
-  employeeId String?   @unique
-
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  password     String?
+  firstName    String?
+  lastName     String?
+  role         Role     @default(USER)
+  status       UserStatus @default(PENDING)
+  company      Company? @relation("CompanyUsers", fields: [companyId], references: [id])
+  companyId    String?
+  currentCompanyId  String?
+  ownedCompanies Company[] @relation("CompanyOwners") // New: Companies owned by this user
+  otpSecret    String?  @unique
+  resetToken   String?  @unique
+  createdAt    DateTime @default(now())
+  employee     Employee? @relation(fields: [employeeId], references: [id])
+  employeeId   String?  @unique
   transactions Transaction[]
-  PerformanceReview PerformanceReview[]
-  reports Report[]
-  deals Deal[]
+  performanceReviews PerformanceReview[]
+  reports      Report[]
+  deals        Deal[]
+  members      Member[]
 
-  members Member[]
+  images Image[] @relation("UserImage")
 }
 
-model Category {
-  id        String       @id @default(cuid())
-  name      String
-  type      CategoryType
-  budgetLimit Float?
-  budgetUsed  Float?
-  company   Company      @relation(fields: [companyId], references: [id])
-  companyId String
-
-  transactions Transaction[]
-}
-
-model Transaction {
-  id          String          @id @default(cuid())
-  amount      Float
-  date        DateTime
-  description String?
-  createdAt   DateTime        @default(now())
-  type        TransactionType
-  user        User            @relation(fields: [userId], references: [id])
-  userId      String
-  status      TransactionStatus @default(PENDING)
-
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String
-
-  company   Company @relation(fields: [companyId], references: [id])
-  companyId String
-}
-
-model Report {
-    id          String   @id @default(cuid())
-  title       String
-  fileUrl     String   // if you store file in S3 or similar
-  startDate   DateTime
-  endDate     DateTime
-  createdAt   DateTime @default(now())
-  company     Company  @relation(fields: [companyId], references: [id])
-  companyId   String
-  user        User?    @relation(fields: [userId], references: [id])
-  userId      String?
-}
-
-model Product {
-  id          String   @id @default(cuid())
-  name        String
-  sku         String   @unique
-  unitPrice   Float
-  quantity    Int
-  threshold   Int?
-  description String?
-  createdAt   DateTime @default(now())
-
-  company   Company @relation(fields: [companyId], references: [id])
-  companyId String
-}
-
-model Customer {
-  id            String    @id @default(cuid())
-  name          String
-  email         String?
-  phone         String?
-  lastContacted DateTime?
-  notes         String?
-  createdAt     DateTime  @default(now())
-
-  company   Company @relation(fields: [companyId], references: [id])
-  companyId String
-}
-
-// === Project Management Models ===
-
-// Represents a workspace (e.g., a project or team within a company)
 model Workspace {
   id          String    @id @default(uuid())
   name        String
-  companyId   String    // Foreign key to Company
+  companyId   String
   company     Company   @relation(fields: [companyId], references: [id])
-  imageUrl    String?
-  fileId      String?   // Reference to an uploaded file, e.g., in a storage service
-  inviteCode  String    @unique @default(cuid()) // Unique code for joining
+  // imageId     String   @unique
+  // image       Image?    @relation("WorkspaceImage", fields: [imageId], references: [id])
+  inviteCode  String    @unique @default(cuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  members     Member[]  // Members of this workspace
+  members     Member[]
+  projects    Project[]
+  tasks       Task[]
 
-  projects Project[]
-
-  tasks Task[]
+  images Image[] @relation("WorkspaceImage")
 }
 
-// Represents a user's membership in a workspace
+// Remaining models unchanged for brevity
 model Member {
   id          String    @id @default(uuid())
+  userId      String
   name        String?
   email       String?
-  userId      String    // Foreign key to User
   user        User      @relation(fields: [userId], references: [id])
-  workspaceId String    // Foreign key to Workspace
+  workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  role        Role      @default(MEMBER) // Enum: ADMIN or MEMBER
-  color       String    // Random color for UI purposes
+  role        Role      @default(MEMBER)
+  color       String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  tasks       Task[]    @relation("TaskAssignment") // Tasks assigned to this member
+  tasks       Task[]    @relation("TaskAssignment")
 }
 
 model Project {
@@ -239,11 +201,13 @@ model Project {
   name        String
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  imageUrl    String?   // URL of the uploaded image
-  fileId      String?   // Identifier for the image in storage (e.g., S3 or Vercel Blob)
+  // imageId     String?   // Changed: Foreign key to Image
+  // image       Image?    @relation(fields: [imageId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  tasks       Task[]    // One-to-many relationship with tasks
+  tasks       Task[]
+
+  images Image[] @relation("ProjectImage")
 }
 
 model Task {
@@ -257,24 +221,85 @@ model Task {
   project     Project   @relation(fields: [projectId], references: [id])
   workspaceId String
   workspace   Workspace  @relation(fields: [workspaceId], references: [id])
-  assigneeId  String?   // Foreign key to Member (nullable if unassigned)
+  assigneeId  String?
   assignee    Member?   @relation("TaskAssignment", fields: [assigneeId], references: [id])
-  company     Company    @relation(fields: [companyId], references: [id])
   companyId   String
+  company     Company   @relation(fields: [companyId], references: [id])
   position    Int
 }
 
+model Category {
+  id          String       @id @default(cuid())
+  name        String
+  type        CategoryType
+  budgetLimit Float?
+  budgetUsed  Float?
+  company     Company      @relation(fields: [companyId], references: [id])
+  companyId   String
+  transactions Transaction[]
+}
 
-// === HR / Employee Management Models ===
+model Transaction {
+  id          String          @id @default(cuid())
+  amount      Float
+  date        DateTime
+  description String?
+  createdAt   DateTime        @default(now())
+  type        TransactionType
+  user        User            @relation(fields: [userId], references: [id])
+  userId      String
+  status      TransactionStatus @default(PENDING)
+  category    Category        @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  company     Company         @relation(fields: [companyId], references: [id])
+  companyId   String
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  title     String
+  fileUrl   String
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  sku         String   @unique
+  unitPrice   Float
+  quantity    Int
+  threshold   Int?
+  description String?
+  createdAt   DateTime @default(now())
+  company     Company  @relation(fields: [companyId], references: [id])
+  companyId   String
+}
+
+model Customer {
+  id            String    @id @default(cuid())
+  name          String
+  email         String?
+  phone         String?
+  lastContacted DateTime?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  company       Company   @relation(fields: [companyId], references: [id])
+  companyId     String
+}
 
 model Department {
-  id        String  @id @default(cuid())
-  name      String
+  id          String    @id @default(cuid())
+  name        String
   description String?
-  company   Company @relation(fields: [companyId], references: [id])
-  companyId String
-
-  employees Employee[]
+  company     Company   @relation(fields: [companyId], references: [id])
+  companyId   String
+  employees   Employee[]
 }
 
 model Employee {
@@ -288,22 +313,19 @@ model Employee {
   status       EmployeeStatus @default(ACTIVE)
   department   Department?    @relation(fields: [departmentId], references: [id])
   departmentId String?
-  // Optional link back to User for login
   user         User?          @relation
   salary       Float?
   createdAt    DateTime       @default(now())
-
-  company   Company @relation(fields: [companyId], references: [id])
-  companyId String
-
-  payrolls           Payroll[]
+  company      Company        @relation(fields: [companyId], references: [id])
+  companyId    String
+  payrolls     Payroll[]
   performanceReviews PerformanceReview[]
-  documents          Document[]          @relation("DocumentOwnership")
+  documents    Document[]     @relation("DocumentOwnership")
 }
 
 model Payroll {
   id          String    @id @default(cuid())
-  payPeriod   String? // e.g., "2025-06" or date-range string
+  payPeriod   String?
   grossAmount Float?
   taxAmount   Float?
   netAmount   Float
@@ -313,8 +335,7 @@ model Payroll {
   employeeId  String
   company     Company   @relation(fields: [companyId], references: [id])
   companyId   String
-
-  createdAt DateTime @default(now())
+  createdAt   DateTime @default(now())
 }
 
 model PerformanceReview {
@@ -336,7 +357,6 @@ model Document {
   fileUrl     String
   description String?
   uploadedAt  DateTime  @default(now())
-  // Owner or uploader
   owner       Employee? @relation("DocumentOwnership", fields: [ownerId], references: [id])
   ownerId     String?
   company     Company   @relation(fields: [companyId], references: [id])
@@ -344,14 +364,14 @@ model Document {
 }
 
 model AuditLog {
-  id        String   @id @default(cuid())
-  action    String?
-  entity    String?
-  entityId  String?
-  userId    String?
+  id          String    @id @default(cuid())
+  action      String?
+  entity      String?
+  entityId    String?
+  userId      String?
   description String?
-  url String?
-  timestamp DateTime @default(now())
+  url         String?
+  timestamp   DateTime  @default(now())
   companyId   String?
 }
 
@@ -364,24 +384,20 @@ model Notification {
 }
 
 model Contact {
-  id          String               @id @default(cuid())
+  id          String    @id @default(cuid())
   fullName    String
-  email       String               @unique
+  email       String    @unique
   phone       String?
-  companyName String?              // optional free‑text, if you still want it
+  companyName String?
   jobTitle    String?
   notes       String?
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
-
-  // multi‑tenant linkage
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  company     Company   @relation(fields: [companyId], references: [id])
   companyId   String
-  company     Company              @relation(fields: [companyId], references: [id])
-
   deals       Deal[]
   logs        CommunicationLog[]
 }
-
 
 model Deal {
   id          String     @id @default(cuid())
@@ -394,14 +410,13 @@ model Deal {
   ownerId     String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-
   communicationLogs CommunicationLog[]
 }
 
 model CommunicationLog {
   id        String   @id @default(cuid())
-  type      String   // email, sms, call
-  direction String   // inbound, outbound
+  type      String
+  direction String
   message   String?
   timestamp DateTime @default(now())
   deal      Deal?    @relation(fields: [dealId], references: [id])

@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 export default function FinanceForecastSection() {
   const { data, isLoading, isError } = useFinanceForecast()
 
-  if (isLoading) return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+  if (isLoading) return <Skeleton className="h-64 w-full rounded-lg bg-sidebar" />
   if (isError || !data) return <p>Error loading forecast.</p>
 
   // Transform past & forecast into uniform date strings "YYYY-MM-01"

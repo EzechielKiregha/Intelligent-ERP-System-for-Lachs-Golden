@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
+import z from 'zod';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
 
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ proj
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },
-    include: { workspace: true },
+    include: { workspace: true, images : { select : { url : true}} },
   });
   if (!project) {
     return NextResponse.json({ error: 'Project not found' }, { status: 404 });
@@ -30,6 +31,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ proj
   return NextResponse.json({ data: project });
 }
 
+const createProjectSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  workspaceId: z.string().min(1, 'Workspace ID is required'),
+  // url: z.string().url('Invalid URL'),
+  // pathname: z.string().optional(),
+  // contentType: z.string().optional(),
+  // size: z.number().optional(),
+});
+
 // app/api/projects/[projectId]/route.ts
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
 
@@ -39,10 +49,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ pr
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const formData = await req.formData();
-  const name = formData.get('name') as string;
-  const workspaceId = formData.get('workspaceId') as string;
-  const imageUrl = formData.get('imageUrl');
+  const body = await req.json();
+      const parsed = createProjectSchema.safeParse(body);
+      if (!parsed.success) {
+        return NextResponse.json(
+          { error: 'Invalid data', details: parsed.error.errors },
+          { status: 400 }
+        );
+      }
+  
+      const { name, workspaceId } = parsed.data;
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },
@@ -59,27 +75,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ pr
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  let imageUrlString: string | undefined = project.imageUrl || '';
-  let fileId: string | undefined = project.fileId || '';
-  if (imageUrl instanceof File) {
-    // Delete old image if exists, then upload new one
-    // if (project.fileId) await deleteFile(project.fileId);
-    // const uploadedFile = await uploadFile(imageUrl);
-    // imageUrlString = uploadedFile.url;
-    // fileId = uploadedFile.id;
-  } else if (typeof imageUrl === 'string') {
-    // if (project.fileId && imageUrl === '') await deleteFile(project.fileId);
-    imageUrlString = imageUrl || undefined;
-    fileId = imageUrl ? fileId : undefined;
-  }
-
   const updatedProject = await prisma.project.update({
     where: { id: projectId },
     data: {
       name: name || project.name,
       workspaceId,
-      imageUrl: imageUrlString,
-      fileId,
     },
   });
 

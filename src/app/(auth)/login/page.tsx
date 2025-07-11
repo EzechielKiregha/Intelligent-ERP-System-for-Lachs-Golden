@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginInput } from '@/lib/validations/login';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -24,9 +24,12 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [otpPopoverOpen, setOtpPopoverOpen] = useState(false);
   const [otp, setOtp] = useState<string>("");
   const [toEmail, setEmail] = useState<string>("");
+
+  const isCompanyCreated = searchParams.get('companycreated') === 'true';
 
   const {
     register,
@@ -44,26 +47,26 @@ export default function LoginPage() {
         email: data.email,
         password: data.password,
       });
-      if (!res) throw new Error("No response from signIn");
+      if (!res) throw new Error('No response from signIn');
       if (res.error) throw new Error(res.error);
       return res;
     },
     onSuccess: async (res, data) => {
       if (res.ok) {
-        // Send OTP to user's email
-        const otpRes = await axiosdb.post('/api/mail/otp', { toEmail: data.email });
-        if (otpRes.status !== 200) {
-          toast.error("Failed to send OTP. Please try again.");
+        if (isCompanyCreated) {
+          // Bypass OTP and redirect to dashboard
+          toast.success('Login successful!');
+          router.push('/dashboard');
+        } else {
+          // Trigger OTP flow
+          await axiosdb.post('/api/mail/otp', { toEmail: data.email });
+          toast.success('Please verify to continue.');
+          setEmail(data.email || '');
+          setOtpPopoverOpen(true);
         }
-        toast.success(" Please verify to continue.");
-
-        setEmail(data.email || ""); // Store email for OTP verification
-        setOtpPopoverOpen(true); // Open OTP popover
       }
     },
-    onError: (err: any) => {
-      toast.error(err.message || 'Login failed');
-    },
+    onError: (err: any) => toast.error(err.message || 'Login failed'),
   });
 
   const handleVerifyOtp = async (e: React.FormEvent) => {

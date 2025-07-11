@@ -26,6 +26,9 @@ export async function GET(req: NextRequest) {
 
   const projects = await prisma.project.findMany({
     where: { workspaceId },
+    include : {
+      images : { select : { url: true }}
+    },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -37,8 +40,10 @@ export async function GET(req: NextRequest) {
 const createProjectSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   workspaceId: z.string().min(1, 'Workspace ID is required'),
-  imageUrl: z.string().url().optional(),
-  fileId: z.string().optional(),
+  url: z.string().url('Invalid URL'),
+  pathname: z.string().optional(),
+  contentType: z.string().optional(),
+  size: z.number().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -57,7 +62,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, workspaceId, imageUrl, fileId } = parsed.data;
+    const { name, workspaceId, url, pathname, contentType, size } = parsed.data;
 
     // Verify user is a member of the workspace
     const member = await prisma.member.findFirst({
@@ -83,8 +88,14 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         workspaceId,
-        imageUrl,
-        fileId,
+        images:{
+          create : {
+            url,
+            pathname,
+            contentType,
+            size
+          }
+        }
       },
     });
 

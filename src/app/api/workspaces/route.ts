@@ -15,20 +15,30 @@ export async function GET(req: NextRequest) {
       members: { some: { userId: session.user.id } },
       companyId : session.user.companyId
     },
+    include:{
+      images : {
+        select : { url : true},
+        take: 1 // Get only one image per workspace
+      }
+    },
     orderBy: { createdAt: 'desc' },
   });
 
   if (!workspaces) return NextResponse.json({ error: 'Not Found' }, { status: 404 });
 
-  return NextResponse.json({ documents: workspaces, total: workspaces.length });
+  // console.log("[Workspaces] ", workspaces);
+
+  return NextResponse.json({ documents: workspaces }, { status: 200 });
 }
 
 // Define schema for JSON payload
 const createWorkspaceSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   companyId: z.string().min(1, 'Company ID is required'),
-  imageUrl: z.string().url().optional(),
-  fileId: z.string().optional(),
+  url: z.string().url('Invalid URL'),
+  pathname: z.string().optional(),
+  contentType: z.string().optional(),
+  size: z.number().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -49,7 +59,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, companyId, imageUrl, fileId } = parsed.data;
+    const { name, companyId, url, pathname, contentType, size} = parsed.data;
 
     if (companyId !== session.user.companyId) {
       return NextResponse.json(
@@ -62,8 +72,6 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         companyId,
-        imageUrl,
-        fileId,
         members: {
           create: {
             userId: session.user.id,
@@ -73,6 +81,14 @@ export async function POST(req: NextRequest) {
             color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
           },
         },
+        images:{
+          create : {
+            url,
+            pathname,
+            contentType,
+            size
+          }
+        }
       },
     });
 

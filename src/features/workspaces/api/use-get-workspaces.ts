@@ -8,7 +8,8 @@ export const useGetWorkspaces = () => {
     queryKey: ['workspaces'],
     queryFn: async () => {
       const response = await axiosdb.get('/api/workspaces');
-      return response.data;
+      console.log("[Front Data] ", response.data.documents);
+      return response.data.documents;
     },
   });
 };

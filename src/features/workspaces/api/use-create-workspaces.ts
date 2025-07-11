@@ -1,51 +1,63 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { put } from '@vercel/blob';
-import axiosdb from '@/lib/axios';
+import { z } from 'zod';
 import { Workspace } from '@/generated/prisma';
+
+export const workspacesCreateSchema = z.object({
+  name: z.string().min(1, 'Workspace name is required'),
+  imageUrl: z.union([z.instanceof(File), z.string().url(), z.literal('')]).optional(),
+  companyId: z.string().min(1, 'Company ID is required'),
+});
+
+interface W {
+  name: string;
+  companyId: string;
+  id: string;
+  inviteCode: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export const useCreateWorkspaces = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: { name: string; imageUrl?: File | string; companyId: string }) => {
-
+    mutationFn: async (data: z.infer<typeof workspacesCreateSchema>) => {
       const blobToken = process.env.NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN;
       if (!blobToken && data.imageUrl instanceof File) {
         throw new Error('Vercel Blob token is missing. Please configure NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN.');
       }
-
-      let imageUrlString: string | undefined;
-      let fileId: string | undefined;
-
-      // Handle file upload to Vercel Blob if imageUrl is a File
+      let response : W 
       if (data.imageUrl instanceof File) {
         const blob = await put(`workspaces/${Date.now()}-${data.imageUrl.name}`, data.imageUrl, {
           access: 'public',
           token: blobToken,
         });
-        imageUrlString = blob.url;
-        fileId = blob.pathname;
-      } else if (typeof data.imageUrl === 'string' && data.imageUrl) {
-        imageUrlString = data.imageUrl; // Use provided URL if string
+        const responseIf = await axios.post('/api/workspaces', {
+          name: data.name,
+          companyId: data.companyId,
+          url: blob.url,
+          pathname: blob.pathname,
+          contentType: data.imageUrl.type,
+          size: data.imageUrl.size,
+        })
+        response = responseIf.data.data
+      } else {
+        const responseElse = await axios.post('/api/workspaces', {
+          name: data.name,
+          companyId: data.companyId,
+          url: "blob.url",
+          pathname: "blob.pathname",
+          contentType: "data.imageUrl.type",
+          size: "data.imageUrl.size",
+        }
+      )
+        response = responseElse.data.data
       }
-
-      // Send JSON payload to API
-      const response = await axiosdb.post<{
-        success: true,
-        message: 'Workspace created',
-        data: Workspace,
-      }>('/api/workspaces', {
-        name: data.name,
-        companyId: data.companyId,
-        imageUrl: imageUrlString,
-        fileId,
-      });
-
-      console.log("[Workspace] ", response.data.data)
-
-      return response.data.data;
+      return response
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });

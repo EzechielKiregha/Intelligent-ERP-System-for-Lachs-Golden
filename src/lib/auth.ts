@@ -15,6 +15,7 @@ declare module "next-auth" {
       email?: string | null;
       image?: string | null;
       companyId?: string | null;
+      currentCompanyId?: string | null;
       firstName?: string | null;
       lastName?: string | null;
       createdAt?: Date | null;
@@ -24,6 +25,7 @@ declare module "next-auth" {
   interface JWT {
     role?: Role;
     companyId?: string | null;
+    currentCompanyId?: string | null;
     firstName?: string | null;
     lastName?: string | null;
     createdAt?: Date | null;
@@ -55,6 +57,7 @@ export const authOptions: NextAuthOptions = {
             lastName: true,
             role: true,
             companyId: true,
+            currentCompanyId: true,
             employeeId: true,
             createdAt: true,
             password: true, // Needed for validation
@@ -74,6 +77,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name || (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : null),
           role: user.role,
           companyId: user.companyId,
+          currentCompanyId : user.currentCompanyId,
           firstName: user.firstName,
           lastName: user.lastName,
           createdAt: user.createdAt,
@@ -87,6 +91,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as any).role;
         token.companyId = (user as any).companyId;
+        token.currentCompanyId = (user as any).currentCompanyId;
         token.firstName = (user as any).firstName;
         token.lastName = (user as any).lastName;
         token.createdAt = (user as any).createdAt;

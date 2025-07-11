@@ -1,11 +1,10 @@
-// prisma/seed.ts
 import { faker } from '@faker-js/faker';
-import { PrismaClient, EmployeeStatus, PerformanceRating, TaskStatus, DealStage, Role, TransactionType, TransactionStatus } from '@/generated/prisma';
+import { PrismaClient, Role, UserStatus, CategoryType, EmployeeStatus, PerformanceRating, TaskStatus, TransactionType, TransactionStatus, DealStage } from '@/generated/prisma';
 import { subMonths, addMonths } from 'date-fns';
 
 const prisma = new PrismaClient();
 
-// **Helper Functions for Date Generation**
+// Helper Functions for Date Generation
 const fourMonthsAgo = subMonths(new Date(), 4);
 const oneMonthFuture = addMonths(new Date(), 1);
 
@@ -22,27 +21,80 @@ async function main() {
 
   // **1. Create Companies**
   const companies = [];
+  const kireghaCorp = await prisma.company.create({
+    data: {
+      name: 'Kiregha Corp',
+      description: faker.company.catchPhrase(),
+      contactEmail: faker.internet.email(),
+      contactPhone: faker.phone.number(),
+      website: faker.internet.url(),
+      timezone: faker.location.timeZone(),
+      dateFormat: 'YYYY-MM-DD',
+      industry: 'Technology',
+      foundedDate: faker.date.past({ years: 10 }),
+      employeeCount: faker.number.int({ min: 50, max: 500 }),
+      taxId: faker.string.alphanumeric({ length: 10 }),
+      addressLine1: faker.location.streetAddress(),
+      addressLine2: faker.location.secondaryAddress(),
+      city: faker.location.city(),
+      state: faker.location.state(),
+      postalCode: faker.location.zipCode(),
+      country: faker.location.country(),
+      forecastedRevenue: faker.number.float({ min: 100000, max: 1000000, fractionDigits: 2 }),
+      forecastedExpenses: faker.number.float({ min: 50000, max: 500000, fractionDigits: 2 }),
+    },
+  });
+  companies.push(kireghaCorp);
+
   for (let i = 0; i < 2; i++) {
     const comp = await prisma.company.create({
       data: {
-        name: i === 0 ? 'Kiregha Corp' : faker.company.name(),
+        name: faker.company.name(),
         description: faker.company.catchPhrase(),
         contactEmail: faker.internet.email(),
+        contactPhone: faker.phone.number(),
+        website: faker.internet.url(),
         timezone: faker.location.timeZone(),
         dateFormat: 'YYYY-MM-DD',
-        forecastedRevenue: faker.number.float({ min: 50_000, max: 100_000, fractionDigits: 2 }),
-        forecastedExpenses: faker.number.float({ min: 20_000, max: 50_000, fractionDigits: 2 }),
+        industry: faker.helpers.arrayElement(['Finance', 'Healthcare', 'Retail']),
+        foundedDate: faker.date.past({ years: 10 }),
+        employeeCount: faker.number.int({ min: 10, max: 200 }),
+        taxId: faker.string.alphanumeric({ length: 10 }),
+        addressLine1: faker.location.streetAddress(),
+        addressLine2: faker.location.secondaryAddress(),
+        city: faker.location.city(),
+        state: faker.location.state(),
+        postalCode: faker.location.zipCode(),
+        country: faker.location.country(),
+        forecastedRevenue: faker.number.float({ min: 50000, max: 500000, fractionDigits: 2 }),
+        forecastedExpenses: faker.number.float({ min: 20000, max: 200000, fractionDigits: 2 }),
       },
     });
     companies.push(comp);
   }
   console.log(`✅ Created ${companies.length} companies.`);
 
-  // **2. Create Users**
-  const users: Array<{ id: string; companyId: string, name: string | null; email?: string }> = [];
+  // **2. Create Images for Companies**
+  const images = [];
   for (const comp of companies) {
-    const count = faker.number.int({ min: 2, max: 4 });
-    for (let i = 0; i < count; i++) {
+    const image = await prisma.image.create({
+      data: {
+        url: faker.image.urlPicsumPhotos(),
+        pathname: `companies/${comp.id}/logo`,
+        contentType: 'image/jpeg',
+        size: faker.number.int({ min: 100000, max: 1000000 }),
+        uploadedAt: randomDateInPastFourMonths(),
+        companyId: comp.id,
+      },
+    });
+    images.push(image);
+  }
+
+  // **3. Create Users**
+  const users = [];
+  for (const comp of companies) {
+    const userCount = faker.number.int({ min: 3, max: 5 });
+    for (let i = 0; i < userCount; i++) {
       const firstName = faker.person.firstName();
       const lastName = faker.person.lastName();
       const user = await prisma.user.create({
@@ -52,53 +104,237 @@ async function main() {
           firstName,
           lastName,
           password: faker.internet.password({ length: 12 }),
-          role: faker.helpers.arrayElement(['USER', 'ADMIN'] as const),
+          role: faker.helpers.arrayElement([Role.ADMIN, Role.USER, Role.MEMBER]),
+          status: faker.helpers.arrayElement([UserStatus.ACCEPTED, UserStatus.PENDING, UserStatus.BLOCKED]),
+          companyId: comp.id,
+          currentCompanyId: comp.id,
+          createdAt: randomDateInPastFourMonths(),
+        },
+      });
+      users.push(user);
+
+      // Create profile image for user
+      const userImage = await prisma.image.create({
+        data: {
+          url: faker.image.urlPicsumPhotos(),
+          pathname: `users/${user.id}/profile`,
+          contentType: 'image/jpeg',
+          size: faker.number.int({ min: 100000, max: 1000000 }),
+          uploadedAt: randomDateInPastFourMonths(),
+          userId: user.id,
+        },
+      });
+      images.push(userImage);
+    }
+  }
+  console.log(`✅ Created ${users.length} users with profile images.`);
+
+  // **4. Create Workspaces**
+  const workspaces = [];
+  for (const comp of companies) {
+    const workspaceCount = faker.number.int({ min: 1, max: 3 });
+    for (let i = 0; i < workspaceCount; i++) {
+      const wsImage = await prisma.image.create({
+        data: {
+          url: faker.image.urlPicsumPhotos(),
+          pathname: `workspaces/${comp.id}/${faker.string.uuid()}`,
+          contentType: 'image/jpeg',
+          size: faker.number.int({ min: 100000, max: 1000000 }),
+          uploadedAt: randomDateInPastFourMonths(),
           companyId: comp.id,
         },
       });
-      users.push({ id: user.id, companyId: comp.id, name: user?.name, email: user.email });
+      const ws = await prisma.workspace.create({
+        data: {
+          name: `${faker.hacker.noun()} Workspace`,
+          companyId: comp.id,
+          inviteCode: faker.string.uuid(),
+          createdAt: randomDateInPastFourMonths(),
+          updatedAt: randomDateInPastFourMonths(),
+          images: { connect: { id: wsImage.id } },
+        },
+      });
+      workspaces.push(ws);
+
+      // Add members to workspace
+      const companyUsers = users.filter(u => u.companyId === comp.id);
+      const memberCount = Math.min(faker.number.int({ min: 2, max: 4 }), companyUsers.length);
+      const selectedUsers = faker.helpers.shuffle(companyUsers).slice(0, memberCount);
+      for (const user of selectedUsers) {
+        await prisma.member.create({
+          data: {
+            userId: user.id,
+            workspaceId: ws.id,
+            name: user.name || 'Anonymous Member',
+            email: user.email || 'anonymous@example.com',
+            role: faker.helpers.arrayElement([Role.ADMIN, Role.MEMBER]),
+            color: faker.color.rgb(),
+            createdAt: randomDateInPastFourMonths(),
+          },
+        });
+      }
     }
   }
-  console.log(`✅ Created ${users.length} users.`);
+  console.log(`✅ Created ${workspaces.length} workspaces with members.`);
 
-  // **3. Create Categories**
-  const categories: Array<{ id: string; companyId: string }> = [];
-  const incomeCats = ['Sales', 'Services', 'Other Income'];
-  const expenseCats = ['Rent', 'Salaries', 'Supplies'];
+  // **5. Create Projects**
+  const projects = [];
+  for (const ws of workspaces) {
+    const projectCount = faker.number.int({ min: 1, max: 3 });
+    for (let i = 0; i < projectCount; i++) {
+      const projImage = await prisma.image.create({
+        data: {
+          url: faker.image.urlPicsumPhotos(),
+          pathname: `projects/${ws.id}/${faker.string.uuid()}`,
+          contentType: 'image/jpeg',
+          size: faker.number.int({ min: 100000, max: 1000000 }),
+          uploadedAt: randomDateInPastFourMonths(),
+          companyId: ws.companyId,
+        },
+      });
+      const proj = await prisma.project.create({
+        data: {
+          name: `${faker.hacker.noun()} Project`,
+          workspaceId: ws.id,
+          createdAt: randomDateInPastFourMonths(),
+          updatedAt: randomDateInPastFourMonths(),
+          images: { connect: { id: projImage.id } },
+        },
+      });
+      projects.push(proj);
+    }
+  }
+  console.log(`✅ Created ${projects.length} projects.`);
+
+  // **6. Create Tasks**
+  for (const proj of projects) {
+    const wsMembers = await prisma.member.findMany({
+      where: {
+        workspaceId: proj.workspaceId
+      }, include : {
+        workspace : {
+          select : { companyId : true}
+        }
+      }
+    });
+    const taskCount = faker.number.int({ min: 3, max: 8 });
+    for (let i = 0; i < taskCount; i++) {
+      const assignee = wsMembers.length > 0 ? faker.helpers.arrayElement(wsMembers) : null;
+      await prisma.task.create({
+        data: {
+          title: faker.hacker.phrase(),
+          description: faker.lorem.sentence(),
+          status: faker.helpers.enumValue(TaskStatus),
+          createdAt: randomDateInPastFourMonths(),
+          dueDate: randomDueDate(),
+          projectId: proj.id,
+          workspaceId: proj.workspaceId,
+          assigneeId: assignee?.id,
+          companyId: wsMembers[0]?.workspace.companyId,
+          position: faker.number.int({ min: 1, max: 100 }),
+        },
+      });
+    }
+  }
+  console.log(`✅ Created tasks for ${projects.length} projects.`);
+
+  // **7. Create Categories**
+  const categories = [];
   for (const comp of companies) {
+    const incomeCats = ['Sales', 'Services', 'Other Income'];
+    const expenseCats = ['Rent', 'Salaries', 'Supplies'];
     for (const name of incomeCats) {
       const cat = await prisma.category.create({
         data: {
           name,
-          type: 'INCOME',
-          budgetLimit: faker.number.float({ min: 10_000, max: 30_000, fractionDigits: 2 }),
+          type: CategoryType.INCOME,
+          budgetLimit: faker.number.float({ min: 10000, max: 30000, fractionDigits: 2 }),
           budgetUsed: 0,
           companyId: comp.id,
         },
       });
-      categories.push({ id: cat.id, companyId: comp.id });
+      categories.push(cat);
     }
     for (const name of expenseCats) {
       const cat = await prisma.category.create({
         data: {
           name,
-          type: 'EXPENSE',
-          budgetLimit: faker.number.float({ min: 5_000, max: 20_000, fractionDigits: 2 }),
+          type: CategoryType.EXPENSE,
+          budgetLimit: faker.number.float({ min: 5000, max: 20000, fractionDigits: 2 }),
           budgetUsed: 0,
           companyId: comp.id,
         },
       });
-      categories.push({ id: cat.id, companyId: comp.id });
+      categories.push(cat);
     }
   }
   console.log(`✅ Created ${categories.length} categories.`);
 
-  // **4. Create Products**
-  const products: Array<{ id: string; companyId: string }> = [];
+  // **8. Create Transactions**
   for (const comp of companies) {
-    const count = faker.number.int({ min: 5, max: 8 });
-    for (let i = 0; i < count; i++) {
-      const prod = await prisma.product.create({
+    const companyUsers = users.filter(u => u.companyId === comp.id);
+    const companyCats = categories.filter(c => c.companyId === comp.id);
+    const txCount = faker.number.int({ min: 20, max: 40 });
+    for (let i = 0; i < txCount; i++) {
+      const user = faker.helpers.arrayElement(companyUsers);
+      const cat = faker.helpers.arrayElement(companyCats);
+      await prisma.transaction.create({
+        data: {
+          amount: faker.number.float({ min: 10, max: 2000, fractionDigits: 2 }),
+          date: randomDateInPastFourMonths(),
+          description: faker.commerce.productDescription(),
+          type: faker.helpers.enumValue(TransactionType),
+          status: faker.helpers.enumValue(TransactionStatus),
+          userId: user.id,
+          companyId: comp.id,
+          categoryId: cat.id,
+          createdAt: randomDateInPastFourMonths(),
+        },
+      });
+    }
+  }
+  console.log(`✅ Created transactions for ${companies.length} companies.`);
+
+  // **9. Update Categories' budgetUsed**
+  for (const cat of categories) {
+    const agg = await prisma.transaction.aggregate({
+      where: { categoryId: cat.id },
+      _sum: { amount: true },
+    });
+    await prisma.category.update({
+      where: { id: cat.id },
+      data: { budgetUsed: agg._sum.amount || 0 },
+    });
+  }
+  console.log(`✅ Updated budgetUsed for ${categories.length} categories.`);
+
+  // **10. Create Reports**
+  for (const comp of companies) {
+    const companyUsers = users.filter(u => u.companyId === comp.id);
+    const reportCount = faker.number.int({ min: 2, max: 4 });
+    for (let i = 0; i < reportCount; i++) {
+      const user = companyUsers.length > 0 ? faker.helpers.arrayElement(companyUsers) : null;
+      const startDate = randomDateInPastFourMonths();
+      await prisma.report.create({
+        data: {
+          title: `${faker.hacker.noun()} Report`,
+          fileUrl: faker.internet.url(),
+          startDate,
+          endDate: faker.date.between({ from: startDate, to: new Date() }),
+          createdAt: randomDateInPastFourMonths(),
+          companyId: comp.id,
+          userId: user?.id,
+        },
+      });
+    }
+  }
+  console.log(`✅ Created reports for ${companies.length} companies.`);
+
+  // **11. Create Products**
+  for (const comp of companies) {
+    const productCount = faker.number.int({ min: 5, max: 10 });
+    for (let i = 0; i < productCount; i++) {
+      await prisma.product.create({
         data: {
           name: faker.commerce.productName(),
           sku: faker.string.alphanumeric({ length: 8 }),
@@ -110,17 +346,15 @@ async function main() {
           companyId: comp.id,
         },
       });
-      products.push({ id: prod.id, companyId: comp.id });
     }
   }
-  console.log(`✅ Created ${products.length} products.`);
+  console.log(`✅ Created products for ${companies.length} companies.`);
 
-  // **5. Create Customers**
-  const customers: Array<{ id: string; companyId: string }> = [];
+  // **12. Create Customers**
   for (const comp of companies) {
-    const count = faker.number.int({ min: 3, max: 5 });
-    for (let i = 0; i < count; i++) {
-      const cust = await prisma.customer.create({
+    const customerCount = faker.number.int({ min: 3, max: 6 });
+    for (let i = 0; i < customerCount; i++) {
+      await prisma.customer.create({
         data: {
           name: faker.company.name(),
           email: faker.internet.email(),
@@ -131,16 +365,15 @@ async function main() {
           companyId: comp.id,
         },
       });
-      customers.push({ id: cust.id, companyId: comp.id });
     }
   }
-  console.log(`✅ Created ${customers.length} customers.`);
+  console.log(`✅ Created customers for ${companies.length} companies.`);
 
-  // **6. Create Departments**
-  const departments: Array<{ id: string; companyId: string }> = [];
+  // **13. Create Departments**
+  const departments = [];
   for (const comp of companies) {
-    const deptCount = faker.number.int({ min: 2, max: 3 });
-    for (let d = 0; d < deptCount; d++) {
+    const deptCount = faker.number.int({ min: 2, max: 4 });
+    for (let i = 0; i < deptCount; i++) {
       const dept = await prisma.department.create({
         data: {
           name: `${faker.company.buzzAdjective()} Dept.`,
@@ -148,16 +381,16 @@ async function main() {
           companyId: comp.id,
         },
       });
-      departments.push({ id: dept.id, companyId: comp.id });
+      departments.push(dept);
     }
   }
   console.log(`✅ Created ${departments.length} departments.`);
 
-  // **7. Create Employees**
-  const employees: Array<{ id: string; companyId: string; departmentId: string }> = [];
+  // **14. Create Employees**
+  const employees = [];
   for (const dept of departments) {
-    const empCount = faker.number.int({ min: 2, max: 4 });
-    for (let e = 0; e < empCount; e++) {
+    const empCount = faker.number.int({ min: 2, max: 5 });
+    for (let i = 0; i < empCount; i++) {
       const firstName = faker.person.firstName();
       const lastName = faker.person.lastName();
       const emp = await prisma.employee.create({
@@ -174,14 +407,14 @@ async function main() {
           createdAt: randomDateInPastFourMonths(),
         },
       });
-      employees.push({ id: emp.id, companyId: dept.companyId, departmentId: dept.id });
+      employees.push(emp);
     }
   }
   console.log(`✅ Created ${employees.length} employees.`);
 
-  // **8. Link Some Users to Employees**
+  // **15. Link Some Users to Employees**
   for (const emp of employees) {
-    const companyUsers = users.filter(u => u.companyId === emp.companyId);
+    const companyUsers = users.filter(u => u.companyId === emp.companyId && !u.employeeId);
     if (companyUsers.length > 0) {
       const user = faker.helpers.arrayElement(companyUsers);
       await prisma.user.update({
@@ -190,13 +423,12 @@ async function main() {
       });
     }
   }
-  console.log('🔄 Linked some users to employees.');
+  console.log(`✅ Linked some users to employees.`);
 
-  // **9. Create Payrolls**
-  let payrollCount = 0;
+  // **16. Create Payrolls**
   for (const emp of employees) {
-    const payPeriodCount = faker.number.int({ min: 3, max: 4 }); // 3-4 months of payrolls
-    for (let i = 0; i < payPeriodCount; i++) {
+    const payrollCount = faker.number.int({ min: 3, max: 4 });
+    for (let i = 0; i < payrollCount; i++) {
       const month = subMonths(new Date(), i);
       await prisma.payroll.create({
         data: {
@@ -211,16 +443,14 @@ async function main() {
           createdAt: randomDateInPastFourMonths(),
         },
       });
-      payrollCount++;
     }
   }
-  console.log(`✅ Created ${payrollCount} payroll records.`);
+  console.log(`✅ Created payrolls for ${employees.length} employees.`);
 
-  // **10. Create Performance Reviews**
-  let reviewCount = 0;
+  // **17. Create Performance Reviews**
   for (const emp of employees) {
-    const cnt = faker.number.int({ min: 1, max: 2 });
-    for (let i = 0; i < cnt; i++) {
+    const reviewCount = faker.number.int({ min: 1, max: 2 });
+    for (let i = 0; i < reviewCount; i++) {
       const companyUsers = users.filter(u => u.companyId === emp.companyId);
       const reviewer = companyUsers.length > 0 ? faker.helpers.arrayElement(companyUsers) : null;
       await prisma.performanceReview.create({
@@ -233,16 +463,14 @@ async function main() {
           reviewerId: reviewer?.id,
         },
       });
-      reviewCount++;
     }
   }
-  console.log(`✅ Created ${reviewCount} performance reviews.`);
+  console.log(`✅ Created performance reviews for ${employees.length} employees.`);
 
-  // **11. Create Documents**
-  let docCount = 0;
+  // **18. Create Documents**
   for (const emp of employees) {
-    const dcnt = faker.number.int({ min: 2, max: 3 });
-    for (let i = 0; i < dcnt; i++) {
+    const docCount = faker.number.int({ min: 1, max: 3 });
+    for (let i = 0; i < docCount; i++) {
       await prisma.document.create({
         data: {
           title: faker.lorem.words(3),
@@ -253,100 +481,51 @@ async function main() {
           companyId: emp.companyId,
         },
       });
-      docCount++;
     }
   }
-  console.log(`✅ Created ${docCount} documents.`);
+  console.log(`✅ Created documents for ${employees.length} employees.`);
 
-  // **12. Create Workspaces**
-  const workspaces: Array<{ id: string; companyId: string }> = [];
-  for (const comp of companies) {
-    const workspaceCount = faker.number.int({ min: 1, max: 2 });
-    for (let w = 0; w < workspaceCount; w++) {
-      const ws = await prisma.workspace.create({
+  // **19. Create Audit Logs**
+  for (const user of users) {
+    const logCount = faker.number.int({ min: 1, max: 3 });
+    for (let i = 0; i < logCount; i++) {
+      await prisma.auditLog.create({
         data: {
-          name: `${faker.hacker.noun()} Workspace`,
-          companyId: comp.id,
-          imageUrl: faker.image.url(),
-          createdAt: randomDateInPastFourMonths(),
-        },
-      });
-      workspaces.push({ id: ws.id, companyId: comp.id });
-
-      // Add members to workspace
-      const companyUsers = users.filter(u => u.companyId === comp.id);
-      const memberCount = faker.number.int({ min: 2, max: 4 });
-      const selectedUsers = faker.helpers.shuffle(companyUsers).slice(0, memberCount);
-      for (const user of selectedUsers) {
-        await prisma.member.create({
-          data: {
-            userId: user.id,
-            workspaceId: ws.id,
-            name : user.name || "Anonymous Member",
-            email : user.email || "anonymous.email@example.com",
-            role: faker.helpers.arrayElement(['ADMIN', 'MEMBER'] as const),
-            color: faker.color.rgb(),
-            createdAt: randomDateInPastFourMonths(),
-          },
-        });
-      }
-    }
-  }
-  console.log(`✅ Created ${workspaces.length} workspaces with members.`);
-
-  // **13. Create Projects**
-  const projects: Array<{ id: string; workspaceId: string }> = [];
-  for (const ws of workspaces) {
-    const projectCount = faker.number.int({ min: 1, max: 3 });
-    for (let p = 0; p < projectCount; p++) {
-      const proj = await prisma.project.create({
-        data: {
-          name: `${faker.hacker.noun()} Project`,
-          workspaceId: ws.id,
-          imageUrl: faker.image.url(),
-          createdAt: randomDateInPastFourMonths(),
-        },
-      });
-      projects.push({ id: proj.id, workspaceId: ws.id });
-    }
-  }
-  console.log(`✅ Created ${projects.length} projects.`);
-
-  // **14. Create Tasks**
-  let taskCount = 0;
-  for (const ws of workspaces) {
-    const wsMembers = await prisma.member.findMany({ where: { workspaceId: ws.id } });
-    const wsProjects = projects.filter(p => p.workspaceId === ws.id);
-    if (wsProjects.length === 0 || wsMembers.length === 0) continue;
-
-    const taskCountPerWorkspace = faker.number.int({ min: 5, max: 10 });
-    for (let t = 0; t < taskCountPerWorkspace; t++) {
-      const project = faker.helpers.arrayElement(wsProjects);
-      const assignee = faker.helpers.arrayElement(wsMembers);
-      await prisma.task.create({
-        data: {
-          title: faker.hacker.phrase(),
+          action: faker.helpers.arrayElement(['CREATE', 'UPDATE', 'DELETE']),
+          entity: faker.helpers.arrayElement(['User', 'Transaction', 'Product']),
+          entityId: faker.string.uuid(),
+          userId: user.id,
           description: faker.lorem.sentence(),
-          status: faker.helpers.enumValue(TaskStatus),
-          createdAt: randomDateInPastFourMonths(),
-          dueDate: randomDueDate(),
-          projectId: project.id,
-          workspaceId: ws.id,
-          assigneeId: assignee.id,
-          companyId: ws.companyId,
-          position: faker.number.int({ min: 1, max: 100 }),
+          url: `https://app.example.com/${faker.lorem.word()}`,
+          companyId: user.companyId,
+          timestamp: randomDateInPastFourMonths(),
         },
       });
-      taskCount++;
     }
   }
-  console.log(`✅ Created ${taskCount} tasks.`);
+  console.log(`✅ Created audit logs for ${users.length} users.`);
 
-  // **15. Create Contacts**
-  const contacts: Array<{ id: string; companyId: string }> = [];
+  // **20. Create Notifications**
+  for (const user of users) {
+    const notifCount = faker.number.int({ min: 1, max: 3 });
+    for (let i = 0; i < notifCount; i++) {
+      await prisma.notification.create({
+        data: {
+          message: faker.lorem.sentence(),
+          type: faker.helpers.arrayElement(['INFO', 'WARNING', 'ALERT']),
+          userId: user.id,
+          createdAt: randomDateInPastFourMonths(),
+        },
+      });
+    }
+  }
+  console.log(`✅ Created notifications for ${users.length} users.`);
+
+  // **21. Create Contacts**
+  const contacts = [];
   for (const comp of companies) {
-    const contactCount = faker.number.int({ min: 3, max: 5 });
-    for (let c = 0; c < contactCount; c++) {
+    const contactCount = faker.number.int({ min: 3, max: 6 });
+    for (let i = 0; i < contactCount; i++) {
       const contact = await prisma.contact.create({
         data: {
           fullName: faker.person.fullName(),
@@ -356,19 +535,19 @@ async function main() {
           jobTitle: faker.person.jobTitle(),
           notes: faker.lorem.paragraph(),
           createdAt: randomDateInPastFourMonths(),
+          updatedAt: randomDateInPastFourMonths(),
           companyId: comp.id,
         },
       });
-      contacts.push({ id: contact.id, companyId: comp.id });
+      contacts.push(contact);
     }
   }
   console.log(`✅ Created ${contacts.length} contacts.`);
 
-  // **16. Create Deals**
-  let dealCount = 0;
+  // **22. Create Deals**
   for (const contact of contacts) {
-    const dealCountPerContact = faker.number.int({ min: 0, max: 2 });
-    for (let d = 0; d < dealCountPerContact; d++) {
+    const dealCount = faker.number.int({ min: 1, max: 3 });
+    for (let i = 0; i < dealCount; i++) {
       const companyUsers = users.filter(u => u.companyId === contact.companyId);
       const owner = companyUsers.length > 0 ? faker.helpers.arrayElement(companyUsers) : null;
       await prisma.deal.create({
@@ -379,19 +558,18 @@ async function main() {
           contactId: contact.id,
           ownerId: owner?.id,
           createdAt: randomDateInPastFourMonths(),
+          updatedAt: randomDateInPastFourMonths(),
         },
       });
-      dealCount++;
     }
   }
-  console.log(`✅ Created ${dealCount} deals.`);
+  console.log(`✅ Created deals for ${contacts.length} contacts.`);
 
-  // **17. Create Communication Logs**
-  let logCount = 0;
+  // **23. Create Communication Logs**
   const deals = await prisma.deal.findMany();
   for (const deal of deals) {
-    const logCountPerDeal = faker.number.int({ min: 1, max: 3 });
-    for (let l = 0; l < logCountPerDeal; l++) {
+    const logCount = faker.number.int({ min: 1, max: 3 });
+    for (let i = 0; i < logCount; i++) {
       await prisma.communicationLog.create({
         data: {
           type: faker.helpers.arrayElement(['email', 'sms', 'call']),
@@ -402,107 +580,9 @@ async function main() {
           contactId: deal.contactId,
         },
       });
-      logCount++;
     }
   }
-  console.log(`✅ Created ${logCount} communication logs.`);
-
-  // **18. Create Transactions**
-  const txCount = 80;
-  for (let i = 0; i < txCount; i++) {
-    const u = faker.helpers.arrayElement(users);
-    const cat = faker.helpers.arrayElement(
-      categories.filter(c => c.companyId === u.companyId)
-    );
-    await prisma.transaction.create({
-      data: {
-        amount: faker.number.float({ min: 10, max: 2000, fractionDigits: 2 }),
-        date: randomDateInPastFourMonths(),
-        description: faker.commerce.productDescription(),
-        type: faker.helpers.enumValue(TransactionType),
-        status: faker.helpers.enumValue(TransactionStatus),
-        userId: u.id,
-        companyId: u.companyId,
-        categoryId: cat.id,
-        createdAt: randomDateInPastFourMonths(),
-      },
-    });
-  }
-  console.log(`✅ Created ${txCount} transactions.`);
-
-  // **19. Update Categories' budgetUsed**
-  for (const cat of categories) {
-    const agg = await prisma.transaction.aggregate({
-      where: { categoryId: cat.id },
-      _sum: { amount: true },
-    });
-    await prisma.category.update({
-      where: { id: cat.id },
-      data: { budgetUsed: agg._sum.amount ?? 0 },
-    });
-  }
-  console.log('🔄 Updated budgetUsed on categories.');
-
-  // **20. Create Reports**
-  let reportCount = 0;
-  for (const comp of companies) {
-    const reportCountPerCompany = faker.number.int({ min: 2, max: 3 });
-    const companyUsers = users.filter(u => u.companyId === comp.id);
-    for (let r = 0; r < reportCountPerCompany; r++) {
-      const user = companyUsers.length > 0 ? faker.helpers.arrayElement(companyUsers) : null;
-      const startDate = randomDateInPastFourMonths();
-      const endDate = faker.date.between({ from: startDate, to: new Date() });
-      await prisma.report.create({
-        data: {
-          title: `${faker.hacker.noun()} Report`,
-          fileUrl: faker.internet.url(),
-          startDate,
-          endDate,
-          createdAt: randomDateInPastFourMonths(),
-          companyId: comp.id,
-          userId: user?.id,
-        },
-      });
-      reportCount++;
-    }
-  }
-  console.log(`✅ Created ${reportCount} reports.`);
-
-  // **21. Create Audit Logs**
-  let logCountAudit = 0;
-  for (const u of users.slice(0, 5)) {
-    for (let i = 0; i < 2; i++) {
-      await prisma.auditLog.create({
-        data: {
-          action: faker.helpers.arrayElement(['CREATE', 'UPDATE', 'DELETE']),
-          entity: faker.helpers.arrayElement(['Product', 'Category', 'Transaction']),
-          entityId: faker.string.uuid(),
-          userId: u.id,
-          description: faker.lorem.sentence(),
-          url: `https://app.example.com/${faker.lorem.word()}`,
-          companyId: u.companyId,
-          timestamp: randomDateInPastFourMonths(),
-        },
-      });
-      logCountAudit++;
-    }
-  }
-  console.log(`✅ Created ${logCountAudit} audit logs.`);
-
-  // **22. Create Notifications**
-  let noteCount = 0;
-  for (const u of users) {
-    await prisma.notification.create({
-      data: {
-        message: faker.lorem.sentence(),
-        type: faker.helpers.arrayElement(['INFO', 'WARNING', 'ALERT']),
-        userId: u.id,
-        createdAt: randomDateInPastFourMonths(),
-      },
-    });
-    noteCount++;
-  }
-  console.log(`✅ Created ${noteCount} notifications.`);
+  console.log(`✅ Created communication logs for ${deals.length} deals.`);
 
   console.log('🎉 Full seeding complete!');
 }

@@ -1,3 +1,4 @@
+import ContactPage from "@/components/Contact";
 import { FeaturesSection } from "@/components/FeaturesSection";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/HeroSection";
@@ -7,7 +8,7 @@ import React from "react";
 
 export default function Home() {
   return (
-    <main className="flex flex-col bg-white dark:bg-[#0f1522] text-gray-800 dark:text-gray-200 font-sans">
+    <main className="flex flex-col bg-white dark:bg-[#0a0e16] text-gray-800 dark:text-gray-200 font-sans">
       <Navbar />
       <div>
         <div >
@@ -18,6 +19,9 @@ export default function Home() {
         </div>
         <div >
           <StatsSection />
+        </div>
+        <div >
+          <ContactPage />
         </div>
         <div >
           <Footer />

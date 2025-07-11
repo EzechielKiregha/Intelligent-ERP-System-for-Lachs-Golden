@@ -63,10 +63,10 @@ export default function DashboardPage() {
             </div>
           )}
 
-          <div className="mb-6 lg:px-6">
+          <div className="mb-6">
             <FinanceForecastSection />
           </div>
-          <div className="lg:px-6">
+          <div >
             <CategoriesList />
           </div>
 
@@ -90,7 +90,7 @@ export default function DashboardPage() {
               <ActivityFeed auditLogs={auditLogs} />
             )}
           </div>
-          <div className="lg:px-6">
+          <div >
             {insightsLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
             {!insightsLoading && insightsData && (
               <FinancialInsights />

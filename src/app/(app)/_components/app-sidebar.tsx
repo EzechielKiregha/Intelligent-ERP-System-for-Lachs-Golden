@@ -18,7 +18,7 @@ import {
 import { NavMain } from "./nav-main"
 import { NavProjects } from "./nav-projects"
 import { NavUser } from "./nav-user"
-import { TeamSwitcher } from "./team-switcher"
+import { CompanySwitcher } from "./company-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -33,6 +33,7 @@ import SkeletonLoader from "./SkeletonLoader"
 import { DashboardProjects } from "./dashboard-projects"
 import dynamic from "next/dynamic"
 import { usePathname } from "next/navigation"
+import CreateCompanyModal from "./create-company-modal"
 
 // This is sample data.
 
@@ -100,16 +101,19 @@ const navMainItems = [
 
 const company = [
   {
+    id: "1",
     name: "Intelligent ERP Inc.",
     logo: Cpu,
     plan: "Enterprise",
   },
   {
+    id: "2",
     name: "Smart Solutions Ltd.",
     logo: AudioWaveform,
     plan: "Startup",
   },
   {
+    id: "3",
     name: "NextGen Tech",
     logo: Command,
     plan: "Free",
@@ -136,28 +140,31 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useAuth().user;
 
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher company={company} />
-      </SidebarHeader>
-      <SidebarContent>
-        {pm ? (
-          <DashboardProjects />
-        ) : (
-          <NavMain items={navMainItems} />
-        )}
-        {isLoading && <SkeletonLoader type="list" height={40} />}
-        <NavProjects auditLogs={logs} />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={{
-          name: user?.name || userData.name,
-          email: user?.email || userData.email,
-          avatar: user?.avatar || userData.avatar,
-        }} />
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+    <>
+      <CreateCompanyModal />
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <CompanySwitcher />
+        </SidebarHeader>
+        <SidebarContent>
+          {pm ? (
+            <DashboardProjects />
+          ) : (
+            <NavMain items={navMainItems} />
+          )}
+          {isLoading && <SkeletonLoader type="list" height={40} />}
+          <NavProjects auditLogs={logs} />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={{
+            name: user?.name || userData.name,
+            email: user?.email || userData.email,
+            avatar: user?.avatar || userData.avatar,
+          }} />
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    </>
   );
 }
 

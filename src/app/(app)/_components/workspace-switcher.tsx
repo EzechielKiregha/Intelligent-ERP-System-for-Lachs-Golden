@@ -16,8 +16,16 @@ import {
 import { useCreateWorkspace } from "../../../features/workspaces/hooks/use-create-workspace";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Workspace } from "@/generated/prisma";
 
+interface W {
+  name: string;
+  id: string;
+  companyId: string;
+  inviteCode: string;
+  createdAt: Date;
+  updatedAt: Date;
+  images: { url: string }[]
+}
 export function WorkspaceSwitcher() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -53,13 +61,13 @@ export function WorkspaceSwitcher() {
               <SelectValue placeholder={"No workspace selected"} />
             )}
           </SelectTrigger>
-          <SelectContent>
-            {data && data?.documents?.map((workspace: Workspace) => (
-              <SelectItem key={workspace.id} value={workspace.id}>
+          <SelectContent className="w-[--radix-select-trigger-width] bg-sidebar">
+            {data && data.map((workspace: W) => (
+              <SelectItem className="bg-sidebar-accent text-sidebar-accent-foreground" key={workspace.id} value={workspace.id}>
                 <div className="flex items-center gap-x-2">
                   <Avatar className="size-8 rounded-lg">
                     <AvatarImage
-                      src={workspace?.imageUrl as string}
+                      src={workspace?.images[0].url as string}
                       alt="Workspace logo"
                     />
                     <AvatarFallback className="bg-black text-white rounded-lg font-bold text-lg">

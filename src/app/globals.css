@@ -127,7 +127,7 @@
 /* styles/global.css or relevant CSS file */
 .animate-loading-bar {
   width: 0;
-  animation: loading 3s ease-in-out infinite;
+  animation: loading 8s ease-in-out infinite;
 }
 
 @keyframes loading {

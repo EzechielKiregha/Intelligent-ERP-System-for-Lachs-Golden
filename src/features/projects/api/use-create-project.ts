@@ -4,12 +4,21 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '@/lib/axios';
 import { put } from '@vercel/blob';
 import { z } from 'zod';
+import { Project } from '@/generated/prisma';
 
 // Schema for validation (aligned with form and API)
 export const projectCreateSchema = z.object({
   name: z.string().min(1, 'Project name is required'),
   imageUrl: z.union([z.instanceof(File), z.string().url(), z.literal('')]).optional(),
 });
+
+interface P {
+  name: string;
+  id: string;
+  workspaceId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export const useCreateProject = (workspaceId: string) => {
   const queryClient = useQueryClient();
@@ -21,31 +30,36 @@ export const useCreateProject = (workspaceId: string) => {
       if (!blobToken && data.imageUrl instanceof File) {
         throw new Error('Vercel Blob token is missing. Please configure NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN.');
       }
-
-      let imageUrlString: string | undefined;
-      let fileId: string | undefined;
-
-      // Upload file to Vercel Blob if imageUrl is a File
-      if (data.imageUrl instanceof File) {
-        const blob = await put(`projects/${Date.now()}-${data.imageUrl.name}`, data.imageUrl, {
+      let response : P
+      if (data.imageUrl instanceof File){
+        const blob = await put(`workspaces/${Date.now()}-${data.imageUrl.name}`, data.imageUrl, {
           access: 'public',
           token: blobToken,
         });
-        imageUrlString = blob.url;
-        fileId = blob.pathname;
-      } else if (typeof data.imageUrl === 'string' && data.imageUrl) {
-        imageUrlString = data.imageUrl;
-      }
-
-      // Send JSON payload to API
-      const response = await axios.post('/api/projects', {
-        name: data.name,
-        workspaceId,
-        imageUrl: imageUrlString,
-        fileId,
-      });
-
-      return response.data;
+        
+        // Send JSON payload to API
+        const responseIf = await axios.post('/api/projects', {
+          name: data.name,
+          workspaceId,
+          url: blob.url,
+          pathname: blob.pathname,
+          contentType: data.imageUrl.type,
+          size: data.imageUrl.size,
+        });
+        response = responseIf.data.data
+      } else {
+        const responseElse = await axios.post('/api/projects', {
+          name: data.name,
+          workspaceId,
+          url: "blob.url",
+          pathname: "blob.pathname",
+          contentType: "data.imageUrl.type",
+          size: 0,
+        }
+      )
+      response = responseElse.data.data
+    }
+    return response
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects', workspaceId] });
