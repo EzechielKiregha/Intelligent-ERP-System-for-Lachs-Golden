@@ -27,22 +27,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ task
   const task = await prisma.task.findUnique({
     where: { id: taskId },
     include: {
-      project: true,
-      assignee: { include: { user: { select: { name: true, email: true } } } },
+      project: {
+        include : { images: { select: { url: true } },
+      }
+      },
+      assignee: true,
     },
   });
   if (!task || task.workspaceId !== workspaceId) {
     return NextResponse.json({ success: false, message: 'Task not found', data: null }, { status: 404 });
   }
-
-  // const populatedTask = {
-  //   ...task,
-  //   assignee: {
-  //     ...task.assignee,
-  //     name: task.assignee.user.name || task.assignee.user.email.split('@')[0],
-  //     email: task.assignee.user.email,
-  //   },
-  // };
 
   return NextResponse.json({ data: task });
 }

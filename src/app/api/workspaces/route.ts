@@ -34,7 +34,6 @@ export async function GET(req: NextRequest) {
 // Define schema for JSON payload
 const createWorkspaceSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  companyId: z.string().min(1, 'Company ID is required'),
   url: z.string().url('Invalid URL'),
   pathname: z.string().optional(),
   contentType: z.string().optional(),
@@ -59,11 +58,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, companyId, url, pathname, contentType, size} = parsed.data;
+    const { name, url, pathname, contentType, size} = parsed.data;
 
-    if (companyId !== session.user.currentCompanyId) {
+    const companyId = session.user.currentCompanyId;
+
+    if (!companyId) {
       return NextResponse.json(
-        { error: 'Unauthorized: Invalid companyId' },
+        { error: 'Unauthorized:' },
         { status: 401 }
       );
     }

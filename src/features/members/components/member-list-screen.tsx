@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useGetMembers } from "../api/use-get-members";
+import { M, useGetMembers } from "../api/use-get-members";
 import { useGetWorkspaceIdParam } from "@/features/workspaces/hooks/use-get-workspace-param";
 import { useGetCurrentMember } from "../api/use-get-current-member";
 import { useMemo, useState } from "react";
@@ -91,7 +91,7 @@ export default function MemberListScreen() {
           <div className="space-y-5">
             {isLoading
               ? [1, 2, 3].map((i) => <MemberListItemSkeleton key={i} />)
-              : membersList?.map((member) => (
+              : membersList?.map((member: M) => (
                 <MemberListItem
                   workspaceId={workspaceId}
                   setOpenRoleUpdateDialog={setOpenRoleUpdateDialog}

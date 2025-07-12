@@ -24,7 +24,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { workspacesCreateSchema } from "../schemas";
 import { useAuth } from "contents/authContext";
-import { Workspace } from "@/generated/prisma";
+
 
 interface CreateWorkspacesFormProps {
   onCancel?: () => void;
@@ -191,7 +191,10 @@ export default function CreateWorkspacesForm({
                   Cancel
                 </Button>
               )}
-              <Button disabled={isPending} type="submit" className="font-bold bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
+              <Button
+                disabled={isPending}
+                type="submit"
+                className="font-bold bg-sidebar-accent cursor-pointer hover:bg-sidebar-primary text-sidebar-accent-foreground">
                 Create Workspace
               </Button>
             </div>

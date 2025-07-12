@@ -13,12 +13,10 @@ import { Project, Task } from "@/hooks/type";
 
 interface TaskBreadcrumbsProps {
   task: Task;
-  project: Project;
 }
 
 export default function TaskBreadcrumbs({
   task,
-  project,
 }: TaskBreadcrumbsProps) {
   const router = useRouter();
   const { setIsOpen: setOpenEditTaskModal } = useOpenEditTaskModal();
@@ -26,6 +24,9 @@ export default function TaskBreadcrumbs({
     "Are you sure?",
     "This process cannot be undo"
   );
+
+  // console.log("[Task Breadcrumbs] Task:", task);
+
   const { mutate: deleteMutation } = useDeleteTask(task.workspaceId);
 
   const handleDelete = async () => {
@@ -34,7 +35,7 @@ export default function TaskBreadcrumbs({
     if (!ok) {
       return;
     }
-    const taskId = task.$id
+    const taskId = task.id
     deleteMutation(
       taskId,
       {
@@ -60,8 +61,8 @@ export default function TaskBreadcrumbs({
             className="group "
           >
             <ProjectAvatar
-              name={project.name}
-              imageUrl={project.imageUrl as string}
+              name={task.project.name}
+              imageUrl={task.project.images[0]?.url}
               className="size-8"
               textClassName="text-[14px] text-muted-foreground group-hover:text-black transition-colors"
             />
@@ -69,7 +70,7 @@ export default function TaskBreadcrumbs({
           <div className="flex items-center gap-x-1">
             <ChevronRight className="size-5 lg:size-6 text-muted-foreground" />
             <span className="font-bold text-sm lg:text-base truncate">
-              {task.name}
+              {task.title}
             </span>
           </div>
         </div>
@@ -80,7 +81,7 @@ export default function TaskBreadcrumbs({
             onClick={() => {
               setOpenEditTaskModal({
                 editTaskForm: true,
-                taskId: task.$id,
+                taskId: task.id,
               });
             }}
           >

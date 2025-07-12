@@ -89,12 +89,12 @@ const TasksContainer = ({ tasks, workspaceId }: TasksContainerProps) => {
         <ul className="space-y-3">
           {tasks.slice(0, 10).map((task) => (
             <li
-              key={task.$id}
+              key={task.id}
               className="border p-4 rounded-md flex items-center justify-between gap-x-4"
             >
               <div>
                 <div className="flex items-center gap-x-3">
-                  <span className="font-semibold">{task.name}</span>
+                  <span className="font-semibold">{task.title}</span>
                   <Badge variant={task.status as TASK_STATUS}>
                     {task.status}
                   </Badge>
@@ -104,11 +104,11 @@ const TasksContainer = ({ tasks, workspaceId }: TasksContainerProps) => {
                   <Dot />
                   <span className="flex items-center gap-x-1">
                     <Calendar className="size-4" />{" "}
-                    {formatDistanceToNow(task.$createdAt || "")}
+                    {formatDistanceToNow(task.createdAt || "")}
                   </span>
                 </div>
               </div>
-              <Link href={`/workspaces/${workspaceId}/tasks/${task.$id}`}>
+              <Link href={`/workspaces/${workspaceId}/tasks/${task.id}`}>
                 <Button variant={"outline"} size={"sm"}>
                   <ExternalLink />
                 </Button>

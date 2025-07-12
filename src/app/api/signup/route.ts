@@ -3,11 +3,15 @@ import { hash } from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
+import { ro } from '@faker-js/faker';
+import { Role, UserStatus } from '@/generated/prisma';
 
 const signUpSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email'),
+  role: z.enum([Role.ADMIN, Role.ADMIN, Role.USER]).optional(),
+  status: z.enum([UserStatus.PENDING, UserStatus.ACCEPTED, UserStatus.BLOCKED]).optional(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   companyId: z.string().min(1, 'Company ID is required'),
 });
@@ -28,7 +32,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { firstName, lastName, email, password, companyId } = parseResult.data;
+    const { firstName, lastName, email, password, companyId, role, status } = parseResult.data;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -60,9 +64,18 @@ export async function POST(req: NextRequest) {
         firstName,
         lastName,
         name: `${firstName} ${lastName}`,
-        role: 'USER',
-        status: 'PENDING',
+        role: role || 'USER',
+        status: status || UserStatus.PENDING,
         companyId,
+        currentCompanyId: companyId,
+        images: {
+          create: {
+            url: "https://github.com/shadcn.png",
+            pathname: "https://github.com/shadcn.png",
+            contentType: "https://github.com/shadcn.png",
+            size: 10000,
+          }
+        }
       },
     });
 

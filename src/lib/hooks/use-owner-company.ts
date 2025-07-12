@@ -75,3 +75,20 @@ export const useCreateCompany = () => {
     },
   });
 }
+
+export function useDeleteCompany() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string|undefined) => axiosdb.delete(`/api/settings/company` , { data: { companyId: id } }),
+    onMutate: () => {
+      queryClient.cancelQueries({ queryKey: ['ownerCompanies'] });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ownerCompanies'] });
+      toast.success("Deleted Successfully")
+    },
+    onError () {
+      toast.error("Failed")
+    }
+  });
+}

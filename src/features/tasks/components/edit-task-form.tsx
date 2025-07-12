@@ -57,10 +57,10 @@ export default function EditTaskForm({
   const form = useForm<z.infer<typeof taskCreateSchema>>({
     resolver: zodResolver(taskCreateSchema),
     defaultValues: {
-      name: initValue?.name,
-      description: initValue?.description,
-      assigneeId: initValue?.assigneeId,
-      dueDate: new Date(initValue.dueDate),
+      title: initValue?.title,
+      description: initValue?.description || "",
+      assigneeId: initValue?.assigneeId || "",
+      dueDate: new Date(initValue.dueDate || new Date()),
       status: TASK_STATUS[initValue?.status as TASK_STATUS],
       projectId: initValue?.projectId,
     },
@@ -123,7 +123,7 @@ export default function EditTaskForm({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Task Name</FormLabel>

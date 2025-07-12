@@ -19,9 +19,11 @@ export default function FinanceSummaryCards() {
   if (isLoading) {
     return (
       <>
-        <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
-        <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
-        <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+        <div className="space-y-2">
+          <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+          <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+          <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+        </div>
       </>
     )
   }
@@ -46,7 +48,7 @@ export default function FinanceSummaryCards() {
   const netFooter = `Compared to previous ${data.period}`;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 px-4 py-3 lg:px-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
       <MetricCard
         description="Total Revenue"
         value={data.totalRevenue}

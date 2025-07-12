@@ -7,8 +7,9 @@ export const useGetCurrentMember = (workspaceId: string) => {
   return useQuery({
     queryKey: ['current-member', workspaceId],
     queryFn: async () => {
-      const { data } = await axiosdb.get(`/api/members/current?workspaceId=${workspaceId}`);
-      return data.data;
+      const res = await axiosdb.get(`/api/members/current?workspaceId=${workspaceId}`);
+      // console.log('Current member data:', data);
+      return res.data.member;
     },
     enabled: !!workspaceId,
   });

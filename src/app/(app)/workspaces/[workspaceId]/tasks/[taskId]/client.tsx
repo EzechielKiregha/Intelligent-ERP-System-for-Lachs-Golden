@@ -22,6 +22,8 @@ export default function TaskIdClientPage() {
     workspaceId
   );
 
+  console.log("[TaskIdClientPage] Data:", data);
+
   if ((!isLoading && !data) || (!isLoading && error !== null)) {
     return <PageError />;
   }
@@ -32,10 +34,10 @@ export default function TaskIdClientPage() {
 
   return (
     <div>
-      <TaskBreadcrumbs task={data} project={data.project} />
+      <TaskBreadcrumbs task={data.task} />
       <DotdotSeparator className="my-4" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <TaskOverviewCard task={data} />
+        <TaskOverviewCard task={data.task} />
         <TasksContainer tasks={data.relatedTasks} workspaceId={workspaceId} />
       </div>
     </div>
@@ -60,12 +62,12 @@ const TasksContainer = ({ tasks, workspaceId }: TasksContainerProps) => {
         <ul className="space-y-3">
           {tasks?.slice(0, 3).map((task) => (
             <li
-              key={task.$id}
+              key={task.id}
               className="border p-4 rounded-md flex items-center justify-between gap-x-4"
             >
               <div>
                 <div className="flex items-center gap-x-3">
-                  <span className="font-semibold">{task.name}</span>
+                  <span className="font-semibold">{task.title}</span>
                   <Badge variant={task.status as TASK_STATUS}>
                     {task.status}
                   </Badge>
@@ -75,11 +77,11 @@ const TasksContainer = ({ tasks, workspaceId }: TasksContainerProps) => {
                   <Dot />
                   <span className="flex items-center gap-x-1">
                     <Calendar className="size-4" />{" "}
-                    {formatDistanceToNow(task.$createdAt || " ")}
+                    {formatDistanceToNow(task.createdAt || " ")}
                   </span>
                 </div>
               </div>
-              <Link href={`/workspaces/${workspaceId}/tasks/${task.$id}`}>
+              <Link href={`/workspaces/${workspaceId}/tasks/${task.id}`}>
                 <Button variant={"outline"} size={"sm"}>
                   <ExternalLink />
                 </Button>

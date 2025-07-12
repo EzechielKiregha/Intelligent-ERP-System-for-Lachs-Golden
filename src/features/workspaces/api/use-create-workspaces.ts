@@ -4,12 +4,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { put } from '@vercel/blob';
 import { z } from 'zod';
-import { Workspace } from '@/generated/prisma';
 
 export const workspacesCreateSchema = z.object({
   name: z.string().min(1, 'Workspace name is required'),
   imageUrl: z.union([z.instanceof(File), z.string().url(), z.literal('')]).optional(),
-  companyId: z.string().min(1, 'Company ID is required'),
+  companyId: z.string().optional(),
 });
 
 interface W {
@@ -49,10 +48,10 @@ export const useCreateWorkspaces = () => {
         const responseElse = await axios.post('/api/workspaces', {
           name: data.name,
           companyId: data.companyId,
-          url: "blob.url",
-          pathname: "blob.pathname",
-          contentType: "data.imageUrl.type",
-          size: "data.imageUrl.size",
+          url: "https://github.com/shadcn.png",
+          pathname: "https://github.com/shadcn.png",
+          contentType: "https://github.com/shadcn.png",
+          size: 10000, // Default size if no image is provided
         }
       )
         response = responseElse.data.data

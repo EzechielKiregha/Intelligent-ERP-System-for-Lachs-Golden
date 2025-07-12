@@ -30,7 +30,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useAuth } from "contents/authContext"
-import { useNavigation } from "@/hooks/use-navigation"
 import { useRouter } from "next/navigation"
 
 interface userDetails {
@@ -104,7 +103,9 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="hover:bg-sidebar-accent">
+              <DropdownMenuItem
+                onClick={() => router.push("/settings")}
+                className="hover:bg-sidebar-accent">
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>

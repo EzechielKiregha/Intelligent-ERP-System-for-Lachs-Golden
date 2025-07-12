@@ -17,36 +17,36 @@ export function useHRSummary() {
     },
   })
 }
-interface Emp {
-  id: string,
-  firstName: string,
-  lastName: string,
-  email: string,
-  jobTitle: string,
-  department: { name: string },
-  createdAt: string,
+interface Employee {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  jobTitle: string | null;
+  department: { name: string } | null;
+  createdAt: string;
+  user: { id: string } | null;
 }
 // Preview recent employees
 export function useHREmployeesPreview() {
   return useQuery({
     queryKey: ['recent-employees'],
     queryFn: async () => {
-      const { data } = await axiosdb.get<Emp[]>('/api/hr/preview/employees')
+      const { data } = await axiosdb.get<Employee[]>('/api/hr/preview/employees')
       return data
     }
   })
 }
 
 interface Task {
-  id: string,
-  title: string,
-  description: string,
-  dueDate: string,
-  assignee: {
-    firstName: string,
-    lastName: string,
-  },
-  createdAt: string,
+  id: string;
+  title: string;
+  description: string | null;
+  dueDate: string | null;
+  assignee: { user: { id: string; firstName: string | null; lastName: string | null } } | null;
+  project: { id: string; name: string } | null;
+  workspace: { id: string; name: string } | null;
+  createdAt: string;
 }
 
 // Tasks preview

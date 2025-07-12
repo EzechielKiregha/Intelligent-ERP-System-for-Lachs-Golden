@@ -30,6 +30,8 @@ export default function SignUpPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [fowardUser, setForwardUser] = useState<UserFormData | null>(null);
+
 
   const { register, handleSubmit, formState: { errors } } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
@@ -60,6 +62,7 @@ export default function SignUpPage() {
   const onSubmit = (data: UserFormData) => {
     if (step === 1) {
       setStep(2);
+      setForwardUser(data);
     } else if (step === 2 && selectedCompany) {
       signUpMutation.mutate({ ...data, companyId: selectedCompany });
     }
@@ -116,10 +119,6 @@ export default function SignUpPage() {
                           onClick={() => setSelectedCompany(company.id)}
                           className={`p-4 mb-2 cursor-pointer ${selectedCompany === company.id ? 'bg-[#80410e] text-white' : 'bg-white dark:bg-[#1F2A44]'}`}
                         >
-                          <CardHeader>
-                            <CardTitle>
-                            </CardTitle>
-                          </CardHeader>
                           <CardContent>
                             <h3 className="font-medium">{company.name}</h3>
                             <p className="text-sm">{company.industry}</p>
@@ -130,7 +129,7 @@ export default function SignUpPage() {
                       <p>No companies available</p>
                     )}
                   </ScrollArea>
-                  <Link href="/company/create" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+                  <Link href={`/company/create?data=${fowardUser}&isOwner=true`} className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
                     Create a new company
                   </Link>
                   {selectedCompany === null && <p className="text-xs text-[#E53E3E] dark:text-[#FC8181]">Please select a company</p>}
@@ -178,6 +177,6 @@ export default function SignUpPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </div >
   );
 }

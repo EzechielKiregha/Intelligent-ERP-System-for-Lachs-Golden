@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
         jobTitle: true,
         department: { select: { name: true } },
         createdAt: true,
+        user: { select: { id: true } }, // Include userId for permission checks
       },
     });
 

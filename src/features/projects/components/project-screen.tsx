@@ -13,7 +13,6 @@ import PageError from "@/components/page-error";
 import AnalyticsContainer from "@/components/analysis-container";
 import { Project } from "@/hooks/type";
 import { useGetProjectById } from "../api/use-get-projects";
-import PageNotFound from "@/components/page-not-found";
 
 interface ProjectScreenProps {
   projectId: string;
@@ -37,7 +36,7 @@ export default function ProjectScreen({ projectId }: ProjectScreenProps) {
   return (
     <div className="w-full mx-auto space-y-6 overflow-hidden">
       <div className="flex items-center justify-between gap-x-4">
-        <ProjectAvatar imageUrl={project.imageUrl as string | ''} name={project.name} />
+        <ProjectAvatar imageUrl={project.images[0].url} name={project.name} />
         <Link href={`${fullHref}/settings`}>
           <Button variant={"outline"} className="bg-sidebar-accent">
             <Edit /> <span className="font-semibold">Edit</span>

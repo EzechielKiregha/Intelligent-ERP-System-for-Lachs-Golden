@@ -20,19 +20,21 @@ export async function GET(req: NextRequest) {
 
     // Calculate total revenue manually
     const totalRevenue = transactions.reduce((sum, tx) => sum + tx.amount, 0);
-    const revPercentage = totalRevenue > 0 ? (totalRevenue / 100) * 100 : 0;
-
+    let revPercentage =   (totalRevenue > 0 ? (totalRevenue / transactions.length) : 0);
+    revPercentage = parseFloat(revPercentage.toFixed(2))
     // Count total orders
     const totalOrders = await prisma.transaction.count({
       where: { type: 'ORDER', companyId },
     });
-    const orderPercentage = totalOrders > 0 ? (totalOrders / 100) * 100 : 0;
+    let orderPercentage = totalOrders > 0 ? (totalOrders / 100) * 100 : 0;
+    orderPercentage = parseFloat(orderPercentage.toFixed(2));
 
     // Count total customers
     const totalCustomers = await prisma.user.count({
       where: { companyId },
     });
-    const customerPercentage = totalCustomers > 0 ? (totalCustomers / 100) * 100 : 0;
+    let customerPercentage = totalCustomers > 0 ? (totalCustomers / 100) * 100 : 0;
+    customerPercentage = parseFloat(customerPercentage.toFixed(2));
 
     // Return the aggregated stats
     return NextResponse.json({

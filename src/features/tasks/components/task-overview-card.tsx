@@ -16,7 +16,7 @@ export default function TaskOverviewCard({ task }: TaskOverviewCardProps) {
       <span className="text-lg font-bold">Overview</span>
       <div className="space-y-3 mt-4">
         <TaskOverviewProperty label="Name">
-          <p>{task.name}</p>
+          <p>{task.title}</p>
         </TaskOverviewProperty>
         <TaskOverviewProperty label="Description">
           <p>{task.description || "No description set"}</p>
@@ -34,7 +34,7 @@ export default function TaskOverviewCard({ task }: TaskOverviewCardProps) {
           </div>
         </TaskOverviewProperty>
         <TaskOverviewProperty label="Due Date">
-          <TaskDate dueDate={task.dueDate} className="text-base" />
+          <TaskDate dueDate={task.dueDate?.toLocaleString() || "No Due Date"} className="text-base" />
         </TaskOverviewProperty>
         <TaskOverviewProperty label="Status">
           <Badge

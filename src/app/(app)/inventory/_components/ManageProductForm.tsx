@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 import { Product, useSingleProduct } from '@/lib/hooks/inventory'
 import { toast } from 'sonner'
 import axiosdb from '@/lib/axios'
+import { ro } from '@faker-js/faker'
 
 const productSchema = z.object({
   name: z.string().min(1),
@@ -60,9 +61,11 @@ export default function ManageProductForm({ productId }: Props) {
       if (isEdit && productId) {
         await axiosdb.patch(`/api/inventory/products/${productId}?id=${productId}`, data)
         toast.success('Product updated')
+        router.push('/inventory?product=updated')
       } else {
         await axiosdb.post('/api/inventory/products/create', data)
         toast.success('Product created')
+        router.push('/inventory?product=created')
       }
       router.refresh()
     } catch (err) {
@@ -76,18 +79,21 @@ export default function ManageProductForm({ productId }: Props) {
       <div className="grid md:grid-cols-2 gap-4">
         <div>
           <label className="block mb-1">Name</label>
-          <Input {...register('name')} value={product?.name} />
+          {isEdit && <span className="text-sm text-gray-500">Editing: {product?.name}</span>}
+          <Input {...register('name')} />
           {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
         </div>
         <div>
-          <label className="block mb-1">SKU</label>
-          <Input {...register('sku')} value={product?.sku} />
+          <label className="block mb-1">SKU </label>
+          {isEdit && <span className="text-sm text-gray-500">Editing: {product?.sku}</span>}
+          <Input {...register('sku')} />
           {errors.sku && <p className="text-sm text-red-500">{errors.sku.message}</p>}
         </div>
       </div>
       <div className="grid md:grid-cols-3 gap-4">
         <div>
           <label className="block mb-1">Unit Price</label>
+          {isEdit && <span className="text-sm text-gray-500">Editing: {product?.unitPrice}</span>}
           <Controller defaultValue={product?.unitPrice} name="unitPrice" control={control} render={({ field }) => (
             <Input type="number" step="0.01" {...field} onChange={(e) => field.onChange(parseFloat(e.target.value))} />
           )} />
@@ -95,14 +101,16 @@ export default function ManageProductForm({ productId }: Props) {
         </div>
         <div>
           <label className="block mb-1">Quantity</label>
-          <Controller defaultValue={product?.quantity} name="quantity" control={control} render={({ field }) => (
+          {isEdit && <span className="text-sm text-gray-500">Editing: {product?.quantity}</span>}
+          <Controller name="quantity" control={control} render={({ field }) => (
             <Input type="number" {...field} onChange={(e) => field.onChange(parseInt(e.target.value))} />
           )} />
           {errors.quantity && <p className="text-sm text-red-500">{errors.quantity.message}</p>}
         </div>
         <div>
           <label className="block mb-1">Threshold</label>
-          <Controller defaultValue={product?.threshold} name="threshold" control={control} render={({ field }) => (
+          {isEdit && <span className="text-sm text-gray-500">Editing: {product?.threshold}</span>}
+          <Controller name="threshold" control={control} render={({ field }) => (
             <Input type="number" {...field} onChange={(e) => field.onChange(parseInt(e.target.value))} />
           )} />
           {errors.threshold && <p className="text-sm text-red-500">{errors.threshold.message}</p>}
@@ -110,7 +118,8 @@ export default function ManageProductForm({ productId }: Props) {
       </div>
       <div>
         <label className="block mb-1">Description</label>
-        <Textarea {...register('description')} value={product?.description} />
+        {isEdit && <span className="text-sm text-gray-500">Editing: {product?.description}</span>}
+        <Textarea {...register('description')} />
       </div>
       <Button type="submit" disabled={isSubmitting} className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
         {isEdit ? 'Update Product' : 'Create Product'}

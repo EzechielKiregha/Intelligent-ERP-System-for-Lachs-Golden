@@ -8,7 +8,7 @@ export const workspacesCreateSchema = z.object({
       z.string().transform((v) => (v === "" ? undefined : v)),
     ])
     .optional(),
-    companyId: z.string()
+    companyId: z.string().optional(),
 });
 
 export const workspacesUpdateSchema = z.object({

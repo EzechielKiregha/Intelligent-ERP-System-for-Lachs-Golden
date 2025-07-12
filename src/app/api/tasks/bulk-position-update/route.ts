@@ -11,6 +11,9 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   const { tasks } = body;
+
+  console.log("[POST /api/tasks/bulk-position-update] Received tasks:", tasks);
+
   const { searchParams } = new URL(req.url);
   const workspaceId = searchParams.get('workspaceId');
 
@@ -25,19 +28,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
-  const taskIds = tasks.map((t: { $id: any; }) => t.$id);
+  const taskIds = tasks.map((t: { id: any; }) => t.id);
+  
   const existingTasks = await prisma.task.findMany({
     where: { id: { in: taskIds }, workspaceId },
   });
+
+  console.log("[POST /api/tasks/bulk-position-update] Existing tasks found:", existingTasks.length);
 
   if (existingTasks.length !== tasks.length) {
     return NextResponse.json({ success: false, message: 'Some tasks not found or not in the same workspace', data: null }, { status: 404 });
   }
 
   const updatedTasks = await Promise.all(
-    tasks.map(async (task: { $id: any; position: any; status: any; }) => {
+    tasks.map(async (task: { id: any; position: any; status: any; }) => {
       return await prisma.task.update({
-        where: { id: task.$id },
+        where: { id: task.id },
         data: { position: task.position, status: task.status },
       });
     })

@@ -81,11 +81,11 @@ export default function WorkspaceIdClientPage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <TasksContainer workspaceId={workspaceId} tasks={tasksData || []} />
         <ProjectsContainer
           projects={projectsData?.documents || []}
           workspaceId={workspaceId}
         />
+        <TasksContainer workspaceId={workspaceId} tasks={tasksData || []} />
         <MembersContainer
           members={membersData || []}
           workspaceId={workspaceId}
@@ -128,12 +128,12 @@ const TasksContainer = ({ tasks, workspaceId }: TasksContainerProps) => {
         <ul className="space-y-3">
           {tasks.slice(0, 3).map((task) => (
             <li
-              key={task.$id}
+              key={task.id}
               className="border p-4 rounded-md flex flex-col md:flex-row md:items-center md:justify-between gap-4"
             >
               <div>
                 <div className="flex items-center gap-x-3">
-                  <span className="font-semibold">{task.name}</span>
+                  <span className="font-semibold">{task.title}</span>
                   <Badge variant={task.status as TASK_STATUS}>
                     {task.status}
                   </Badge>
@@ -143,11 +143,11 @@ const TasksContainer = ({ tasks, workspaceId }: TasksContainerProps) => {
                   <Dot />
                   <span className="flex items-center gap-x-1">
                     <Calendar className="size-4" />{" "}
-                    {formatDistanceToNow(task.$createdAt || " ")}
+                    {formatDistanceToNow(task.createdAt || " ")}
                   </span>
                 </div>
               </div>
-              <Link href={`/workspaces/${workspaceId}/tasks/${task.$id}`}>
+              <Link href={`/workspaces/${workspaceId}/tasks/${task.id}`}>
                 <Button
                   variant={"outline"}
                   size={"sm"}
@@ -217,7 +217,7 @@ const ProjectsContainer = ({
                 <div>
                   <ProjectAvatar
                     name={project.name}
-                    imageUrl={project.imageUrl as string | ''}
+                    imageUrl={project.images[0]?.url}
                     textClassName="text-base"
                   />
                 </div>

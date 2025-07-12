@@ -51,10 +51,10 @@ export const useCreateProject = (workspaceId: string) => {
         const responseElse = await axios.post('/api/projects', {
           name: data.name,
           workspaceId,
-          url: "blob.url",
-          pathname: "blob.pathname",
-          contentType: "data.imageUrl.type",
-          size: 0,
+          url: "https://github.com/shadcn.png",
+          pathname: "https://github.com/shadcn.png",
+          contentType: "https://github.com/shadcn.png",
+          size: 10000, // Default size if no image is provided
         }
       )
       response = responseElse.data.data

@@ -23,24 +23,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
-  const members = await prisma.member.findMany({
+  const list = await prisma.member.findMany({
     where: { workspaceId },
     // include: { user: { select: { name: true, email: true } } },
     orderBy:{ createdAt: 'desc' },
   });
 
-  let populatedMembers = []
+  let members = []
 
-  if (!members) {
-    populatedMembers.push(member)
+  if (!list) {
+    members.push(member)
   }
   else {
-    members.map( m => ( 
-      populatedMembers.push({ ...m })
+    list.map( m => ( 
+      members.push({ ...m })
     ));
   }
 
-  if (!populatedMembers) return NextResponse.json({ success: false, message: 'Members not found', data: null }, { status: 404 });
+  if (!members) return NextResponse.json({ success: false, message: 'Members not found', data: null }, { status: 404 });
 
-  return NextResponse.json({ data : populatedMembers }, {status:200});
+  return NextResponse.json({members}, {status:200});
 }

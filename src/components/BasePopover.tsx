@@ -56,13 +56,13 @@ export default function BasePopover({
         {/* Trigger Button */}
         <motion.div
           key="button"
-          className="relative group bg-sidebar-accent hover:bg-sidebar-primary"
+          className="relative group bg-transparent"
           layoutId={`popover-${uniqueId}`}
           onClick={handleToggle}
         >
           <motion.button
             layoutId={`popover-label-${uniqueId}`}
-            className="hover:text-sidebar-foreground transition-all duration-300 cursor-pointer"
+            className="transition-all duration-300 cursor-pointer"
           >
             {buttonLabel}
           </motion.button>

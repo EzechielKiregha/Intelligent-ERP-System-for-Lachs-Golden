@@ -46,7 +46,7 @@ export const taskColumns: ColumnDef<Task>[] = [
         <div className="flex items-center gap-x-2">
           <ProjectAvatar
             name={project.name}
-            imageUrl={project.imageUrl as string}
+            imageUrl={project.images[0]?.url}
             className="size-7"
             showName={false}
           />
@@ -105,7 +105,7 @@ export const taskColumns: ColumnDef<Task>[] = [
       );
     },
     cell: ({ row }) => {
-      return <TaskDate dueDate={row.original.dueDate} />;
+      return <TaskDate dueDate={row.original.dueDate?.toLocaleString() || "No Due Date"} />;
     },
   },
   {

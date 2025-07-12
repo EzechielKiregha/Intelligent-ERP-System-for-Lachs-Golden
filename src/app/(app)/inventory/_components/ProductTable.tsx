@@ -16,6 +16,9 @@ import {
 import { useProducts } from "@/lib/hooks/inventory";
 import SkeletonLoader from "../../_components/SkeletonLoader";
 import { DataTable, DragHandle, TableCellViewer } from "../../_components/ReusableDataTable";
+import { truncateText } from "@/lib/utils";
+import React from "react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 // 1. Schema
 export const productSchema = z.object({
@@ -100,11 +103,45 @@ export const productColumns: ColumnDef<z.infer<typeof productSchema>>[] = [
   {
     accessorKey: "description",
     header: "Description",
-    cell: ({ row }) => (
-      <div className="text-muted-foreground text-sm">
-        {row.original.description || "N/A"}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const description = row.original.description || '';
+      const [isDescriptionModalOpen, setIsDescriptionModalOpen] = React.useState(false); // State for this specific modal
+
+      const truncated = truncateText(description, 10); // Adjust maxLength as needed
+      return (
+        <>
+          {description && description.length > 20 && ( // Only show "View More" if truncation occurred
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => setIsDescriptionModalOpen(true)}
+              className="p-0 h-auto  ml-2" // Adjust styling as needed
+            >
+              View More
+            </Button>
+          )}
+
+          {/* Dialog for full description */}
+          <Dialog open={isDescriptionModalOpen} onOpenChange={setIsDescriptionModalOpen}>
+            <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
+              <DialogHeader>
+                <DialogTitle>Department Description</DialogTitle>
+                <DialogDescription>
+                  {description || 'No description provided.'}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => setIsDescriptionModalOpen(false)}
+                  className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+                >
+                  Close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog></>
+      );
+    }
   },
   {
     id: "actions",

@@ -95,19 +95,19 @@ export default function TaskDataKanban({
 
         // Always update the moved tasks
         updatesPayload.push({
-          $id: updateMovedTask.$id,
+          id: updateMovedTask.id,
           status: updateMovedTask.status as TASK_STATUS,
           position: Math.min((destination.index + 1) * 1000, 1_000_000),
         });
 
         // Update destination tasks item position
         newTasks[destinationStatus].forEach((task, index) => {
-          if (task && task.$id !== updateMovedTask.$id) {
+          if (task && task.id !== updateMovedTask.id) {
             const newPosition = Math.min((index + 1) * 1000, 1_000_000);
             // If current position of destination task item is not equal updated new position, then add to updatesPayload to also update in the backend and save to database
             if (task.position !== newPosition) {
               updatesPayload.push({
-                $id: task.$id,
+                id: task.id,
                 status: task.status as TASK_STATUS,
                 position: newPosition,
               });
@@ -121,7 +121,7 @@ export default function TaskDataKanban({
             const newPosition = Math.min((index + 1) * 1000, 1_000_000);
             if (task.position !== newPosition) {
               updatesPayload.push({
-                $id: task.$id,
+                id: task.id,
                 status: task.status as TASK_STATUS,
                 position: newPosition,
               });
@@ -178,8 +178,8 @@ export default function TaskDataKanban({
                   {tasks[board].map((task, index) => (
                     <Draggable
                       index={index}
-                      draggableId={`${task.name}-${index}`}
-                      key={`${task.name}-${index}`}
+                      draggableId={`${task.title}-${index}`}
+                      key={`${task.title}-${index}`}
                     >
                       {(provided) => (
                         <div

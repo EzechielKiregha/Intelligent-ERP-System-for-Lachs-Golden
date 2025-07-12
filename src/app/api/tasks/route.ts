@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
 import { Prisma, TaskStatus } from '@/generated/prisma';
 import { authOptions } from '@/lib/auth';
+import { taskCreateSchema } from '@/features/tasks/schemas';
 
 export async function GET(req: NextRequest) {
  const session = await getServerSession(authOptions);;
@@ -34,22 +35,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
-  // const where = {
-  //   workspaceId,
-  //   ...(projectId && { projectId }),
-  //   ...(assigneeId && { assigneeId }),
-  //   ...(status && { TaskStatus }),
-  //   ...(dueDate && { dueDate: new Date(dueDate) }),
-  //   ...(search && { title: { contains: search } }),
-  //   companyId
-  // };
+  const where = {
+    workspaceId,
+    ...(projectId && { projectId }),
+    ...(assigneeId && { assigneeId }),
+    ...(status && { TaskStatus }),
+    ...(dueDate && { dueDate: new Date(dueDate) }),
+    ...(search && { title: { contains: search } }),
+    companyId
+  };
 
   const tasks = await prisma.task.findMany({
     where : {
       companyId, assigneeId : member.id
     },
     include: {
-      project: true,
+      project: {
+        include: { images: { select: { url: true } } },
+      },
       assignee: true, // Fetch Member data
     },
     orderBy: { createdAt: 'desc' },
@@ -71,17 +74,16 @@ export async function POST(req: NextRequest) {
   }
   const companyId = session.user.currentCompanyId
   const body = await req.json();
-  const { workspaceId, title, projectId, assigneeId, status, dueDate, description } = body;
 
-  if (!workspaceId || !title || !projectId || !assigneeId || !status) {
+  const parsed = taskCreateSchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json({ success: false, message: 'Invalid data', data: null }, { status: 400 });
   }
 
-  const member = await prisma.member.findFirst({
-    where: { workspaceId },
-  });
-  if (!member) {
-    return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
+  const { workspaceId, title, projectId, assigneeId, status, dueDate, description } = parsed.data;
+
+  if (!workspaceId || !title || !projectId || !assigneeId || !status) {
+    return NextResponse.json({ success: false, message: 'Invalid data', data: null }, { status: 400 });
   }
 
   const highestPositionTask = await prisma.task.findFirst({

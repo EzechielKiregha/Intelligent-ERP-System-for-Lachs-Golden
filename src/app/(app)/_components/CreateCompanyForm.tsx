@@ -17,13 +17,30 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ChevronDownIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { useCreateCompany } from '@/lib/hooks/use-owner-company';
+import { Role } from '@/generated/prisma';
+import axiosdb from '@/lib/axios';
+import z from 'zod';
 
 interface CreateCompanyProps {
   onCancel?: () => void;
+  isOwner?: boolean;
+  fowardUser?: any;
 }
+
+// Define form schema with Zod
+const userSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  email: z.string().email('Invalid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
+
+type UserFormData = z.infer<typeof userSchema>;
 
 export default function CreateCompanyForm({
   onCancel,
+  isOwner = false,
+  fowardUser = null,
 }: CreateCompanyProps) {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -83,8 +100,11 @@ export default function CreateCompanyForm({
         ...data,
         foundedDate: date || undefined, // Ensure date is set correctly
       }, {
-        onSuccess: () => {
+        onSuccess: (data) => {
           toast.success('Company created! Please log in to continue.');
+          if (isOwner && fowardUser) {
+            handleOwnerCompanyCreation(data.id);
+          }
           setStep(5); // Move to review step
         },
         onError: (err: any) => {
@@ -93,6 +113,30 @@ export default function CreateCompanyForm({
       });
     } else {
       handleNext();
+    }
+  };
+
+  const signUpMutation = useMutation({
+    mutationFn: async (data: UserFormData & { companyId: string }) => {
+      const res = await axiosdb.post('/api/signup', data);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success('Owner Account Initialized.');
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to create account');
+    },
+  });
+
+  const handleOwnerCompanyCreation = (companyId: string) => {
+    if (fowardUser) {
+      const userData = {
+        ...fowardUser,
+        role: Role.OWNER,
+        companyId, // Assuming createCompanyMutation returns the created company ID
+      };
+      signUpMutation.mutate(userData);
     }
   };
 

@@ -37,7 +37,7 @@ export default function HRStatsCards() {
     }).format(v)
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
       <MetricCard
         description="Employees"
         value={totalEmployees}

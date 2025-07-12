@@ -33,7 +33,7 @@ export default function TaskAction({ task }: TaskActionProps) {
     if (!ok) {
       return;
     }
-    const taskId = task.$id
+    const taskId = task.id
     deleteMutation(
       taskId,
       {
@@ -58,7 +58,7 @@ export default function TaskAction({ task }: TaskActionProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <Link href={`/workspaces/${workspaceId}/tasks/${task.$id}`}>
+          <Link href={`/workspaces/${workspaceId}/tasks/${task.id}`}>
             <DropdownMenuItem>
               <ExternalLink />
               Task Detail
@@ -73,7 +73,7 @@ export default function TaskAction({ task }: TaskActionProps) {
             onClick={() => {
               setIsOpen({
                 editTaskForm: true,
-                taskId: task.$id,
+                taskId: task.id,
               });
             }}
           >

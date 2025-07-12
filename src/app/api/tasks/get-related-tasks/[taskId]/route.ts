@@ -26,7 +26,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ task
 
   const task = await prisma.task.findUnique({
     where: { id: taskId },
-    include: { assignee: true },
+    include: {
+      project: {
+        include: { images: { select: { url: true } } },
+      },
+      assignee: true,
+    },
   });
   if (!task || task.workspaceId !== workspaceId) {
     return NextResponse.json({ success: false, message: 'Task not found', data: null }, { status: 404 });
@@ -36,34 +41,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ task
     where: {
       workspaceId,
       assigneeId: task.assigneeId,
-      id: { not: task.id },
+      id: { not: taskId },
     },
     include: {
-      project: true,
-      assignee: { include: { user: { select: { name: true, email: true } } } },
+      project: {
+        include: { images: { select: { url: true } } },
+      },
+      assignee: true,
     },
     orderBy: { createdAt: 'desc' },
   });
 
-  // const populatedRelatedTasks = relatedTasks.map(t => ({
-  //   ...t,
-  //   assignee: {
-  //     ...t.assignee,
-  //     name: t.assignee.user.name || t.assignee.user.email.split('@')[0],
-  //     email: t.assignee.user.email,
-  //  // Other fields...
-  //   },
-  // }));
+  // console.log("[GET /api/tasks/get-related-tasks] Related tasks found:", relatedTasks.length);
+  // console.log("[GET /api/tasks/get-related-tasks] Task:", task);
 
-  // const populatedTask = {
-  //   ...task,
-  //   relatedTasks: populatedRelatedTasks,
-  //   assignee: {
-  //     ...task.assignee,
-  //     name: task.assignee.user.name || task.assignee.user.email.split('@')[0],
-  //     email: task.assignee.user.email,
-  //   },
-  // };
-
-  return NextResponse.json({ data: relatedTasks });
+  return NextResponse.json({ task, relatedTasks });
 }

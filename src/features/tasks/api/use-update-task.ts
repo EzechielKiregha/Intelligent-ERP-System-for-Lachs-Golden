@@ -7,8 +7,8 @@ export const useUpdateTask = (workspaceId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ taskId, data }: { taskId: string | undefined; data: {
-      $id?: string;
-      name: string;
+      id?: string;
+      title: string;
       projectId: string;
       assigneeId: string;
       status: string;

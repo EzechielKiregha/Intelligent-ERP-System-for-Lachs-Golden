@@ -12,5 +12,12 @@ interface ProjectIdPageProps {
 export default async function ProjectIdPage({ params }: ProjectIdPageProps) {
   const { projectId } = await params;
 
-  return <ProjectScreen projectId={projectId} />;
+  return (
+    <div className="flex flex-col min-h-full">
+      <div className="@container/main flex flex-1 flex-col gap-4">
+        <ProjectScreen projectId={projectId} />
+      </div>
+    </div>
+
+  );
 }

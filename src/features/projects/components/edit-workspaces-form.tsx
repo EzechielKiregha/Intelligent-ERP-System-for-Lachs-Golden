@@ -43,7 +43,7 @@ export default function EditProjectForm({
     resolver: zodResolver(projectUpdateSchema),
     defaultValues: {
       name: initialValue.name,
-      imageUrl: initialValue.imageUrl || "",
+      imageUrl: initialValue.images[0]?.url || "",
     },
   });
 

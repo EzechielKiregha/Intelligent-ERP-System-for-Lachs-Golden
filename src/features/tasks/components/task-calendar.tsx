@@ -75,15 +75,15 @@ const CustomToolbar = ({
 
 export default function TaskCalendar({ data }: TaskCalendarProps) {
   const [value, setValue] = useState(
-    data.length > 0 ? new Date(data[0].dueDate) : new Date()
+    data.length > 0 ? new Date(data[0].dueDate || new Date()) : new Date()
   );
 
   const events: TaskCalendarEventCard[] = data.map((task) => ({
-    $id: task.$id,
-    title: task.name,
+    $id: task.id,
+    title: task.title,
     status: task.status as TASK_STATUS,
-    start: new Date(task.dueDate),
-    end: new Date(task.dueDate),
+    start: new Date(task.dueDate || new Date()),
+    end: new Date(task.dueDate || new Date()),
     assignee: task.assignee,
     project: task.project,
   }));

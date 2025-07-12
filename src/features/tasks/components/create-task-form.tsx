@@ -57,7 +57,8 @@ export default function CreateTaskForm({ onCancel }: CreateTaskFormProps) {
   const form = useForm<z.infer<typeof taskCreateSchema>>({
     resolver: zodResolver(taskCreateSchema),
     defaultValues: {
-      name: "",
+      workspaceId,
+      title: "",
       description: "",
       assigneeId: "",
       dueDate: undefined,
@@ -85,11 +86,13 @@ export default function CreateTaskForm({ onCancel }: CreateTaskFormProps) {
   const isFetchingAssociatedDate = memberOptionLoading || projectOptionLoading;
 
   async function onSubmit(values: z.infer<typeof taskCreateSchema>) {
+    console.log("Form submitted with values:", values);
+
     mutate(
       { ...values },
       {
-        onSuccess: ({ message }) => {
-          toast.success(message);
+        onSuccess: () => {
+          toast.success("Task created successfully");
           form.reset();
           queryClient.invalidateQueries({
             queryKey: ["tasks", values.projectId],
@@ -97,7 +100,7 @@ export default function CreateTaskForm({ onCancel }: CreateTaskFormProps) {
           onCancel?.();
         },
         onError: ({ message }) => {
-          toast.error(message);
+          toast.error("Failed to create task: " + message);
         },
       }
     );
@@ -113,7 +116,7 @@ export default function CreateTaskForm({ onCancel }: CreateTaskFormProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Task Name</FormLabel>
@@ -128,7 +131,18 @@ export default function CreateTaskForm({ onCancel }: CreateTaskFormProps) {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="workspaceId"
+              render={({ field }) => (
+                <FormItem className="hidden">
+                  <FormControl>
+                    <Input type="hidden" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="dueDate"

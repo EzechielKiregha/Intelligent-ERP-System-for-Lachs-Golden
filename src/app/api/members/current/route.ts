@@ -18,11 +18,11 @@ export async function GET(req: NextRequest) {
 
   const member = await prisma.member.findFirst({
     where: { workspaceId, userId: session.user.id },
-    include: { user: { select: { name: true, email: true } } },
+    // include: { user: { select: { name: true, email: true } } },
   });
   if (!member) {
     return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
   }
 
-  return NextResponse.json({ success: true, message: 'Success', data: member });
+  return NextResponse.json({member});
 }

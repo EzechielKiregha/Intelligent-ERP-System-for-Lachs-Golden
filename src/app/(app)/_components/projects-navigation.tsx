@@ -9,16 +9,7 @@ import { usePathname } from "next/navigation";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Project } from "@/generated/prisma";
-
-interface P {
-  name: string;
-  id: string;
-  workspaceId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  images: { url: string }
-}
+import { Project } from "@/hooks/type";
 
 export default function ProjectsNavigation() {
   const workspaceId = useGetWorkspaceIdParam();
@@ -49,7 +40,7 @@ export default function ProjectsNavigation() {
             <Folder className="size-4 text-muted-foreground" />
           </div>
         ) : (
-          data && data.documents.map((project: P) => {
+          data && data.documents.map((project: Project) => {
             const fullHrefPath = `/workspaces/${workspaceId}/projects/${project.id}`;
             const isActive = pathname === fullHrefPath;
 
@@ -60,7 +51,7 @@ export default function ProjectsNavigation() {
                     <div className="flex items-center gap-x-2">
                       <Avatar className="size-8 rounded-lg">
                         <AvatarImage
-                          src={project.images.url || ''}
+                          src={project.images[0].url}
                           alt="Project logo"
                         />
                         <AvatarFallback className="bg-primary text-white rounded-lg font-bold text-lg">

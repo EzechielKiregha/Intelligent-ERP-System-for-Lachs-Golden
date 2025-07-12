@@ -36,7 +36,7 @@ export default function TaskCalendarEventCardItem({
           />
           <ProjectAvatar
             name={event.project.name}
-            imageUrl={event.project.imageUrl as string}
+            imageUrl={event.project.images[0]?.url}
             className="size-7"
             showName={false}
           />

@@ -1,3 +1,5 @@
+import { Role, TaskStatus } from "@/generated/prisma";
+
 export interface TaskCalendarEventCard {
   $id?: string;
   title: string;
@@ -9,31 +11,36 @@ export interface TaskCalendarEventCard {
 }
 
 export interface PositionedTask {
-  $id?: string;
+  id?: string;
   status: TASK_STATUS;
   position: number;
 }
 
 export type Member = {
+  name: string | null;
   id: string;
   userId: string;
-  name: string;
-  email: string;
+  email: string | null;
   workspaceId: string;
-  role: MEMBER_ROLE;
+  role: Role;
   color: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export interface MemberWithUserData {
   members : Member[]
 } 
 
-export type Project = {
-  id: string;
+export type Project =  {
   name: string;
-  imageUrl?: string | null;
-  fileId: string | null;
+  id: string;
   workspaceId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  images : {
+    url: string;
+  }[];
 };
 
 export type ProjectAnalyticsResponse = {
@@ -58,19 +65,20 @@ export enum TASK_STATUS {
 }
 
 export type Task =  {
-  $id?: string,
-  name: string;
+  id: string;
   workspaceId: string;
+  createdAt: Date;
+  status:TaskStatus;
+  title: string;
+  description: string | null;
+  dueDate: Date | null;
   projectId: string;
-  assigneeId: string;
-  status: string;
-  dueDate: string;
-  description?: string;
+  assigneeId: string | null;
+  companyId: string;
+  position: number;
   project: Project;
   assignee: Member;
-  position: number;
   relatedTasks?: Task[];
-  $createdAt?: string
 };
 
 export enum MEMBER_ROLE {
