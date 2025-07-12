@@ -1,3 +1,4 @@
+"use client"
 import CreateCompanyForm from '@/app/(app)/_components/CreateCompanyForm'
 import { LeftAuthPanel } from '@/components/LeftAuthPanel'
 import { useSearchParams } from 'next/navigation'
