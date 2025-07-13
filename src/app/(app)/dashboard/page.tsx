@@ -108,27 +108,27 @@ export default function DashboardPage() {
               <MetricCard
                 icon={<DollarSign className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Revenue"
-                value={`$${!stats.totalRevenue ? 0 : stats.totalRevenue.toLocaleString()}`}
-                delta={`${!stats.revPercentage ? 0 : stats.revPercentage * 100}%`}
-                deltaType={`${!stats.revPercentage ? "neutral" : stats.revPercentage > 20 ? "increase" : stats.revPercentage < 20 ? "decrease" : "neutral"}`}
+                value={`$${!stats.totalRevenue === undefined ? 0 : stats.totalRevenue.toLocaleString()}`}
+                delta={`${!stats.revPercentage === undefined ? 0 : stats.revPercentage * 100}%`}
+                deltaType={`${!stats.revPercentage === undefined ? "neutral" : stats.revPercentage > 20 ? "increase" : stats.revPercentage < 20 ? "decrease" : "neutral"}`}
                 footerMessage="Revenue generated so far"
                 footerSubtext="This average over all transactions made in the company <=> 20% increase"
               />
               <MetricCard
                 icon={<ShoppingCart className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Orders"
-                value={!stats.totalOrders ? 0 : stats.totalOrders.toLocaleString()}
-                delta={`${!stats.orderPercentage ? 0 : stats.orderPercentage * 100}%`}
-                deltaType={`${!stats.orderPercentage ? "neutral" : stats.orderPercentage > 0 ? "increase" : stats.orderPercentage < 0 ? "decrease" : "neutral"}`}
+                value={!stats.totalOrders === undefined ? 0 : stats.totalOrders.toLocaleString()}
+                delta={`${!stats.orderPercentage === undefined ? 0 : stats.orderPercentage * 100}%`}
+                deltaType={`${!stats.orderPercentage === undefined ? "neutral" : stats.orderPercentage > 0 ? "increase" : stats.orderPercentage < 0 ? "decrease" : "neutral"}`}
                 footerMessage="Orders processed so far"
                 footerSubtext="This is over number of orders made in the company"
               />
               <MetricCard
                 icon={<Users className="w-6 h-6 text-[#f20eadb] dark:text-[#f3edd8]" />}
                 title="Total Users"
-                value={!stats.totalCustomers ? 0 : stats.totalCustomers.toLocaleString()}
-                delta={`${!stats.customerPercentage ? 0 : stats.customerPercentage * 100}%`}
-                deltaType={`${!stats.customerPercentage ? "neutral" : stats.customerPercentage > 0 ? "increase" : stats.customer < 0 ? "decrease" : "neutral"}`}
+                value={!stats.totalCustomers === undefined ? 0 : stats.totalCustomers.toLocaleString()}
+                delta={`${!stats.customerPercentage === undefined ? 0 : stats.customerPercentage * 100}%`}
+                deltaType={`${!stats.customerPercentage === undefined ? "neutral" : stats.customerPercentage > 0 ? "increase" : stats.customer < 0 ? "decrease" : "neutral"}`}
                 footerMessage="Customers served so far"
                 footerSubtext="This is over number of users registered in the company"
               />
