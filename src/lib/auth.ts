@@ -13,13 +13,13 @@ declare module "next-auth" {
       role: Role; // Use Prisma Role enum
       name?: string | null;
       email?: string | null;
-      image?: string | null;
       companyId?: string | null;
       currentCompanyId?: string | null;
       firstName?: string | null;
       lastName?: string | null;
       createdAt?: Date | null;
       employeeId?: string | null;
+      image?: string;
     };
   }
   interface JWT {
@@ -30,6 +30,7 @@ declare module "next-auth" {
     lastName?: string | null;
     createdAt?: Date | null;
     employeeId?: string | null;
+    image?: string;
   }
 }
 
@@ -61,6 +62,7 @@ export const authOptions: NextAuthOptions = {
             employeeId: true,
             createdAt: true,
             password: true, // Needed for validation
+            images : { select: { url: true }, take : 1 }, // Optional, if you want to include user image
           },
         });
         if (!user || !user.password) {
@@ -82,6 +84,7 @@ export const authOptions: NextAuthOptions = {
           lastName: user.lastName,
           createdAt: user.createdAt,
           employeeId: user.employeeId,
+          image: user.images?.[0]?.url ||  "https://github.com/shadcn.png", // Use the first image URL if available
         };
       },
     }),
@@ -96,6 +99,7 @@ export const authOptions: NextAuthOptions = {
         token.lastName = (user as any).lastName;
         token.createdAt = (user as any).createdAt;
         token.employeeId = (user as any).employeeId;
+        token.image = (user as any).image; // Include image if available
       }
       return token;
     },
@@ -111,6 +115,7 @@ export const authOptions: NextAuthOptions = {
         // Include name and email from token if available
         session.user.name = token.name;
         session.user.email = token.email;
+        session.user.image = token.image as string // Replace null with undefined
       }
       return session;
     },

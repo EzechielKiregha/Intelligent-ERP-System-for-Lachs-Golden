@@ -1,6 +1,7 @@
 import { useBudgetData } from '@/lib/hooks/finance';
 import React from 'react';
 import Link from 'next/link';
+import SkeletonLoader from '../../_components/SkeletonLoader';
 
 interface BudgetCategory {
   id: string;
@@ -14,7 +15,7 @@ export default function BudgetSection() {
   const { data, isLoading, isError } = useBudgetData();
 
   if (isLoading) {
-    return <p>Loading budget data...</p>;
+    return <SkeletonLoader height={40} type="card" count={3} />;
   }
 
   if (isError || !data || data.length === 0) {

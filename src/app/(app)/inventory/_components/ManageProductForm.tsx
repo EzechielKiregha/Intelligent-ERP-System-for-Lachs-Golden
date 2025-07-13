@@ -75,7 +75,7 @@ export default function ManageProductForm({ productId }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto p-6 space-y-6 bg-sidebar text-sidebar-foreground rounded-xl border border-sidebar-border">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto p-6 space-y-6 bg-sidebar shadow-2xl text-sidebar-foreground rounded-xl border border-sidebar-border">
       <div className="grid md:grid-cols-2 gap-4">
         <div>
           <label className="block mb-1">Name</label>

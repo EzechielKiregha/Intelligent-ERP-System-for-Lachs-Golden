@@ -20,7 +20,7 @@ export default function EmployeesPage() {
         <div className="flex gap-2">
           <EmployeeFormPopover />
           <Link href="/hr/employees/manage">
-            <Button className="bg-sidebar-primary hover:bg-sidebar-accent text-sidebar-primary-foreground">
+            <Button className="hover:bg-sidebar-primary bg-sidebar-accent text-sidebar-primary-foreground">
               Full Manage
             </Button>
           </Link>

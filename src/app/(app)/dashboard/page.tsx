@@ -107,8 +107,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
             {/* Finance Forecast Section */}
             {revenueLoading && !revenueError && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
-            {inventoryLoading && !inventoryError && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
-            {revenueError || !revenueData ? (
+            {revenueError || !revenueData && !revenueLoading ? (
               <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold">No Revenue Data Found</h3>
                 <p className="text-sm">
@@ -123,7 +122,8 @@ export default function DashboardPage() {
             )}
 
             {/* Inventory Section */}
-            {inventoryError || !inventoryData ? (
+            {inventoryLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
+            {inventoryError || !inventoryData && !inventoryLoading ? (
               <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold">No Inventory Data Found</h3>
                 <p className="text-sm">
@@ -135,15 +135,15 @@ export default function DashboardPage() {
               </div>
             ) : (
               <SalesDistribution data={{
-                totalItems: inventoryData.totalProducts,
-                lowStock: inventoryData.lowStockCount,
-                pendingOrders: inventoryData.recentOrders.length
+                totalItems: inventoryData?.totalProducts || 0,
+                lowStock: inventoryData?.lowStockCount || 0,
+                pendingOrders: inventoryData?.recentOrders.length || 0
               }} />
             )}
           </div>
           {/* Audit Logs Section */}
-          {logsLoading && !logsError && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
-          {logsError || !auditLogs ? (
+          {logsLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
+          {logsError || !auditLogs && !logsLoading ? (
             <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold">No Audit Logs Found</h3>
               <p className="text-sm">
@@ -155,8 +155,8 @@ export default function DashboardPage() {
           )}
 
           {/* AI Insights Section */}
-          {insightsLoading && !insightsError && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
-          {insightsError || !insightsData ? (
+          {insightsLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
+          {insightsError || !insightsData && !insightsLoading ? (
             <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold">No AI Insights Found</h3>
               <p className="text-sm">

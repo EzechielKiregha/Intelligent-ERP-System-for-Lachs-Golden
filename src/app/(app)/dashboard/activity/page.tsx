@@ -19,7 +19,22 @@ interface AuditLog {
 
 const ActivityFeed = () => {
 
-  const { data: auditLogs, isLoading: logsLoading } = useAuditLog()
+  const { data: auditLogs, isLoading: logsLoading, error } = useAuditLog()
+
+  if (logsLoading) {
+    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />;
+  }
+
+  if (error || !auditLogs) {
+    return (
+      <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold">No Audit Logs Found</h3>
+        <p className="text-sm">
+          Start tracking company activities by enabling audit logs.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-2 space-y-6">
@@ -30,14 +45,12 @@ const ActivityFeed = () => {
           Real time activity feed updated of your business actions and performance, very detailed transactions, revenue, and expenses.
         </p>
       </header>
-      {logsLoading && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
       {!logsLoading && (
         <Card className="bg-sidebar shadow">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-
-            </CardTitle>
+            <CardTitle className="text-lg font-semibold text-sidebar-foreground">Recent Activities</CardTitle>
           </CardHeader>
+          {/* Activity List */}
           <CardContent className="space-y-4">
             {auditLogs.length === 0 ? (
               <p className="text-sm text-gray-600 dark:text-gray-400">No recent activity found.</p>

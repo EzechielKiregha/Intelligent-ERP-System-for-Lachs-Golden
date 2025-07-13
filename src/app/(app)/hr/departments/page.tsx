@@ -13,7 +13,7 @@ export default function DepartmentsPage() {
         <div className="flex gap-2">
           <DepartmentFormPopover />
           <Link href="/hr/departments/manage">
-            <Button className="bg-sidebar-primary hover:bg-sidebar-accent text-sidebar-primary-foreground">
+            <Button className="hover:bg-sidebar-primary bg-sidebar-accent text-sidebar-primary-foreground">
               Full Manage
             </Button>
           </Link>

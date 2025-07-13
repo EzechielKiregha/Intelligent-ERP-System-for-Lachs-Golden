@@ -208,7 +208,21 @@ export default function TransactionsPage() {
   const { data: transactions, isLoading, error } = useFinanceTransactions();
 
   if (isLoading) return <Skeleton className={`h-90 w-full rounded-lg bg-sidebar`} />;
-  // if (error) return <div>Error loading transactions</div>;
+  if (error) {
+    return (
+      <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold">No Transactions Found</h3>
+        <p className="text-sm">
+          Start managing your company&apos;s finances transactions by adding a quick transactions.
+        </p>
+        {/* <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
+          <Link href="/finance/trasactions" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Create Categories
+          </Link>
+        </div> */}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
