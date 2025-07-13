@@ -108,9 +108,9 @@ export default function DashboardPage() {
               <MetricCard
                 icon={<DollarSign className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Revenue"
-                value={`$${stats?.totalRevenue || '0'}`}
-                delta={`${(stats?.revPercentage || 0) * 100}%`}
-                deltaType={`${stats?.revPercentage > 20 ? "increase" : stats?.revPercentage < 20 ? "decrease" : "neutral"}`}
+                value={`$${stats.totalRevenue || '0'}`}
+                delta={`${(stats.revPercentage || 0) * 100}%`}
+                deltaType={`${stats.revPercentage > 20 ? "increase" : stats.revPercentage < 20 ? "decrease" : "neutral"}`}
                 footerMessage="Revenue generated so far"
                 footerSubtext="This average over all transactions made in the company <=> 20% increase"
               />
@@ -118,7 +118,7 @@ export default function DashboardPage() {
                 icon={<ShoppingCart className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Orders"
                 value={stats.totalOrders.toLocaleString()}
-                delta={`${stats.orderPercentage * 100}%`}
+                delta={`${(stats.orderPercentage || 0) * 100}%`}
                 deltaType={`${stats.orderPercentage > 0 ? "increase" : stats.orderPercentage < 0 ? "decrease" : "neutral"}`}
                 footerMessage="Orders processed so far"
                 footerSubtext="This is over number of orders made in the company"
@@ -127,8 +127,8 @@ export default function DashboardPage() {
                 icon={<Users className="w-6 h-6 text-[#f20eadb] dark:text-[#f3edd8]" />}
                 title="Total Users"
                 value={stats.totalCustomers.toLocaleString()}
-                delta={`${stats.customerPercentage * 100}%`}
-                deltaType={`${stats.customerPercentage > 0 ? "increase" : stats.customer < 0 ? "decrease" : "neutral"}`}
+                delta={`${(stats.customerPercentage || 0) * 100}%`}
+                deltaType={`${stats.customerPercentage > 0 ? "increase" : stats.customerPercentage < 0 ? "decrease" : "neutral"}`}
                 footerMessage="Customers served so far"
                 footerSubtext="This is over number of users registered in the company"
               />
