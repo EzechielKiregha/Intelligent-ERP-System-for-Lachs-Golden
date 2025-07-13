@@ -126,19 +126,15 @@
 
 /* styles/global.css or relevant CSS file */
 .animate-loading-bar {
-  width: 0;
-  animation: loading 8s ease-in-out infinite;
+  width: 100%;
+  animation: loading 1.5s ease-in-out forwards; /* Adjusted duration for smoother animation */
 }
 
 @keyframes loading {
   0% {
     width: 0;
   }
-  50% {
-    width: 70%;
-  }
   100% {
     width: 100%;
-    opacity: 0;
   }
 }

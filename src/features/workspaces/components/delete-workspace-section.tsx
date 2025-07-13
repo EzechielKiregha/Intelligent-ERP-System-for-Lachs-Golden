@@ -39,7 +39,7 @@ export default function DeleteWorkspaceSection({
       {
         onSuccess: (data: any) => {
           toast.success(data.message);
-          router.push("/");
+          router.push("/dashboard");
         },
         onError: (data) => {
           toast.success(data.message);

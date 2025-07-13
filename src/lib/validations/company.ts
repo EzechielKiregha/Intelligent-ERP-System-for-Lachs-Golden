@@ -1,3 +1,4 @@
+import { Role, UserStatus } from '@/generated/prisma';
 import { z } from 'zod';
 
 export const companySchema = z.object({
@@ -20,6 +21,15 @@ export const companySchema = z.object({
   dateFormat: z.string().min(1, 'Date format is required'),
   forecastedRevenue: z.number().positive().optional(),
   forecastedExpenses: z.number().positive().optional(),
+
+  // Additional fields for company creation with user
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().optional(),
+  role: z.enum([Role.ADMIN, Role.OWNER, Role.USER]).optional(),
+  status: z.enum([UserStatus.PENDING, UserStatus.ACCEPTED, UserStatus.BLOCKED]).optional(),
+  password: z.string().optional(),
+  companyId: z.string().optional(),
 });
 
 export type CompanyFormData = z.infer<typeof companySchema>;

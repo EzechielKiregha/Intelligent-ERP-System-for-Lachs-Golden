@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/button';
 const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const [showWarning, setShowWarning] = useState(false);
   const [countdown, setCountdown] = useState(5);
-  const isHome = usePathname().match(/^\/$/);
-  // Check if the current path is the home page
-  // This regex matches the root path (home page) only
-  // If the path is exactly '/', it will return true, otherwise false
+
+  const isHome = pathname.match(/^\/$/);
+  const isWorkspaceJoin = pathname.match(/^\/workspaces\/([^/]+)\/join\/([^/]+)$/);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -23,8 +23,13 @@ const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         setCountdown((prev) => {
           if (prev <= 1) {
             clearInterval(interval);
-            // Defer navigation to the next tick
-            setTimeout(() => router.push('/login'), 0);
+            // Redirect to login with query params if accessing workspace join route
+            if (isWorkspaceJoin) {
+              const [, wsId, inviteCode] = pathname.match(/^\/workspaces\/([^/]+)\/join\/([^/]+)$/) || [];
+              router.push(`/login?join-ws=true&wsId=${wsId}&inviteCode=${inviteCode}`);
+            } else {
+              router.push('/login');
+            }
           }
           return prev - 1;
         });
@@ -32,19 +37,19 @@ const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
       return () => clearInterval(interval); // Cleanup interval on unmount
     }
-  }, [status, router]);
+  }, [status, router, pathname, isWorkspaceJoin]);
 
   if (isHome) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
   if (status === 'loading') {
     return (
-      // <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-[#0f1522] bg-opacity-50">
-      //   <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-[#80410e] dark:border-t-[#D4AF37] border-gray-900 dark:border-gray-200"></div>
-      // </div>
       <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50">
-        <div className="h-full bg-amber-700 animate-loading-bar"></div>
+        <div
+          className={`h-full bg-sidebar-primary transition-all duration-500 ${status === 'loading' ? 'animate-loading-bar' : 'w-0'
+            }`}
+        ></div>
       </div>
     );
   }
@@ -62,7 +67,14 @@ const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             You are not authenticated. Redirecting to the login page in {countdown} seconds.
           </p>
           <Button
-            onClick={() => router.push('/login')}
+            onClick={() => {
+              if (isWorkspaceJoin) {
+                const [, wsId, inviteCode] = pathname.match(/^\/workspaces\/([^/]+)\/join\/([^/]+)$/) || [];
+                router.push(`/login?join-ws=true&wsId=${wsId}&inviteCode=${inviteCode}`);
+              } else {
+                router.push('/login');
+              }
+            }}
             className="bg-gradient-to-l mt-3.5 mx-auto from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
           >
             Go to Login

@@ -3,43 +3,107 @@ import { authOptions } from '@/lib/auth';
 import  prisma  from '@/lib/prisma';
 import { companySchema } from '@/lib/validations/company';
 import { NextResponse } from 'next/server';
-import { Role } from '@/generated/prisma';
+import { Role, UserStatus } from '@/generated/prisma';
+import { hash } from 'bcryptjs';
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
 
-  try {
-    const body = await req.json();
+  // no need to check for session here, because the user is creating a company and creating his/her account at the same time
+  // need to request body for isNewOwner field
+  const isNewOwner = req.headers.get('is-new-owner') === 'true';
 
-    // console.log("[Server Data] ", body);
-
-    const data = companySchema.parse(body); // Server-side validation
-
-    const company = await prisma.company.create({
-      data: {
-        ...data,
-        users: { connect: { id: session.user.id } },
-      },
-    });
-
-    if (company) {
-      // Update user's current company
-      await prisma.user.update({
-        where: { id: session.user.id },
-        data: {
-          currentCompanyId: company.id,
-          role: Role.OWNER, // Set the user as ADMIN for the new company
-        },
-      });
+  if (!isNewOwner) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    return NextResponse.json(company, { status: 201 });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ message: 'Failed to create company' }, { status: 500 });
+    try {
+      const body = await req.json();
+
+      // console.log("[Server Data] ", body);
+
+      const data = companySchema.parse(body); // Server-side validation
+
+      const company = await prisma.company.create({
+        data: {
+          ...data,
+          users: { connect: { id: session.user.id } },
+          images: {
+            create: {
+              url: "https://github.com/shadcn.png",
+              pathname: "https://github.com/shadcn.png",
+              contentType: "image/png",
+              size: 10000,
+            },
+          },
+        },
+      });
+
+      if (company) {
+        // Update user's current company
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: {
+            currentCompanyId: company.id,
+            role: Role.OWNER, // Set the user as ADMIN for the new company
+          },
+        });
+      }
+
+      return NextResponse.json(company, { status: 201 });
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json({ message: 'Failed to create company' }, { status: 500 });
+    }
+  } else {
+    try {
+      const body = await req.json();
+
+      const data = companySchema.parse(body); // Server-side validation
+
+      const { firstName, lastName, email, password, role, status, ...companyData } = data;
+
+      const hashedPassword = await hash(password || "erp12345", 10);
+
+      const company = await prisma.company.create({
+        data: {
+          ...companyData,
+          users: {
+            create: {
+              email: email || "",
+              password: hashedPassword,
+              firstName,
+              lastName,
+              name: `${firstName} ${lastName}`,
+              role: role || Role.ADMIN,
+              status: status || UserStatus.ACCEPTED,
+              images: {
+                create: {
+                  url: "https://github.com/shadcn.png",
+                  pathname: "https://github.com/shadcn.png",
+                  contentType: "image/png",
+                  size: 10000,
+                },
+              },
+            },
+          },
+          images: {
+            create: {
+              url: "https://github.com/shadcn.png",
+              pathname: "https://github.com/shadcn.png",
+              contentType: "image/png",
+              size: 10000,
+            },
+          },
+        },
+      });
+
+      return NextResponse.json(company, { status: 201 });
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json({ message: 'Failed to create company' }, { status: 500 });
+    }
   }
 }
 

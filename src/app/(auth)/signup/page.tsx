@@ -15,6 +15,7 @@ import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { CardFooter } from '@heroui/react';
+import { Separator } from '@/components/ui/separator';
 
 // Define form schema with Zod
 const userSchema = z.object({
@@ -31,7 +32,6 @@ export default function SignUpPage() {
   const [step, setStep] = useState(1);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [fowardUser, setForwardUser] = useState<UserFormData | null>(null);
-
 
   const { register, handleSubmit, formState: { errors } } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
@@ -108,8 +108,16 @@ export default function SignUpPage() {
 
               {step === 2 && (
                 <div className="space-y-4">
-                  <Label className="text-sm text-gray-800 dark:text-gray-200">Select Your Company</Label>
-                  <ScrollArea className="h-72 w-full border rounded-md p-2">
+                  <Label className="text-sm flex flex-row justify-between text-gray-800 dark:text-gray-200">
+                    Select Your Company
+                    <Link
+                      href={`/company/create?data=${encodeURIComponent(JSON.stringify(fowardUser))}&isOwner=true`}
+                      className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]"
+                    >
+                      Create a new company
+                    </Link>
+                  </Label>
+                  <ScrollArea className="h-64 w-full border rounded-md p-2">
                     {isLoading ? (
                       <p>Loading companies...</p>
                     ) : companies?.length ? (
@@ -117,7 +125,7 @@ export default function SignUpPage() {
                         <Card
                           key={company.id}
                           onClick={() => setSelectedCompany(company.id)}
-                          className={`p-4 mb-2 cursor-pointer ${selectedCompany === company.id ? 'bg-[#80410e] text-white' : 'bg-white dark:bg-[#1F2A44]'}`}
+                          className={`mb-1 cursor-pointer ${selectedCompany === company.id ? 'bg-[#80410e] text-white' : 'bg-white dark:bg-[#1F2A44]'}`}
                         >
                           <CardContent>
                             <h3 className="font-medium">{company.name}</h3>
@@ -129,9 +137,7 @@ export default function SignUpPage() {
                       <p>No companies available</p>
                     )}
                   </ScrollArea>
-                  <Link href={`/company/create?data=${fowardUser}&isOwner=true`} className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
-                    Create a new company
-                  </Link>
+
                   {selectedCompany === null && <p className="text-xs text-[#E53E3E] dark:text-[#FC8181]">Please select a company</p>}
                   <div className="flex items-center">
                     <input

@@ -1,5 +1,6 @@
 import { useBudgetData } from '@/lib/hooks/finance';
 import React from 'react';
+import Link from 'next/link';
 
 interface BudgetCategory {
   id: string;
@@ -12,19 +13,34 @@ interface BudgetCategory {
 export default function BudgetSection() {
   const { data, isLoading, isError } = useBudgetData();
 
-  // if (isLoading) {
-  //   return <p>Loading budget data...</p>;
-  // }
+  if (isLoading) {
+    return <p>Loading budget data...</p>;
+  }
 
-  if (isError) {
-    return <p>Error loading budget data.</p>;
+  if (isError || !data || data.length === 0) {
+    return (
+      <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold">No Budget Data Found</h3>
+        <p className="text-sm">
+          Start managing your company's budget by creating categories and setting limits.
+        </p>
+        <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
+          <Link href="/finance/budget" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Setup Budget
+          </Link>
+          <Link href="/finance/categories" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Manage Categories
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border border-sidebar-border rounded-lg shadow p-4">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Budget Allocation</h3>
       <ul className="space-y-4">
-        {data && data.map((category: BudgetCategory) => (
+        {data.map((category: BudgetCategory) => (
           <li key={category.id} className="flex items-center justify-between">
             {/* Category Name */}
             <div className="flex-1">

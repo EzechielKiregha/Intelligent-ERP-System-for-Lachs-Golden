@@ -208,7 +208,7 @@ export default function TransactionsPage() {
   const { data: transactions, isLoading, error } = useFinanceTransactions();
 
   if (isLoading) return <Skeleton className={`h-90 w-full rounded-lg bg-sidebar`} />;
-  if (error) return <div>Error loading transactions</div>;
+  // if (error) return <div>Error loading transactions</div>;
 
   return (
     <div className="space-y-6">

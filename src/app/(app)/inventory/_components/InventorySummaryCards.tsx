@@ -6,15 +6,39 @@ import { useInventorySummary } from '@/lib/hooks/inventory'
 import StockTrendChart from './StockTrendChart'
 import RecentOrdersList from './RecentOrdersList'
 import { MetricCard } from '../../_components/MetricCard'
+import SkeletonLoader from '../..//_components/SkeletonLoader'
+import Link from 'next/link'
 
 export default function InventorySummaryCards() {
   const { data, isLoading, isError } = useInventorySummary()
 
   if (isLoading) {
-    return <Skeleton className="h-96 w-full rounded-lg bg-sidebar" />
+    return (
+      <>
+        <div className="space-y-2">
+          <SkeletonLoader height={40} type="card" count={3} />
+        </div>
+      </>
+    )
   }
+
   if (isError || !data) {
-    return <p className="text-red-600">Failed to load inventory summary.</p>
+    return (
+      <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold">No Inventory Data Found</h3>
+        <p className="text-sm">
+          Start managing your inventory by adding products and connecting your e-commerce platform.
+        </p>
+        <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
+          <Link href="/inventory/manage" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Add Products
+          </Link>
+          <Link href="/inventory/integrations" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Connect E-commerce
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   const { totalProducts, lowStockCount, totalInventoryCost, trend, recentOrders } = data

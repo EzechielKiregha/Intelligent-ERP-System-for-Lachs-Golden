@@ -30,6 +30,9 @@ export default function LoginPage() {
   const [toEmail, setEmail] = useState<string>("");
 
   const isCompanyCreated = searchParams.get('companycreated') === 'true';
+  const isJoinWorkspace = searchParams.get('join-ws') === 'true';
+  const wsId = searchParams.get('wsId');
+  const inviteCode = searchParams.get('inviteCode');
 
   const {
     register,
@@ -54,11 +57,9 @@ export default function LoginPage() {
     onSuccess: async (res, data) => {
       if (res.ok) {
         if (isCompanyCreated) {
-          // Bypass OTP and redirect to dashboard
           toast.success('Login successful!');
           router.push('/dashboard');
         } else {
-          // Trigger OTP flow
           await axiosdb.post('/api/mail/otp', { toEmail: data.email });
           toast.success('Please verify to continue.');
           setEmail(data.email || '');
@@ -76,7 +77,11 @@ export default function LoginPage() {
       if (res.status === 200) {
         toast.success("OTP verified successfully!");
         setOtpPopoverOpen(false);
-        router.push("/dashboard");
+        if (isJoinWorkspace && wsId && inviteCode) {
+          router.push(`/workspaces/${wsId}/join/${inviteCode}`);
+        } else {
+          router.push("/dashboard");
+        }
       } else {
         console.error("OTP verification failed:", res.data);
         toast.error("Invalid OTP. Please try again.");

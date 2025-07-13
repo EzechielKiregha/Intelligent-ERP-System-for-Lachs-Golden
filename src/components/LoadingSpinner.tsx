@@ -9,7 +9,10 @@ const LoadingSpinner = () => {
 
   return (
     <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50">
-      <div className="h-full bg-amber-700 animate-loading-bar"></div>
+      <div
+        className={`h-full bg-sidebar-primary transition-all duration-500 ${isLoading ? 'animate-loading-bar' : 'w-0'
+          }`}
+      ></div>
     </div>
   );
 };

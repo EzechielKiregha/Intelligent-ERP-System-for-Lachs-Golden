@@ -87,11 +87,15 @@ export enum MEMBER_ROLE {
 }
 
 export type Workspace = {
-  $id: string;
+  images: {
+    url: string;
+  }[];
+  } & {
+  id: string;
   name: string;
-  userId: string;
-  imageUrl: string;
-  fileId: string;
+  companyId: string;
+  createdAt: Date;
+  updatedAt: Date;
   inviteCode: string;
 };
 

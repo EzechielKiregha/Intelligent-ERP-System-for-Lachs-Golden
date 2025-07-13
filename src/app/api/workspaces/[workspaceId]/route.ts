@@ -18,11 +18,20 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ work
 
   const workspace = await prisma.workspace.findUnique({
     where: { id: workspaceId },
+    include: {
+      images: {
+        select: {
+          url: true,
+        },
+      }
+    },
   });
   if (!workspace) return NextResponse.json({ error: 'Workspace not found' }, { status: 404 });
 
   return NextResponse.json({ data: workspace });
 }
+
+
 // Define schema for JSON payload
 const createWorkspaceSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -32,7 +41,7 @@ const createWorkspaceSchema = z.object({
   // contentType: z.string().optional(),
   // size: z.number().optional(),
 });
-// app/api/workspaces/[workspaceId]/route.ts
+
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ workspaceId: string }> }) {
 
   const workspaceId = (await params).workspaceId

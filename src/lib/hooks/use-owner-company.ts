@@ -31,6 +31,17 @@ export interface C {
   }[]
 }
 
+export function useGetCompanyById(companyId: string) {
+  return useQuery({
+    queryKey: ['ownerCompanies'],
+    queryFn: async () => {
+      const res = await axiosdb.get(`/api/owner-companies/${companyId}`);
+      // console.log("[Returned Data] ", res.data.comps)
+      return res.data.company;
+    },
+  });
+}
+
 // Hook to fetch owner companies
 export function useGetOwnerCompanies() {
   return useQuery({
@@ -63,8 +74,20 @@ export const useCreateCompany = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: CompanyFormData) => {
-      const res = await axiosdb.post('/api/companies', data);
-      return res.data;
+
+      if (data.email && data.password) {
+        const res = await axiosdb.post('/api/companies', data, {
+          headers: {
+            'is-new-owner': 'true',
+          },
+        });
+
+        return res.data;
+      } else {
+        const res = await axiosdb.post('/api/companies', data);
+        return res.data;
+      }
+
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ownerCompanies'] });

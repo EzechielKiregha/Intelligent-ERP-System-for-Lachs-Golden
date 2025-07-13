@@ -52,7 +52,7 @@ export default function RecentEmployeesPreview() {
           data.map((emp: Employee) => (
             <Link
               key={emp.id}
-              href={`/hr/employees/${emp.id}/profile`}
+              href={`/settings`}
               onClick={(e) => {
                 if (!handleEmployeeClick(emp)) e.preventDefault();
               }}

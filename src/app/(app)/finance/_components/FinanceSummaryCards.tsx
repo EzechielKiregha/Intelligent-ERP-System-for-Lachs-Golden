@@ -3,6 +3,8 @@ import React from 'react';
 import { MetricCard } from '../../_components/MetricCard';
 import { useFinanceSummaryPeriod } from '@/lib/hooks/finance';
 import { Skeleton } from '@/components/ui/skeleton';
+import SkeletonLoader from '../../_components/SkeletonLoader';
+import Link from 'next/link';
 
 export default function FinanceSummaryCards() {
   // You can allow user to choose period; for now default to 'month'
@@ -20,15 +22,31 @@ export default function FinanceSummaryCards() {
     return (
       <>
         <div className="space-y-2">
-          <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
-          <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
-          <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+          <SkeletonLoader height={40} type="card" count={3} />
         </div>
       </>
     )
   }
   if (isError || !data) {
-    return <p className="text-red-600">Failed to load summary.</p>;
+    return (
+      <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold">No Finance Data Found</h3>
+        <p className="text-sm">
+          Start managing your finances by adding transactions, budgets, and forecasts.
+        </p>
+        <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
+          <Link href="/finance/transactions" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Add Transactions
+          </Link>
+          <Link href="/finance/budget" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Setup Budget
+          </Link>
+          <Link href="/finance/forecast" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Create Forecasts
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   // Compute percent changes

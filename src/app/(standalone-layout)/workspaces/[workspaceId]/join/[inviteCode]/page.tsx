@@ -1,3 +1,5 @@
+"use client"
+
 import PageNotFound from "@/components/page-not-found";
 import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace-by-id";
 import WorkspaceJoinScreen from "@/features/workspaces/components/workspace-join-screen";

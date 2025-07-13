@@ -62,7 +62,7 @@ export default function BasePopover({
         >
           <motion.button
             layoutId={`popover-label-${uniqueId}`}
-            className="transition-all duration-300 cursor-pointer"
+            className="transition-all duration-300 bg-transparent cursor-pointer"
           >
             {buttonLabel}
           </motion.button>

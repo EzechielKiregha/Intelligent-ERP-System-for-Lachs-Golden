@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from 'sonner'
+import Link from 'next/link';
 
 // Category schema
 export const categorySchema = z.object({
@@ -19,8 +20,6 @@ export const categorySchema = z.object({
   budgetLimit: z.number(),
   budgetUsed: z.number(),
 });
-
-
 
 // Category columns
 export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
@@ -134,14 +133,31 @@ export const categoryColumns: ColumnDef<z.infer<typeof categorySchema>>[] = [
   },
 ];
 
-
 export default function CategoriesList() {
   const { data: categories, isLoading, error } = useFinanceCategories();
 
   if (isLoading) {
-    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />
+    return <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />;
   }
-  if (error) return <div>Error loading categories</div>;
+
+  if (error || !categories || categories.length === 0) {
+    return (
+      <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold">No Finance Categories Found</h3>
+        <p className="text-sm">
+          Start managing your company's finances by creating categories and setting budgets.
+        </p>
+        <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
+          <Link href="/finance/categories" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Create Categories
+          </Link>
+          <Link href="/finance/budget" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Setup Budget
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <DataTable

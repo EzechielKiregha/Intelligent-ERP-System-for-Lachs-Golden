@@ -9,28 +9,27 @@ export default function FinanceForecastSection() {
   const { data, isLoading, isError } = useFinanceForecast()
 
   if (isLoading) return <Skeleton className="h-64 w-full rounded-lg bg-sidebar" />
-  if (isError || !data) return <p>Error loading forecast.</p>
 
-  // Transform past & forecast into uniform date strings "YYYY-MM-01"
-  const combined = [
-    ...data.past.map(item => {
-      // month like "2025-04"; convert to first day
-      const [year, month] = item.month.split('-')
-      return {
-        date: `${year}-${month}-01`,
-        income: item.revenue,
-        expense: item.expenses,
-      }
-    }),
-    ...data.forecast.map(item => {
-      const [year, month] = item.month.split('-')
-      return {
-        date: `${year}-${month}-01`,
-        income: item.projectedRevenue,
-        expense: item.projectedExpenses,
-      }
-    }),
-  ]
+  const combined = isError || !data
+    ? [{ date: '2023-01-01', income: 0, expense: 0 }]
+    : [
+      ...data.past.map(item => {
+        const [year, month] = item.month.split('-')
+        return {
+          date: `${year}-${month}-01`,
+          income: item.revenue,
+          expense: item.expenses,
+        }
+      }),
+      ...data.forecast.map(item => {
+        const [year, month] = item.month.split('-')
+        return {
+          date: `${year}-${month}-01`,
+          income: item.projectedRevenue,
+          expense: item.projectedExpenses,
+        }
+      }),
+    ]
 
   return (
     <InteractiveAreaChart
@@ -42,7 +41,6 @@ export default function FinanceForecastSection() {
         { key: 'income', label: 'Income', colorVar: '--sidebar-primary' },
         { key: 'expense', label: 'Expense', colorVar: '--sidebar-accent' },
       ]}
-    // using default timeRangeOptions; or pass custom if desired
     />
   )
 }

@@ -94,57 +94,81 @@ export default function CreateCompanyForm({
     }
   };
 
+  // console.log("Foward User:", fowardUser);
+
   const onSubmit = (data: CompanyFormData) => {
-    if (step === 4) {
-      createCompanyMutation.mutate({
-        ...data,
-        foundedDate: date || undefined, // Ensure date is set correctly
-      }, {
-        onSuccess: (data) => {
-          toast.success('Company created! Please log in to continue.');
-          if (isOwner && fowardUser) {
-            handleOwnerCompanyCreation(data.id);
-          }
-          setStep(5); // Move to review step
-        },
-        onError: (err: any) => {
-          toast.error(err.response?.data?.message || 'Failed to create company');
-        },
-      });
-    } else {
-      handleNext();
-    }
-  };
-
-  const signUpMutation = useMutation({
-    mutationFn: async (data: UserFormData & { companyId: string }) => {
-      const res = await axiosdb.post('/api/signup', data);
-      return res.data;
-    },
-    onSuccess: () => {
-      toast.success('Owner Account Initialized.');
-    },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.message || 'Failed to create account');
-    },
-  });
-
-  const handleOwnerCompanyCreation = (companyId: string) => {
-    if (fowardUser) {
+    if (isOwner && fowardUser) {
       const userData = {
         ...fowardUser,
         role: Role.OWNER,
-        companyId, // Assuming createCompanyMutation returns the created company ID
       };
-      signUpMutation.mutate(userData);
+      if (step === 4) {
+        createCompanyMutation.mutate({
+          ...data,
+          ...userData,
+          foundedDate: date || undefined, // Ensure date is set correctly
+        }, {
+          onSuccess: () => {
+            toast.success('Company created and owner created! Please log in to continue.');
+            setStep(5); // Move to review step
+          },
+          onError: (err: any) => {
+            toast.error(err.response?.data?.message || 'Failed to create company');
+          },
+        });
+      } else {
+        handleNext();
+      }
+    } else {
+      if (step === 4) {
+        createCompanyMutation.mutate({
+          ...data,
+          foundedDate: date || undefined, // Ensure date is set correctly
+        }, {
+          onSuccess: (data) => {
+            toast.success('Company created! Please log in to continue.');
+            setStep(5); // Move to review step
+          },
+          onError: (err: any) => {
+            toast.error(err.response?.data?.message || 'Failed to create company');
+          },
+        });
+      } else {
+        handleNext();
+      }
     }
+
   };
+
+  // const signUpMutation = useMutation({
+  //   mutationFn: async (data: UserFormData & { companyId: string }) => {
+  //     const res = await axiosdb.post('/api/signup', data);
+  //     return res.data;
+  //   },
+  //   onSuccess: () => {
+  //     toast.success('Owner Account Initialized.');
+  //   },
+  //   onError: (err: any) => {
+  //     toast.error(err.response?.data?.message || 'Failed to create account');
+  //   },
+  // });
+
+  // const handleOwnerCompanyCreation = (companyId: string) => {
+  //   if (fowardUser) {
+  //     const userData = {
+  //       ...fowardUser,
+  //       role: Role.OWNER,
+  //       companyId, // Assuming createCompanyMutation returns the created company ID
+  //     };
+  //     signUpMutation.mutate(userData);
+  //   }
+  // };
 
   const prevStep = () => setStep(step - 1);
   const nextStep = () => setStep(step + 1);
 
   return (
-    <Card className="w-full max-w-lg bg-sidebar shadow-lg">
+    <Card className="w-full max-w-lg bg-white dark:bg-[#111827] shadow-lg">
       <CardHeader>
         <CardTitle>Create Your Company - Step {step} of 5</CardTitle>
       </CardHeader>

@@ -2,10 +2,10 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { Role } from '@/generated/prisma';
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -59,9 +59,10 @@ export async function GET(req: Request) {
       
       const companies = await prisma.company.findMany({
         where: {
-          owners: {
+          users: {
             some: {
               id: session.user.id,
+              role: Role.OWNER, // Ensure the user is an owner
             },
           },
         },

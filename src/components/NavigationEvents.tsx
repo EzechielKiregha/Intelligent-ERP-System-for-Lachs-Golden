@@ -7,10 +7,12 @@ import { Suspense } from 'react';
 
 // Top Bar Loading Component
 function TopBarLoading({ isLoading }: { isLoading: boolean }) {
-  if (!isLoading) return null;
   return (
     <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50">
-      <div className="h-full bg-sidebar-primary animate-loading-bar"></div>
+      <div
+        className={`h-full bg-sidebar-primary transition-all duration-500 ${isLoading ? 'animate-loading-bar' : 'w-0'
+          }`}
+      ></div>
     </div>
   );
 }
@@ -43,7 +45,7 @@ function NavigationEvents() {
       previousUrlRef.current = currentUrl;
 
       // Simulate loading completion after a delay
-      const timeout = setTimeout(() => setIsLoading(false), 1000); // Increased to 1000ms for better sync
+      const timeout = setTimeout(() => setIsLoading(false), 800); // Adjusted duration for smoother sync
       return () => clearTimeout(timeout);
     }
   }, [pathname, searchParams, setIsLoading]);

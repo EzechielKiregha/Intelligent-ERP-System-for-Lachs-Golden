@@ -34,14 +34,14 @@ export default function EditWorkspacesForm({
   initialValue,
 }: EditWorkspacesFormProps) {
   const queryClient = useQueryClient();
-  const { mutate, isPending } = useUpdateWorkspace(initialValue.$id);
+  const { mutate, isPending } = useUpdateWorkspace(initialValue.id);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof workspacesUpdateSchema>>({
     resolver: zodResolver(workspacesUpdateSchema),
     defaultValues: {
       name: initialValue.name,
-      imageUrl: initialValue.imageUrl || "",
+      imageUrl: initialValue.images[0].url || "",
     },
   });
 
@@ -56,7 +56,7 @@ export default function EditWorkspacesForm({
       {
         onSuccess: ({ message }) => {
           queryClient.invalidateQueries({
-            queryKey: ["workspaces", initialValue.$id],
+            queryKey: ["workspaces", initialValue.id],
           });
           toast.success(message);
         },

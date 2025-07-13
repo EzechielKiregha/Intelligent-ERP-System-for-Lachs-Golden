@@ -180,7 +180,7 @@ export default function ProductsTable() {
   const { data: products, isLoading, error } = useProducts();
 
   if (isLoading) return <SkeletonLoader type="card" height={60} count={1} col={1} />;
-  if (error) return <div className="text-red-500">Error loading products.</div>;
+  // if (error) return <div className="text-red-500">Error loading products.</div>;
 
   return (
     <DataTable
