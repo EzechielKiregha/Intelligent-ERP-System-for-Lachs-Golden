@@ -302,7 +302,7 @@ export default function CreateCompanyForm({
 
           {step === 5 && (
             <div>
-              <ScrollArea className="h-72 w-full border rounded-md p-2">
+              <ScrollArea className="h-94 w-full border rounded-md p-2">
                 <div className="space-y-2">
                   <p className='border-b'><strong>Name:</strong> {formData.name}</p>
                   <p className='border-b'><strong>Description:</strong> {formData.description || 'N/A'}</p>

@@ -32,7 +32,7 @@ const ActivityFeed = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {auditLogs.length === 0 ? (
+        {auditLogs && auditLogs.length === 0 ? (
           <p className="text-sm text-gray-600 dark:text-gray-400">No recent activity found.</p>
         ) : (
           <><ul className="space-y-2">

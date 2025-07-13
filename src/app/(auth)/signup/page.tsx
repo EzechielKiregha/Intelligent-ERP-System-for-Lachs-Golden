@@ -117,7 +117,7 @@ export default function SignUpPage() {
                       Create a new company
                     </Link>
                   </Label>
-                  <ScrollArea className="h-64 w-full border rounded-md p-2">
+                  <ScrollArea className="h-52 w-full border rounded-md p-2">
                     {isLoading ? (
                       <p>Loading companies...</p>
                     ) : companies?.length ? (

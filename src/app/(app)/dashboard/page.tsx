@@ -122,7 +122,7 @@ export default function DashboardPage() {
               />
               <MetricCard
                 icon={<Users className="w-6 h-6 text-[#f20eadb] dark:text-[#f3edd8]" />}
-                title="Total Customers"
+                title="Total Users"
                 value={stats.totalCustomers.toLocaleString()}
                 delta={`${stats.customerPercentage * 100}%`}
                 deltaType={`${stats.customerPercentage > 0 ? "increase" : stats.customer < 0 ? "decrease" : "neutral"}`}

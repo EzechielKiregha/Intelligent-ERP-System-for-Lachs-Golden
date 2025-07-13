@@ -33,7 +33,8 @@ export interface C {
 
 export function useGetCompanyById(companyId: string) {
   return useQuery({
-    queryKey: ['ownerCompanies'],
+    queryKey: ['ownerCompany', companyId],
+    enabled: !!companyId,
     queryFn: async () => {
       const res = await axiosdb.get(`/api/owner-companies/${companyId}`);
       // console.log("[Returned Data] ", res.data.comps)
