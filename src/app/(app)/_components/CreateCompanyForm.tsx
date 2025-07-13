@@ -140,30 +140,6 @@ export default function CreateCompanyForm({
 
   };
 
-  // const signUpMutation = useMutation({
-  //   mutationFn: async (data: UserFormData & { companyId: string }) => {
-  //     const res = await axiosdb.post('/api/signup', data);
-  //     return res.data;
-  //   },
-  //   onSuccess: () => {
-  //     toast.success('Owner Account Initialized.');
-  //   },
-  //   onError: (err: any) => {
-  //     toast.error(err.response?.data?.message || 'Failed to create account');
-  //   },
-  // });
-
-  // const handleOwnerCompanyCreation = (companyId: string) => {
-  //   if (fowardUser) {
-  //     const userData = {
-  //       ...fowardUser,
-  //       role: Role.OWNER,
-  //       companyId, // Assuming createCompanyMutation returns the created company ID
-  //     };
-  //     signUpMutation.mutate(userData);
-  //   }
-  // };
-
   const prevStep = () => setStep(step - 1);
   const nextStep = () => setStep(step + 1);
 
@@ -326,24 +302,32 @@ export default function CreateCompanyForm({
 
           {step === 5 && (
             <div>
-              <div className="space-y-2">
-                <p className='border-b'><strong>Name:</strong> {formData.name}</p>
-                <p className='border-b'><strong>Description:</strong> {formData.description || 'N/A'}</p>
-                <p className='border-b'><strong>Industry:</strong> {formData.industry || 'N/A'}</p>
-                <p className='border-b'><strong>Email:</strong> {formData.contactEmail || 'N/A'}</p>
-                <p className='border-b'><strong>Phone:</strong> {formData.contactPhone || 'N/A'}</p>
-                <p className='border-b'><strong>Website:</strong> {formData.website || 'N/A'}</p>
-                <p className='border-b'><strong>Address:</strong> {formData.addressLine1 || ''} {formData.addressLine2 || ''} {formData.city || ''} {formData.state || ''} {formData.postalCode || ''} {formData.country || ''}</p>
-                <p className='border-b'><strong>Founded Date:</strong> {formData.foundedDate?.toLocaleString() || 'N/A'}</p>
-                <p className='border-b'><strong>Employee Count:</strong> {formData.employeeCount || 'N/A'}</p>
-                <p className='border-b'><strong>Tax ID:</strong> {formData.taxId || 'N/A'}</p>
-                <p className='border-b'><strong>Timezone:</strong> {formData.timezone}</p>
-                <p className='border-b'><strong>Date Format:</strong> {formData.dateFormat}</p>
-                <p className='border-b'><strong>Forecasted Revenue:</strong> {formData.forecastedRevenue || 'N/A'}</p>
-                <p className='border-b'><strong>Forecasted Expenses:</strong> {formData.forecastedExpenses || 'N/A'}</p>
-              </div>
+              <ScrollArea className="h-72 w-full border rounded-md p-2">
+                <div className="space-y-2">
+                  <p className='border-b'><strong>Name:</strong> {formData.name}</p>
+                  <p className='border-b'><strong>Description:</strong> {formData.description || 'N/A'}</p>
+                  <p className='border-b'><strong>Industry:</strong> {formData.industry || 'N/A'}</p>
+                  <p className='border-b'><strong>Email:</strong> {formData.contactEmail || 'N/A'}</p>
+                  <p className='border-b'><strong>Phone:</strong> {formData.contactPhone || 'N/A'}</p>
+                  <p className='border-b'><strong>Website:</strong> {formData.website || 'N/A'}</p>
+                  <p className='border-b'><strong>Address:</strong> {formData.addressLine1 || ''} {formData.addressLine2 || ''} {formData.city || ''} {formData.state || ''} {formData.postalCode || ''} {formData.country || ''}</p>
+                  <p className='border-b'><strong>Founded Date:</strong> {formData.foundedDate?.toLocaleString() || 'N/A'}</p>
+                  <p className='border-b'><strong>Employee Count:</strong> {formData.employeeCount || 'N/A'}</p>
+                  <p className='border-b'><strong>Tax ID:</strong> {formData.taxId || 'N/A'}</p>
+                  <p className='border-b'><strong>Timezone:</strong> {formData.timezone}</p>
+                  <p className='border-b'><strong>Date Format:</strong> {formData.dateFormat}</p>
+                  <p className='border-b'><strong>Forecasted Revenue:</strong> {formData.forecastedRevenue || 'N/A'}</p>
+                  <p className='border-b'><strong>Forecasted Expenses:</strong> {formData.forecastedExpenses || 'N/A'}</p>
+                </div>
+              </ScrollArea>
               <p>Please log back in to activate your new company.</p>
-              <Button type="button" onClick={() => router.push('/login?companycreated=true')} className="w-full">
+              <Button type="button" onClick={() => {
+                if (isOwner) {
+                  router.push('/login')
+                } else {
+                  router.push('/login?companycreated=true')
+                }
+              }} className="w-full">
                 Log In
               </Button>
             </div>
