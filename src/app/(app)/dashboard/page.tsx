@@ -85,7 +85,7 @@ export default function DashboardPage() {
 
           {/* Stats Section */}
           {statsLoading && <SkeletonLoader height={40} type="card" count={3} />}
-          {statsError || !stats && !statsLoading ? (
+          {statsError || !stats ? (
             <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold">No Dashboard Stats Found</h3>
               <p className="text-sm">
