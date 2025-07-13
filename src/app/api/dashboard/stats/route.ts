@@ -38,12 +38,12 @@ export async function GET(req: NextRequest) {
 
     // Return the aggregated stats
     return NextResponse.json({
-      totalRevenue,
-      totalOrders,
-      totalCustomers,
-      revPercentage,
-      orderPercentage,
-      customerPercentage,
+      totalRevenue: totalRevenue ? totalRevenue.toLocaleString() : '0',
+      totalOrders: totalOrders ? totalOrders.toLocaleString() : '0',
+      totalCustomers: totalCustomers ? totalCustomers.toLocaleString() : '0',
+      revPercentage: revPercentage || 0,
+      orderPercentage: orderPercentage || 0,
+      customerPercentage: customerPercentage || 0,
     });
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);

@@ -7,7 +7,7 @@ import ActivityFeed from './_components/ActivityFeed';
 import AIInsights from './_components/AIInsights';
 import SkeletonLoader from '../_components/SkeletonLoader';
 import { MetricCard } from './_components/MetricCards';
-import { DollarSign, NutOffIcon, ShoppingCart, Users } from 'lucide-react';
+import { DollarSign, Frown, NutOffIcon, ShoppingCart, Users } from 'lucide-react';
 import RevenueAnalytics from './_components/RevenueAnalytics';
 import FinanceForecastSection from '../finance/_components/FinanceForecastSection';
 import CategoriesList from '../finance/_components/CategoryList';
@@ -53,11 +53,11 @@ export default function DashboardPage() {
           />
           <div className=" flex flex-col justify-center items-center w-full max-w-lg bg-white dark:bg-[#111827] ">
             <div className="flex items-center gap-x-2 mb-3">
-              <NutOffIcon className="size-6 text-muted-foreground" />
-              <span className="font-bold text-xl">Not Found</span>
+              <Frown className="size-6 text-muted-foreground" />
+              <span className="font-bold text-xl">Internal Error</span>
             </div>
             <p className="text-muted-foreground text-lg">
-              Company not found or you are not authorized to view this dashboard.
+              Please try again later or contact support if the issue persists.
             </p>
             <Link href="/">
               <Button variant={"outline"} className="mt-1">
@@ -108,27 +108,27 @@ export default function DashboardPage() {
               <MetricCard
                 icon={<DollarSign className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Revenue"
-                value={`$${!stats.totalRevenue === undefined ? 0 : stats.totalRevenue.toLocaleString()}`}
-                delta={`${!stats.revPercentage === undefined ? 0 : stats.revPercentage * 100}%`}
-                deltaType={`${!stats.revPercentage === undefined ? "neutral" : stats.revPercentage > 20 ? "increase" : stats.revPercentage < 20 ? "decrease" : "neutral"}`}
+                value={`$${stats.totalRevenue || '0'}`}
+                delta={`${(stats.revPercentage || 0) * 100}%`}
+                deltaType={`${stats.revPercentage > 20 ? "increase" : stats.revPercentage < 20 ? "decrease" : "neutral"}`}
                 footerMessage="Revenue generated so far"
                 footerSubtext="This average over all transactions made in the company <=> 20% increase"
               />
               <MetricCard
                 icon={<ShoppingCart className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Orders"
-                value={!stats.totalOrders === undefined ? 0 : stats.totalOrders.toLocaleString()}
-                delta={`${!stats.orderPercentage === undefined ? 0 : stats.orderPercentage * 100}%`}
-                deltaType={`${!stats.orderPercentage === undefined ? "neutral" : stats.orderPercentage > 0 ? "increase" : stats.orderPercentage < 0 ? "decrease" : "neutral"}`}
+                value={stats.totalOrders.toLocaleString()}
+                delta={`${stats.orderPercentage * 100}%`}
+                deltaType={`${stats.orderPercentage > 0 ? "increase" : stats.orderPercentage < 0 ? "decrease" : "neutral"}`}
                 footerMessage="Orders processed so far"
                 footerSubtext="This is over number of orders made in the company"
               />
               <MetricCard
                 icon={<Users className="w-6 h-6 text-[#f20eadb] dark:text-[#f3edd8]" />}
                 title="Total Users"
-                value={!stats.totalCustomers === undefined ? 0 : stats.totalCustomers.toLocaleString()}
-                delta={`${!stats.customerPercentage === undefined ? 0 : stats.customerPercentage * 100}%`}
-                deltaType={`${!stats.customerPercentage === undefined ? "neutral" : stats.customerPercentage > 0 ? "increase" : stats.customer < 0 ? "decrease" : "neutral"}`}
+                value={stats.totalCustomers.toLocaleString()}
+                delta={`${stats.customerPercentage * 100}%`}
+                deltaType={`${stats.customerPercentage > 0 ? "increase" : stats.customer < 0 ? "decrease" : "neutral"}`}
                 footerMessage="Customers served so far"
                 footerSubtext="This is over number of users registered in the company"
               />
