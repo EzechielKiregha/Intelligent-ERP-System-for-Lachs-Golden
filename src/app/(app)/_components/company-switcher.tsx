@@ -49,7 +49,7 @@ export function CompanySwitcher() {
   if (isLoading) {
     return (
       <div className="h-full w-full">
-        <Skeleton className="bg-sidebar-accent flex-1 w-full h-full py-6" />
+        <Skeleton className="bg-sidebar-ring flex-1 w-full h-full py-6" />
       </div>
     );
   }

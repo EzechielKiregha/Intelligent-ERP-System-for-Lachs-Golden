@@ -85,15 +85,15 @@ const navMainItems = [
       { title: "Departments", url: "/hr/departments" },
     ],
   },
-  {
-    title: "CRM",
-    url: "/crm",
-    icon: Command,
-    items: [
-      { title: "Lead/Customer", url: "/crm/contacts" },
-      { title: "Sales Pipeline", url: "/crm/sales" },
-    ],
-  },
+  // {
+  //   title: "CRM",
+  //   url: "/crm",
+  //   icon: Command,
+  //   items: [
+  //     { title: "Lead/Customer", url: "/crm/contacts" },
+  //     { title: "Sales Pipeline", url: "/crm/sales" },
+  //   ],
+  // },
 ];
 
 const company = [

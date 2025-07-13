@@ -45,6 +45,18 @@ export function Navbar() {
   const currentUser = useAuth().user;
   const { data: company, isLoading: companyLoading, isError: companyError } = useGetCompanyById(currentUser?.currentCompanyId || '');
 
+  if (companyLoading) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50">
+        <div
+          className={`h-full bg-sidebar-primary transition-all duration-500 ${companyLoading ? 'animate-loading-bar' : 'w-0'
+            }`}
+        >
+
+        </div>
+      </div>
+    );
+  }
 
   return (
     <nav className="fixed top-0 left-0 w-full h-16 bg-sidebar shadow flex items-center px-6 z-50">

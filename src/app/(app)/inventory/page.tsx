@@ -12,6 +12,19 @@ export default function InventoryPage() {
   const { data: company, isLoading: companyLoading, isError: companyError } = useGetCompanyById(currentUser?.currentCompanyId || '');
 
 
+  if (companyLoading) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50">
+        <div
+          className={`h-full bg-sidebar-primary transition-all duration-500 ${companyLoading ? 'animate-loading-bar' : 'w-0'
+            }`}
+        >
+
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-full">
       <div className="@container/main flex flex-1 flex-col gap-2">
