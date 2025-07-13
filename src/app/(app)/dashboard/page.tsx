@@ -108,9 +108,9 @@ export default function DashboardPage() {
               <MetricCard
                 icon={<DollarSign className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
                 title="Total Revenue"
-                value={`$${stats.totalRevenue || '0'}`}
-                delta={`${(stats.revPercentage || 0) * 100}%`}
-                deltaType={`${stats.revPercentage > 20 ? "increase" : stats.revPercentage < 20 ? "decrease" : "neutral"}`}
+                value={`$${stats?.totalRevenue || '0'}`}
+                delta={`${(stats?.revPercentage || 0) * 100}%`}
+                deltaType={`${stats?.revPercentage > 20 ? "increase" : stats?.revPercentage < 20 ? "decrease" : "neutral"}`}
                 footerMessage="Revenue generated so far"
                 footerSubtext="This average over all transactions made in the company <=> 20% increase"
               />

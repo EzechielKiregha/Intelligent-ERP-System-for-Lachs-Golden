@@ -1,8 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosdb from '@/lib/axios';
 
+export interface DashboardStats {
+  totalRevenue: number;
+  totalOrders: number;
+  totalCustomers: number;
+  revPercentage: number;
+  orderPercentage: number;
+  customerPercentage: number;
+}
+
 export function useDashboardStats() {
-  return useQuery({
+  return useQuery<DashboardStats>({
     queryKey: ['dashboard', 'stats'],
     queryFn: async () => {
       const { data } = await axiosdb.get('/api/dashboard/stats');
