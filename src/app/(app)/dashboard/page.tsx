@@ -48,7 +48,7 @@ export default function DashboardPage() {
             <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold">No Dashboard Stats Found</h3>
               <p className="text-sm">
-                Start tracking your company's performance by adding revenue, orders, and customer data.
+                Start tracking your company&apos;s performance by adding revenue, orders, and customer data.
               </p>
               <div className="mt-4 space-y-2">
                 <a href="/finance/transactions" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
@@ -112,7 +112,7 @@ export default function DashboardPage() {
               <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold">No Revenue Data Found</h3>
                 <p className="text-sm">
-                  Start tracking your company's revenue by adding transactions and forecasts.
+                  Start tracking your company&apos;s revenue by adding transactions and forecasts.
                 </p>
                 <a href="/finance/transactions" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
                   Add Transactions

@@ -22,7 +22,7 @@ export default function BudgetSection() {
       <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold">No Budget Data Found</h3>
         <p className="text-sm">
-          Start managing your company's budget by creating categories and setting limits.
+          Start managing your company&apos;s budget by creating categories and setting limits.
         </p>
         <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
           <Link href="/finance/budget" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">

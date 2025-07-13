@@ -145,7 +145,7 @@ export default function CategoriesList() {
       <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold">No Finance Categories Found</h3>
         <p className="text-sm">
-          Start managing your company's finances by creating categories and setting budgets.
+          Start managing your company&apos;s finances by creating categories and setting budgets.
         </p>
         <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
           <Link href="/finance/categories" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
