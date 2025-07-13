@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosdb from "../axios";
 import { toast } from "sonner";
 import { CompanyFormData } from "../validations/company";
+import { useRouter } from "next/navigation";
+import { useAuth } from "contents/authContext";
 
 export interface C {
   id: string,
@@ -57,15 +59,26 @@ export function useGetOwnerCompanies() {
 
 // Hook to switch company
 export function useSwitchCompany() {
+  const router = useRouter();
+  const { refreshSession } = useAuth(); 
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (companyId: string) => {
       const res = await axiosdb.post('/api/switch-company', { companyId });
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ['ownerCompanies'] });
+      queryClient.invalidateQueries({ queryKey: ['ownerCompany', data.id] });
+      
       toast.success('Company switched successfully');
+
+      // Refresh the session to update currentCompanyId
+      await refreshSession();
+
+      // Force a full-page reload
+      window.location.href = '/';
     },
     onError: () => toast.error('Failed to switch company'),
   });

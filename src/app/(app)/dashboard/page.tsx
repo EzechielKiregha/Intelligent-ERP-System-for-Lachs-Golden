@@ -47,7 +47,10 @@ export default function DashboardPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-transparent px-4 shadow-lg">
         <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
-          <LeftAuthPanel />
+          <LeftAuthPanel
+            name={company && company?.name}
+            desc={company && company?.description}
+          />
           <div className=" flex flex-col justify-center items-center w-full max-w-lg bg-white dark:bg-[#111827] ">
             <div className="flex items-center gap-x-2 mb-3">
               <NutOffIcon className="size-6 text-muted-foreground" />
@@ -82,7 +85,7 @@ export default function DashboardPage() {
 
           {/* Stats Section */}
           {statsLoading && <SkeletonLoader height={40} type="card" count={3} />}
-          {statsError || !stats ? (
+          {statsError || !stats && !statsLoading ? (
             <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold">No Dashboard Stats Found</h3>
               <p className="text-sm">
@@ -144,7 +147,7 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
             {/* Finance Forecast Section */}
-            {revenueLoading && !revenueError && <Skeleton className="h-40 w-full rounded-lg bg-sidebar" />}
+            {revenueLoading && !revenueError && <Skeleton className="h-60 w-full rounded-lg bg-sidebar" />}
             {revenueError || !revenueData && !revenueLoading ? (
               <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold">No Revenue Data Found</h3>
@@ -155,7 +158,7 @@ export default function DashboardPage() {
                   Add Transactions
                 </a>
               </div>
-            ) : (
+            ) : !revenueLoading && (
               <RevenueAnalytics data={revenueData} range={range} onRangeChange={setRange} />
             )}
 
@@ -171,7 +174,7 @@ export default function DashboardPage() {
                   Add Products
                 </a>
               </div>
-            ) : (
+            ) : !inventoryLoading && (
               <SalesDistribution data={{
                 totalItems: inventoryData?.totalProducts || 0,
                 lowStock: inventoryData?.lowStockCount || 0,
@@ -188,7 +191,7 @@ export default function DashboardPage() {
                 Start tracking company activities by enabling audit logs.
               </p>
             </div>
-          ) : (
+          ) : !logsLoading && (
             <ActivityFeed auditLogs={auditLogs} />
           )}
 
@@ -201,7 +204,7 @@ export default function DashboardPage() {
                 Start leveraging AI insights by enabling analytics for your company.
               </p>
             </div>
-          ) : (
+          ) : !insightsLoading && (
             <FinancialInsights />
           )}
         </div>

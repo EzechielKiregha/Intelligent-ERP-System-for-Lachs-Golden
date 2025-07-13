@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { useAuth } from 'contents/authContext';
-import { useNavigation } from '@/hooks/use-navigation';
 import {
   Avatar,
   AvatarFallback,
@@ -28,6 +27,7 @@ import { Button } from '@/components/ui/button';
 import { ModeToggle } from './toggleTheme';
 import { Menu, LogOut, Sparkles, Bell, CreditCard, BadgeCheck, ChevronsUpDown, Cpu } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useGetCompanyById } from '@/lib/hooks/use-owner-company';
 
 export function Navbar() {
   const router = useRouter();
@@ -42,13 +42,17 @@ export function Navbar() {
     { label: 'Contact', href: '/#contact' },
   ];
 
+  const currentUser = useAuth().user;
+  const { data: company, isLoading: companyLoading, isError: companyError } = useGetCompanyById(currentUser?.currentCompanyId || '');
+
+
   return (
     <nav className="fixed top-0 left-0 w-full h-16 bg-sidebar shadow flex items-center px-6 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-full w-full">
         <Link href="/" className="text-xl font-bold flex flex-row gap-1.5 text-[#80410e] dark:text-[#D4AF37]">
           <Cpu className="w-6 h-6 text-[#80410e] dark:text-[#D4AF37]" />
-          Intelligent ERP
-          <span className="hidden md:flex text-sm text-muted-foreground">Inc.</span>
+          {company ? company?.name : 'Intelligent ERP'}
+          <span className="hidden md:flex text-sm text-muted-foreground">{company ? company?.industry : 'Inc.'}</span>
         </Link>
 
         {/* Desktop Menu */}

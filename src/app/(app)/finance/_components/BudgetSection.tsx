@@ -15,7 +15,7 @@ export default function BudgetSection() {
   const { data, isLoading, isError } = useBudgetData();
 
   if (isLoading) {
-    return <SkeletonLoader height={40} type="card" count={3} />;
+    return <SkeletonLoader height={72} type="card" count={1} />;
   }
 
   if (isError || !data || data.length === 0) {

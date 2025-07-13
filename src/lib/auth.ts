@@ -99,8 +99,18 @@ export const authOptions: NextAuthOptions = {
         token.lastName = (user as any).lastName;
         token.createdAt = (user as any).createdAt;
         token.employeeId = (user as any).employeeId;
-        token.image = (user as any).image; // Include image if available
+        token.image = (user as any).image;
       }
+  
+      // Update the JWT with the new currentCompanyId if it was changed
+      if (token.currentCompanyId) {
+        const updatedUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { currentCompanyId: true },
+        });
+        token.currentCompanyId = updatedUser?.currentCompanyId || token.currentCompanyId;
+      }
+  
       return token;
     },
     async session({ session, token }) {
@@ -108,15 +118,14 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub!;
         session.user.role = token.role! as Role;
         session.user.companyId = token.companyId as string;
-        session.user.currentCompanyId = token.companyId as string;
+        session.user.currentCompanyId = token.currentCompanyId as string;
         session.user.firstName = token.firstName as string;
         session.user.lastName = token.lastName as string;
         session.user.createdAt = token.createdAt as Date;
         session.user.employeeId = token.employeeId as string;
-        // Include name and email from token if available
         session.user.name = token.name;
         session.user.email = token.email;
-        session.user.image = token.image as string // Replace null with undefined
+        session.user.image = token.image as string;
       }
       return session;
     },

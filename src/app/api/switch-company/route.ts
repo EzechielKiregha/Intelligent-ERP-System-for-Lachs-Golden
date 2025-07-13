@@ -35,6 +35,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Unauthorized: Not an owner of this company' }, { status: 403 });
     }
 
+    console.log('Switching company for user:', session.user.id, 'to company:', companyId);
+    
+    // Optionally update the session (if using a custom session store)
+    session.user.currentCompanyId = companyId;
+    session.user.companyId = companyId; // Update the session in your session store if needed
+
     // Update the user's currentCompanyId
     await prisma.user.update({
       where: { id: session.user.id },

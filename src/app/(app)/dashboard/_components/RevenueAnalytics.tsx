@@ -19,9 +19,9 @@ const RevenueAnalytics: React.FC<RevenueAnalyticsProps> = ({ data, range, onRang
     { label: 'Last quarter', value: 'lastquarter' },
   ];
 
-  if (!data || data.length === 0) {
-    return <p className="text-gray-500 dark:text-gray-400">No revenue data available for the selected range.</p>;
-  }
+  // if (!data || data.length === 0) {
+  //   return <p className="text-gray-500 dark:text-gray-400">No revenue data available for the selected range.</p>;
+  // }
 
   return (
     <div className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] rounded-lg shadow p-4">
@@ -47,7 +47,7 @@ const RevenueAnalytics: React.FC<RevenueAnalyticsProps> = ({ data, range, onRang
 
       {/* Revenue Data */}
       <ul className="space-y-2">
-        {data.map((item) => (
+        {data && data.map((item) => (
           <li key={item.quarter} className="flex justify-between items-center py-2">
             {/* Quarter and Revenue */}
             <div>

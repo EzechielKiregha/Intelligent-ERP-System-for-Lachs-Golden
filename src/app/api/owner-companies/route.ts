@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
       })
     }
 
-    console.log("[ Companies ] ",comps)
+    // console.log("[ Companies ] ",comps)
     
     return NextResponse.json({comps});
   } catch (error) {

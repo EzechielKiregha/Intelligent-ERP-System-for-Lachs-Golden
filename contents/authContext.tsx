@@ -1,13 +1,14 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { signOut, useSession } from 'next-auth/react';
+import { signOut, useSession, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   user: any;
   isAuthenticated: boolean;
   logout: () => Promise<void>;
+  refreshSession: () => Promise<void>; // Add refreshSession to the context
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,8 +31,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login');
   };
 
+  const refreshSession = async () => {
+    const updatedSession = await getSession(); // Fetch the updated session
+    setUser(updatedSession?.user || null);
+    setIsAuthenticated(!!updatedSession?.user);
+
+    // Force NextAuth to refresh the session
+    const event = new Event("visibilitychange");
+    document.dispatchEvent(event);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, logout, refreshSession }}>
       {children}
     </AuthContext.Provider>
   );

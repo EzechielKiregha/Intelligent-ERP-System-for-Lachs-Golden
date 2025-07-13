@@ -148,7 +148,7 @@ export default function CategoriesList() {
           Start managing your company&apos;s finances by creating categories and setting budgets.
         </p>
         <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
-          <Link href="/finance/categories" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+          <Link href="/finance/budget" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
             Create Categories
           </Link>
           <Link href="/finance/budget" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
