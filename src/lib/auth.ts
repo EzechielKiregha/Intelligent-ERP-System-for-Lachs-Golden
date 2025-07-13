@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
           lastName: user.lastName,
           createdAt: user.createdAt,
           employeeId: user.employeeId,
-          image: user.images?.[0]?.url ||  "https://github.com/shadcn.png", // Use the first image URL if available
+          image: user.images?.[0]?.url, // Use the first image URL if available
         };
       },
     }),
@@ -107,6 +107,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.sub!;
         session.user.role = token.role! as Role;
+        session.user.companyId = token.companyId as string;
         session.user.currentCompanyId = token.companyId as string;
         session.user.firstName = token.firstName as string;
         session.user.lastName = token.lastName as string;

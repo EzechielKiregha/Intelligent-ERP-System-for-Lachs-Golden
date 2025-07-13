@@ -7,7 +7,7 @@ import ActivityFeed from './_components/ActivityFeed';
 import AIInsights from './_components/AIInsights';
 import SkeletonLoader from '../_components/SkeletonLoader';
 import { MetricCard } from './_components/MetricCards';
-import { DollarSign, ShoppingCart, Users } from 'lucide-react';
+import { DollarSign, NutOffIcon, ShoppingCart, Users } from 'lucide-react';
 import RevenueAnalytics from './_components/RevenueAnalytics';
 import FinanceForecastSection from '../finance/_components/FinanceForecastSection';
 import CategoriesList from '../finance/_components/CategoryList';
@@ -17,6 +17,9 @@ import FinancialInsights from '../finance/_components/FinancialInsights';
 import { useAuth } from 'contents/authContext';
 import { getGreeting } from '@/lib/utils';
 import { useGetCompanyById } from '@/lib/hooks/use-owner-company';
+import { LeftAuthPanel } from '@/components/LeftAuthPanel';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading, isError: statsError } = useDashboardStats();
@@ -29,6 +32,41 @@ export default function DashboardPage() {
   const currentUser = useAuth().user;
   const { data: company, isLoading: companyLoading, isError: companyError } = useGetCompanyById(currentUser?.currentCompanyId || '');
 
+  if (companyLoading) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50">
+        <div
+          className={`h-full bg-sidebar-primary transition-all duration-500 ${companyLoading ? 'animate-loading-bar' : 'w-0'
+            }`}
+        >
+        </div>
+      </div>
+    );
+  }
+  if (companyError || !company) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg">
+        <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
+          <LeftAuthPanel />
+          <div className=" flex flex-col justify-center items-center w-full max-w-lg bg-white dark:bg-[#111827] ">
+            <div className="flex items-center gap-x-2 mb-3">
+              <NutOffIcon className="size-6 text-muted-foreground" />
+              <span className="font-bold text-xl">Not Found</span>
+            </div>
+            <p className="text-muted-foreground text-lg">
+              Could not find requested resources
+            </p>
+            <Link href="/">
+              <Button variant={"outline"} className="mt-1">
+                Return Home
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
@@ -38,7 +76,7 @@ export default function DashboardPage() {
               {getGreeting()} {currentUser.name}
             </h2>
             <h3 className="text-lg text-muted-foreground">
-              Welcome to &quot;{company?.name || 'Your Company'}&quot; Dashboard
+              Welcome to &quot;{company ? company?.name : 'Your Company'}&quot; Dashboard
             </h3>
           </div>
 
