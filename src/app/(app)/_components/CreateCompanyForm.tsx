@@ -311,7 +311,7 @@ export default function CreateCompanyForm({
                   <p className='border-b'><strong>Phone:</strong> {formData.contactPhone || 'N/A'}</p>
                   <p className='border-b'><strong>Website:</strong> {formData.website || 'N/A'}</p>
                   <p className='border-b'><strong>Address:</strong> {formData.addressLine1 || ''} {formData.addressLine2 || ''} {formData.city || ''} {formData.state || ''} {formData.postalCode || ''} {formData.country || ''}</p>
-                  <p className='border-b'><strong>Founded Date:</strong> {formData.foundedDate?.toLocaleString() || 'N/A'}</p>
+                  <p className='border-b'><strong>Founded Date:</strong> {date?.toLocaleString() || 'N/A'}</p>
                   <p className='border-b'><strong>Employee Count:</strong> {formData.employeeCount || 'N/A'}</p>
                   <p className='border-b'><strong>Tax ID:</strong> {formData.taxId || 'N/A'}</p>
                   <p className='border-b'><strong>Timezone:</strong> {formData.timezone}</p>

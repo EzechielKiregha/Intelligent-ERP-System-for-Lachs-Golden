@@ -134,7 +134,7 @@ export default function SettingsPage() {
     <div className="flex flex-col min-h-full">
       <div className="@container/main flex flex-1 flex-col gap-4">
         <h1 className="text-3xl font-semibold text-sidebar-foreground">Settings</h1>
-        <div className="flex items-center flex-col justify-cente px-4 shadow-lg">
+        <div className="flex items-center flex-col justify-cente px-4 w-full shadow-lg">
           <Card className="w-full max-w-4xl bg-sidebar text-sidebar-foreground border-[var(--sidebar-border)] shadow-lg rounded-2xl">
             {/* <CardHeader>
           <CardTitle className="text-[24px] font-semibold text-sidebar-foreground"></CardTitle>
@@ -145,7 +145,7 @@ export default function SettingsPage() {
               ) : (
                 <Tabs defaultValue="profile" onValueChange={handleTabChange}>
                   <div className="overflow-x-auto">
-                    <TabsList className="flex bg-sidebar-accent text-sidebar-accent-foreground">
+                    <TabsList className="flex bg-sidebar-accent text-gray-200 w-full flex-row items-center justify-between p-4 ">
                       <TabsTrigger value="profile">Profile</TabsTrigger>
                       {userData?.employee && <TabsTrigger value="employee">Employee Settings</TabsTrigger>}
                       {(session?.user.role === Role.ADMIN || session?.user.role === Role.OWNER) && (

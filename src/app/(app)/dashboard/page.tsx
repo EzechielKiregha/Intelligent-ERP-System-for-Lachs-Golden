@@ -45,7 +45,7 @@ export default function DashboardPage() {
   }
   if (companyError || !company) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg">
+      <div className="flex items-center justify-center min-h-screen bg-transparent px-4 shadow-lg">
         <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
           <LeftAuthPanel />
           <div className=" flex flex-col justify-center items-center w-full max-w-lg bg-white dark:bg-[#111827] ">
@@ -54,7 +54,7 @@ export default function DashboardPage() {
               <span className="font-bold text-xl">Not Found</span>
             </div>
             <p className="text-muted-foreground text-lg">
-              Could not find requested resources
+              Company not found or you are not authorized to view this dashboard.
             </p>
             <Link href="/">
               <Button variant={"outline"} className="mt-1">

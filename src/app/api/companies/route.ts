@@ -29,6 +29,7 @@ export async function POST(req: Request) {
         data: {
           ...data,
           users: { connect: { id: session.user.id } },
+          owners : { connect: { id: session.user.id } },
           images: {
             create: {
               url: "https://github.com/shadcn.png",
@@ -47,6 +48,9 @@ export async function POST(req: Request) {
           data: {
             currentCompanyId: company.id,
             role: Role.OWNER, // Set the user as ADMIN for the new company
+            ownedCompanies: {
+              connect: { id: company.id },
+            },
           },
         });
       }
@@ -69,25 +73,6 @@ export async function POST(req: Request) {
       const company = await prisma.company.create({
         data: {
           ...companyData,
-          users: {
-            create: {
-              email: email || "",
-              password: hashedPassword,
-              firstName,
-              lastName,
-              name: `${firstName} ${lastName}`,
-              role: role || Role.ADMIN,
-              status: status || UserStatus.ACCEPTED,
-              images: {
-                create: {
-                  url: "https://github.com/shadcn.png",
-                  pathname: "https://github.com/shadcn.png",
-                  contentType: "image/png",
-                  size: 10000,
-                },
-              },
-            },
-          },
           images: {
             create: {
               url: "https://github.com/shadcn.png",
@@ -95,6 +80,32 @@ export async function POST(req: Request) {
               contentType: "image/png",
               size: 10000,
             },
+          },
+        },
+      });
+
+      const user = await prisma.user.create({
+        data: {
+          firstName,
+          lastName,
+          email : email || "",
+          password: hashedPassword,
+          role: role || Role.OWNER, // Default to OWNER if not provided
+          status: status || UserStatus.ACCEPTED, // Default to ACTIVE if not provided
+          currentCompanyId: company.id,
+          companyId: company.id,
+          ownedCompanies: {
+            connect: { id: company.id },
+          },
+        },
+      });
+
+      // Connect the user to the company
+      await prisma.company.update({
+        where: { id: company.id },
+        data: {
+          users: {
+            connect: { id: user.id },
           },
         },
       });

@@ -44,12 +44,11 @@ export async function GET(req: NextRequest) {
 
     // 3. Recent ORDER transactions
     const recentOrders = await prisma.transaction.findMany({
-      where: { type: 'ORDER' },
+      where: { companyId, type: 'ORDER' },
       include: {
         category: true,
       },
       orderBy: { createdAt: 'desc' },
-      take: 5,
     })
 
     return NextResponse.json({

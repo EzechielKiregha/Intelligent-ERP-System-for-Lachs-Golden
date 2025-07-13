@@ -55,33 +55,32 @@ export async function GET(req: NextRequest) {
         } }
       });
       comps.push(company)
-    } else if (session.user.role.match(Role.ADMIN)){
+    } else if (session.user.role.match(Role.OWNER) || session.user.role.match(Role.ADMIN)){
       
-      const companies = await prisma.company.findMany({
+      const userWithOwnedCompanies = await prisma.user.findUnique({
         where: {
-          users: {
-            some: {
-              id: session.user.id,
-              role: Role.OWNER, // Ensure the user is an owner
-            },
-          },
+          id : session.user.id,
         },
-        // select: {
-        //   id: true,
-        //   name: true,
-        //   industry: true,
-        // },
-        include : { images : {
-          select : { url : true },
-          take : 1
-        }}
+        include:{
+          ownedCompanies: {
+            select: {
+              id: true,
+              name: true,
+              industry: true,
+              images: {
+                select: { url: true },
+                take: 1
+              }
+            }
+          }
+        }
       });
-      companies.map((c) => {
+      userWithOwnedCompanies?.ownedCompanies?.map((c) => {
         comps.push({...c})
       })
     }
 
-    // console.log("[ Companies ] ",comps)
+    console.log("[ Companies ] ",comps)
     
     return NextResponse.json({comps});
   } catch (error) {

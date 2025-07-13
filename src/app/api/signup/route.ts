@@ -3,7 +3,6 @@ import { hash } from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
-import { ro } from '@faker-js/faker';
 import { Role, UserStatus } from '@/generated/prisma';
 
 const signUpSchema = z.object({
@@ -76,6 +75,15 @@ export async function POST(req: NextRequest) {
             size: 10000,
           }
         }
+      },
+    });
+
+    const updatedCompany = await prisma.company.update({
+      where: { id: companyId },
+      data: {
+        users: {
+          connect: { id: user.id },
+        },
       },
     });
 
