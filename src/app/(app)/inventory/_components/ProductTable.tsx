@@ -180,7 +180,21 @@ export default function ProductsTable() {
   const { data: products, isLoading, error } = useProducts();
 
   if (isLoading) return <SkeletonLoader type="card" height={60} count={1} col={1} />;
-  // if (error) return <div className="text-red-500">Error loading products.</div>;
+  if (error) {
+    return (
+      <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold">No Products Found</h3>
+        <p className="text-sm">
+          Start managing your company&apos;s products by adding a product.
+        </p>
+        {/* <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
+          <Link href="/finance/trasactions" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Create Categories
+          </Link>
+        </div> */}
+      </div>
+    );
+  };
 
   return (
     <DataTable
