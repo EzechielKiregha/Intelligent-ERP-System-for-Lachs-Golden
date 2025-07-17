@@ -13,22 +13,23 @@ export default function EmployeesPage() {
   const router = useRouter()
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-sidebar-foreground">Employees</h1>
-        <div className="flex gap-2">
-          <EmployeeFormPopover />
-          <Link href="/hr/employees/manage">
-            <Button className="hover:bg-sidebar-primary bg-sidebar-accent text-sidebar-primary-foreground">
-              Full Manage
-            </Button>
-          </Link>
+    <div className="flex flex-col min-h-full">
+      <div className="@container/main flex flex-1 flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h1 className="text-2xl font-semibold text-sidebar-foreground">Employees</h1>
+          <div className="flex gap-2">
+            <EmployeeFormPopover />
+            <Link href="/hr/employees/manage">
+              <Button className="hover:bg-sidebar-primary bg-sidebar-accent text-sidebar-primary-foreground">
+                Full Manage
+              </Button>
+            </Link>
+          </div>
         </div>
-      </div>
 
-      {/* Employee Table */}
-      <EmployeeTable />
-    </div>
+        {/* Employee Table */}
+        <EmployeeTable />
+      </div>
+    </div >
   )
 }

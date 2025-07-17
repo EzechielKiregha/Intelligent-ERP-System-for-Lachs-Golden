@@ -100,8 +100,6 @@ export const employeeColumns: ColumnDef<Emp>[] = [
               if (user.role === Role.OWNER) {
                 del.mutate(row.original.id)
                 if (del.isSuccess) toast.success("Employee Deleted");
-                else if (del.isError) toast.error("An Error Happened");
-                else toast.error("Failed to delete");
               } else {
                 setIsModalOpen(true)
               }

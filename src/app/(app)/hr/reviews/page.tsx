@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button'
 
 export default function ReviewsPage() {
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col min-h-full">
+      <div className="@container/main flex flex-1 flex-col gap-4">
         <h1 className="text-2xl font-semibold text-sidebar-foreground">Performance Reviews</h1>
         <ReviewFormPopover />
         <Link href="/hr/reviews/manage">
