@@ -14,7 +14,6 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   const companyId = session.user.currentCompanyId
   const emp = await prisma.employee.findUnique({
     where: { id, companyId },
-    include: { department: true },
   })
   return NextResponse.json(emp)
 }

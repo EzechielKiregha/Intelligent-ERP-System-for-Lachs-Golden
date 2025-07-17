@@ -19,7 +19,7 @@ export default function ReviewTimeline() {
           <div className="mt-1 p-4 bg-sidebar rounded-lg shadow-sm">
             <h4 className="font-semibold text-sidebar-primary">{r.rating}</h4>
             <p className="text-sidebar-foreground">{r.comments}</p>
-            {r.reviewer && <p className="text-xs text-sidebar-foreground mt-1">By {r.reviewer.name}</p>}
+            {r.reviewer && <p className="text-xs text-sidebar-foreground mt-1">By {r.reviewer.fistName} {r.reviewer.fistName}</p>}
           </div>
         </li>
       ))}

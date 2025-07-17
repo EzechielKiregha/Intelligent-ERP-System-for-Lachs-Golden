@@ -83,17 +83,19 @@ const navMainItems = [
       { title: "Human Resource", url: "/hr" },
       { title: "Employees", url: "/hr/employees" },
       { title: "Departments", url: "/hr/departments" },
+      { title: "Payroll", url: "/hr/payroll" },
+      { title: "Perfornance Review", url: "/hr/reviews" },
     ],
   },
-  // {
-  //   title: "CRM",
-  //   url: "/crm",
-  //   icon: Command,
-  //   items: [
-  //     { title: "Lead/Customer", url: "/crm/contacts" },
-  //     { title: "Sales Pipeline", url: "/crm/sales" },
-  //   ],
-  // },
+  {
+    title: "CRM",
+    url: "/crm",
+    icon: Command,
+    items: [
+      { title: "Lead/Customer", url: "/crm/contacts" },
+      { title: "Sales Pipeline", url: "/crm/sales" },
+    ],
+  },
 ];
 
 const company = [

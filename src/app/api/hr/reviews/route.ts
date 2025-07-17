@@ -10,14 +10,16 @@ export async function GET(_: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const companyId = session.user.currentCompanyId
+
   const list = await prisma.performanceReview.findMany({
     where:{companyId},
     include: {
-      reviewer: { select: { name: true } },
+      reviewer: { select: { firstName: true, lastName: true } },
       employee: { select: { firstName: true, lastName: true } },
     },
     orderBy: { reviewDate: 'desc' },
   })
+
   return NextResponse.json(list)
 }
 
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
     reviewDate,
     rating,
     comments,
-    reviewerId,
+    reviewerId : session.user.id, // Default to current user if no reviewer specified
     employeeId,
     companyId
   } })

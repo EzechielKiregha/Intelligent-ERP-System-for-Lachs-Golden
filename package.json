@@ -81,6 +81,10 @@
     "vaul": "^1.1.2",
     "zod": "^3.25.75"
   },
+  "peerDependencies": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.10",

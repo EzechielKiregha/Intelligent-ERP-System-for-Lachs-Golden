@@ -1,33 +1,11 @@
+import { Role } from '@/generated/prisma';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axiosdb from 'axios';
+import { useAuth } from 'contents/authContext';
+import { useRouter } from 'next/navigation';
 import {toast} from 'sonner';
 
-const API = {
-  fetch: '/api/inventory/products',
-  create: '/api/inventory/products/create',
-  update: '/api/inventory/products/update',
-  delete: '/api/inventory/products',
-};
 
-export interface Product {
-  id: string,
-  name: string,
-  sku: string,
-  quantity: number,
-  threshold: number,
-  description?: string,
-  unitPrice: number;
-};
-
-export function useProducts() {
-  return useQuery<Product[], Error>({
-    queryKey : ['inventory','products'], 
-    queryFn: async () => {
-      const { data } = await axiosdb.get<Product[]>(API.fetch);
-      return data;
-    }
-  });
-}
 
 export function useInventorySummaryCards() {
   return useQuery({
@@ -64,7 +42,34 @@ export function useInventorySummary() {
   })
 }
 
+const API = {
+  fetch: '/api/inventory/products',
+  create: '/api/inventory/products/create',
+  update: '/api/inventory/products/update',
+  delete: '/api/inventory/products',
+};
 
+export interface Product {
+  id: string,
+  name: string,
+  sku: string,
+  quantity: number,
+  threshold: number,
+  description?: string,
+  unitPrice: number;
+};
+
+
+
+export function useProducts() {
+  return useQuery<Product[], Error>({
+    queryKey : ['inventory','products'],
+    queryFn: async () => {
+      const { data } = await axiosdb.get<{ products : Product[]}>(API.fetch);
+      return data.products;
+    }
+  });
+}
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
@@ -89,15 +94,28 @@ export function useUpdateProduct() {
   });
 }
 
-export function useDeleteProduct() {
+export function useDeleteProduct(id: string) {
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const user = useAuth().user;
+
   return useMutation({
-    mutationFn: (id: string) => axiosdb.delete(`${API.delete}/${id}`),
-    onSuccess: () => {
+    mutationFn: async () => {
+      if (user?.role === Role.ADMIN || user?.role === Role.OWNER) {
+        const res = await axiosdb.delete(`${API.delete}/${id}`)
+        return res.data;
+      } else {
+        return {success: false, message: 'You do not have permission to delete this product.'};
+      }
+    },
+    onSuccess: (data : any) => {
+      if (!data.success) {
+        toast.error(data.message);
+      } else toast.success(data.message || 'Product deleted successfully');
       queryClient.invalidateQueries({
         queryKey : ['inventory','products'],
       })
-      toast.success("Deleted Successfully")
+      router.refresh();
     },
     onError () {
       toast.error("Failed")

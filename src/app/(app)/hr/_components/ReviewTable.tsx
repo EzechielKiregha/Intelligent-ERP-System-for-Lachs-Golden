@@ -9,7 +9,6 @@ import { useDeleteReview, useReviews } from '@/lib/hooks/hr'
 import { DataTable, DragHandle } from '../../_components/ReusableDataTable'
 import { z } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
-import toast from 'sonner'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React from 'react'
 import { truncateText } from '@/lib/utils'
@@ -19,7 +18,7 @@ type RV = {
   reviewDate: string
   rating: 'EXCEEDS' | 'MEETS' | 'NEEDS_IMPROVEMENT'
   comments: string
-  reviewer?: { name: string }
+  reviewer?: { fistName: string, lastName: string }
   employee?: { firstName: string; lastName: string }
 }
 const rvSchema = z.object({
@@ -36,7 +35,7 @@ export const reviewColumns: ColumnDef<RV>[] = [
   { id: 'select', header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected()} onCheckedChange={v => table.toggleAllPageRowsSelected(!!v)} />, cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={v => row.toggleSelected(!!v)} />, enableSorting: false },
   { accessorKey: 'reviewDate', header: 'Date', cell: ({ row }) => format(new Date(row.original.reviewDate), 'yyyy-MM-dd') },
   { id: 'emp', header: 'Employee', cell: ({ row }) => row.original.employee ? `${row.original.employee.firstName} ${row.original.employee.lastName}` : '—' },
-  { id: 'rev', header: 'Reviewer', cell: ({ row }) => row.original.reviewer?.name || '—' },
+  { id: 'rev', header: 'Reviewer', cell: ({ row }) => row.original.reviewer ? `${row.original.reviewer.lastName}` : '—' },
   { accessorKey: 'rating', header: 'Rating', cell: ({ row }) => <div className="flex items-center gap-1"><Star className="w-4 h-4 text-sidebar-primary" /> {row.original.rating}</div> },
   {
     accessorKey: 'comments',

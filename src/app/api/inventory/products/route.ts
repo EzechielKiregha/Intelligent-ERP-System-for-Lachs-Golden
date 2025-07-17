@@ -11,10 +11,12 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const companyId = session.user.currentCompanyId;
+
+    console.log('Fetching products for company:', companyId);
   try {
     const products = await prisma.product.findMany({
       where : {
-        id : companyId,
+        companyId,
       },
       select : {
         id:true,
@@ -27,7 +29,8 @@ export async function GET() {
       },
       orderBy: { createdAt: 'desc' },
     });
-    return NextResponse.json(products);
+
+    return NextResponse.json({products}, { status: 200 });
   } catch (err) {
     console.error('Fetch error:', err);
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });

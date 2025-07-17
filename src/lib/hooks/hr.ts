@@ -1,6 +1,7 @@
 "use client"
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axiosdb from '@/lib/axios'
+import { toast } from 'sonner'
 
 export function useHRSummary() {
   return useQuery({
@@ -114,6 +115,9 @@ export function useSaveEmployee() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async (emp: any) => {
+
+      console.log("Saving employee:", emp)
+      // If emp.id exists, update; otherwise create
       if (emp.id) {
         const { data } = await axiosdb.put(`/api/hr/employees/${emp.id}`, emp)
         return data
@@ -274,7 +278,7 @@ export function useReviews(employeeId?: string) {
         reviewDate: string
         rating: 'EXCEEDS'|'MEETS'|'NEEDS_IMPROVEMENT'
         comments: string
-        reviewer?: { name: string }
+        reviewer?: { fistName: string, lastName: string }
         employee?: { firstName:string; lastName:string }
       }>
     },
@@ -294,9 +298,12 @@ export function useSaveReview() {
         return data
       }
     },
-    onSuccess: () => qc.invalidateQueries({
+    onSuccess: () => {
+      qc.invalidateQueries({
       queryKey:['hr','reviews']
     }),
+    toast.success('Review Saved')
+  }
   })
 }
 

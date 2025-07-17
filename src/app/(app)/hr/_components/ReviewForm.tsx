@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,9 @@ import { Calendar } from '@/components/ui/calendar'
 import { ChevronDownIcon, Star } from 'lucide-react'
 import BasePopover from '@/components/BasePopover'
 import { useSearchParams } from 'next/navigation'
-import { useReviews, useSaveReview } from '@/lib/hooks/hr'
+import { useEmployees, useReviews, useSaveReview, useSingleEmployee } from '@/lib/hooks/hr'
+import { toast } from 'sonner'
+import { useAuth } from 'contents/authContext'
 
 const schema = z.object({
   reviewDate: z.date(),
@@ -28,11 +30,19 @@ export default function ReviewForm({ reviewId }: { reviewId?: string }) {
   const id = reviewId ?? params.get('id') ?? undefined
   const { data: r } = useReviews() // for single you’d use useSingleReview; here quick
   const save = useSaveReview()
+  const { data: employees, isLoading } = useEmployees();
+  const user = useAuth().user;
+  const empId = params.get('employeeId') || ''
+
+  const { data: e, isLoading: eLoasing } = useSingleEmployee(empId)
+
   const [date, setDate] = useState<Date | undefined>(r?.find(x => x.id === id)?.reviewDate ? new Date(r.find(x => x.id === id)!.reviewDate) : undefined)
 
   const { register, control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<Form>({
     resolver: zodResolver(schema),
     defaultValues: {
+      employeeId: empId || '',
+      reviewerId: user?.id || '',
       reviewDate: date,
       rating: r?.find(x => x.id === id)?.rating,
       comments: r?.find(x => x.id === id)?.comments,
@@ -50,12 +60,50 @@ export default function ReviewForm({ reviewId }: { reviewId?: string }) {
   }, [id, r, reset])
 
   const onSubmit = (data: Form) => {
-    save.mutate({ id, ...data }, { onSuccess: () => reset() })
+    save.mutate({ id, ...data }, {
+      onSuccess: () => {
+        reset()
+        toast.success('Review Saved')
+      }
+    })
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 bg-sidebar text-sidebar-foreground rounded-lg max-w-sm">
-      <div>
+      {eLoasing && !e ? "" : e && (
+        <>
+          <p>Employee Being Reviewed</p>
+          <h1 className='font-medium text-2xl'>{e.firstName} {e.lastName} </h1>
+        </>
+      )}
+      {
+
+        !e && (
+
+          <div className="space-y-2">
+            <Label>
+              Employee Being Reviewed
+
+            </Label>
+            <Controller name="employeeId" control={control} render={({ field }) =>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent className="p-0 w-full bg-sidebar">
+                  {/* <SelectItem key={0} value="None"> None</SelectItem> */}
+                  {isLoading || !employees ? (
+                    <SelectItem value="Loading...">Loading / None</SelectItem>
+                  ) : employees?.map(emp =>
+                    <SelectItem key={emp.id} value={emp.id}>{emp.firstName} {emp.lastName}</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            } />
+          </div>
+
+        )
+
+      }
+      <div className="space-y-2">
         <Label>Review Date</Label>
         <Popover>
           <PopoverTrigger asChild>
@@ -69,17 +117,20 @@ export default function ReviewForm({ reviewId }: { reviewId?: string }) {
         </Popover>
         {errors.reviewDate && <p className="text-red-600 text-sm">{errors.reviewDate.message}</p>}
       </div>
-      <div>
+      <div className="space-y-2">
         <Label>Rating</Label>
         <Controller name="rating" control={control} render={({ field }) =>
-          <select {...field} className="w-full bg-sidebar border border-sidebar-border rounded-md p-2">
-            {['EXCEEDS', 'MEETS', 'NEEDS_IMPROVEMENT'].map(r => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
+          <Select onValueChange={field.onChange} value={field.value}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent className='w-full bg-sidebar border border-sidebar-border rounded-md p-2'>
+              {['EXCEEDS', 'MEETS', 'NEEDS_IMPROVEMENT'].map(s =>
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              )}
+            </SelectContent>
+          </Select>
         } />
       </div>
-      <div>
+      <div className="space-y-2">
         <Label>Comments</Label>
         <Textarea {...register('comments')} />
         {errors.comments && <p className="text-red-600 text-sm">{errors.comments.message}</p>}

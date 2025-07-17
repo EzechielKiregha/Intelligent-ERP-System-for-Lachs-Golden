@@ -14,6 +14,7 @@ import BasePopover from '@/components/BasePopover'
 import { toast } from 'sonner'
 import { useEmployees, useSavePayroll, useSinglePayroll } from '@/lib/hooks/hr'
 import { useSearchParams } from 'next/navigation'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const payrollSchema = z.object({
   employeeId: z.string(),
@@ -30,8 +31,9 @@ export default function PayrollForm({ payrollId }: { payrollId?: string }) {
   const params = useSearchParams()
   const id = payrollId ?? params.get('id') ?? undefined
   const { data: pr } = useSinglePayroll(id)
-  const emps = useEmployees()
+  const { data: employees, isLoading } = useEmployees();
   const save = useSavePayroll()
+  const employeeId = useSearchParams().get('employeeId') || pr?.employeeId || ''
 
   const [date, setDate] = useState<Date | undefined>(
     pr?.issuedDate ? new Date(pr.issuedDate) : undefined
@@ -79,23 +81,30 @@ export default function PayrollForm({ payrollId }: { payrollId?: string }) {
 
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 bg-sidebar text-sidebar-foreground rounded-lg max-w-md">
       <div>
-        <Label>Employee</Label>
-        <Controller
-          name="employeeId"
-          control={control}
-          render={({ field }) => (
-            <select {...field} className="w-full bg-sidebar border border-sidebar-border rounded-md p-2">
-              <option value="">Select employee</option>
-              {emps.data?.map(e => (
-                <option key={e.id} value={e.id}>
-                  {e.firstName} {e.lastName}
-                </option>
-              ))}
-            </select>
-          )}
-        />
-        {errors.employeeId && <p className="text-red-600 text-sm">{errors.employeeId.message}</p>}
+        <Label>Employee Being Reviewed</Label>
+        <Controller name="employeeId" control={control} render={({ field }) =>
+          <Select onValueChange={field.onChange} value={field.value}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent className="p-0 w-auto bg-sidebar">
+              {/* <SelectItem key={0} value="None"> None</SelectItem> */}
+              {isLoading || !employees ? (
+                <SelectItem value="Loading...">Loading / None</SelectItem>
+              ) : employees?.map(emp => {
+                if (emp.id === field.value) {
+                  return (
+                    <SelectItem key={emp.id} defaultChecked value={emp.id}>{emp.firstName} {emp.lastName}</SelectItem>
+                  )
+                }
+                return (
+                  <SelectItem key={emp.id} value={emp.id}>{emp.firstName} {emp.lastName}</SelectItem>
+                )
+              }
+              )}
+            </SelectContent>
+          </Select>
+        } />
       </div>
+      {errors.employeeId && <p className="text-red-600 text-sm">{errors.employeeId.message}</p>}
 
       <div>
         <Label>Gross Amount</Label>

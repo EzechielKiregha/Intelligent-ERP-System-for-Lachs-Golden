@@ -20,6 +20,7 @@ import { useGetCompanyById } from '@/lib/hooks/use-owner-company';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading, isError: statsError } = useDashboardStats();
@@ -28,6 +29,7 @@ export default function DashboardPage() {
   const { data: inventoryData, isLoading: inventoryLoading, isError: inventoryError } = useInventorySummary();
   const { data: insightsData, isLoading: insightsLoading, isError: insightsError } = useAIInsights();
   const { data: auditLogs, isLoading: logsLoading, isError: logsError } = useAuditLog();
+  const router = useRouter();
 
   const currentUser = useAuth().user;
   const { data: company, isLoading: companyLoading, isError: companyError } = useGetCompanyById(currentUser?.currentCompanyId || '');
@@ -59,9 +61,11 @@ export default function DashboardPage() {
             <p className="text-muted-foreground text-lg">
               Please try again later or contact support if the issue persists.
             </p>
-            <Link href="/">
-              <Button variant={"outline"} className="mt-1">
-                Return Home
+            <Link href="#" className="mt-4">
+              <Button onClick={() => {
+                router.refresh();
+              }} variant={"outline"} className="mt-1">
+                Refresh Dashboard
               </Button>
             </Link>
           </div>

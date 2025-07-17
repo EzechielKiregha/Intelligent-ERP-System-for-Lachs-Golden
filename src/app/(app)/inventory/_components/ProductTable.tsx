@@ -13,12 +13,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
-import { useProducts } from "@/lib/hooks/inventory";
+import { useDeleteProduct, useProducts } from "@/lib/hooks/inventory";
 import SkeletonLoader from "../../_components/SkeletonLoader";
 import { DataTable, DragHandle, TableCellViewer } from "../../_components/ReusableDataTable";
 import { truncateText } from "@/lib/utils";
 import React from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import Link from "next/link";
+import { Role } from "@/generated/prisma";
+import { useAuth } from "contents/authContext";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Edit2, Trash2 } from "lucide-react";
 
 // 1. Schema
 export const productSchema = z.object({
@@ -144,34 +150,13 @@ export const productColumns: ColumnDef<z.infer<typeof productSchema>>[] = [
     }
   },
   {
-    id: "actions",
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem
-            onClick={() =>
-              window.location.href = `/inventory/manage?id=${row.original.id}`
-            }
-          >
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    id: 'actions', cell: ({ row }) => {
+      const router = useRouter(), del = useDeleteProduct(row.original.id)
+      return <div className="flex gap-2">
+        <Button variant="ghost" size="icon" onClick={() => router.push(`/inventory/manage?id=${row.original.id}`)}><Edit2 /></Button>
+        <Button variant="ghost" size="icon" onClick={() => del.mutate()}><Trash2 /></Button>
+      </div>
+    }
   },
 ];
 
@@ -187,11 +172,11 @@ export default function ProductsTable() {
         <p className="text-sm">
           Start managing your company&apos;s products by adding a product.
         </p>
-        {/* <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
-          <Link href="/finance/trasactions" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
-            Create Categories
+        <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
+          <Link href="/inventory/manage" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+            Create a Product
           </Link>
-        </div> */}
+        </div>
       </div>
     );
   };
