@@ -28,7 +28,7 @@ const empSchema = z.object({
   lastName: z.string().min(1),
   email: z.string().email(),
   phone: z.string().optional(),
-  hireDate: z.coerce.date(),
+  hireDate: z.coerce.date().optional(),
   jobTitle: z.string().optional(),
   status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']),
   departmentId: z.string().optional(),

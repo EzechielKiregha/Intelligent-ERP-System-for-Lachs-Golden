@@ -115,9 +115,6 @@ export function useSaveEmployee() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async (emp: any) => {
-
-      console.log("Saving employee:", emp)
-      // If emp.id exists, update; otherwise create
       if (emp.id) {
         const { data } = await axiosdb.put(`/api/hr/employees/${emp.id}`, emp)
         return data

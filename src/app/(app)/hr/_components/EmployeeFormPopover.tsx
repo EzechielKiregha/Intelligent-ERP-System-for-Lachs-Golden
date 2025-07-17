@@ -20,7 +20,7 @@ const empSchema = z.object({
   lastName: z.string().min(1),
   email: z.string().email(),
   phone: z.string().optional(),
-  hireDate: z.coerce.date(),
+  hireDate: z.coerce.date().optional(),
   jobTitle: z.string().optional(),
   status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']),
   departmentId: z.string().optional(),
@@ -49,8 +49,7 @@ export default function EmployeeFormPopover() {
 
 
   const onSubmit = (data: EmpForm) => {
-    console.log("Data to be submitted : ", data)
-    save.mutate({ ...data },
+    save.mutate({ ...data, date },
       { onSuccess: () => { toast.success('Employee Saved'); reset() } })
   }
 
@@ -77,7 +76,6 @@ export default function EmployeeFormPopover() {
         <div>
           <Label>Phone</Label>
           <Input {...register('phone')} />
-          {errors.phone && <p className="text-red-600 text-sm">{errors.phone.message}</p>}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col">
@@ -127,7 +125,7 @@ export default function EmployeeFormPopover() {
           </div>
         </div>
         <Button type="submit" disabled={isSubmitting} className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">
-          {'Create'}
+          {isSubmitting ? 'Recording... new employee' : 'Record a new employee'}
         </Button>
       </form>
     </BasePopover>

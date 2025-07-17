@@ -12,9 +12,11 @@ import { useDeleteEmployee, useEmployees } from '@/lib/hooks/hr'
 import { empSchema } from '../employees/_components/ManageEmployeeForm'
 import { EmployeeCellViewer } from './EmployeeCellViewer'
 import { Skeleton } from '@/components/ui/skeleton'
-import toast from 'sonner'
+import { toast } from 'sonner'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React from 'react'
+import { useAuth } from 'contents/authContext'
+import { Role } from '@/generated/prisma'
 
 type Emp = {
   id: string
@@ -84,6 +86,7 @@ export const employeeColumns: ColumnDef<Emp>[] = [
     id: 'actions',
     cell: ({ row }) => {
       const del = useDeleteEmployee()
+      const user = useAuth().user
       const [isModalOpen, setIsModalOpen] = React.useState(false);
       return (
         <div className="flex gap-2">
@@ -94,10 +97,14 @@ export const employeeColumns: ColumnDef<Emp>[] = [
             variant="ghost"
             size="icon"
             onClick={() => {
-              // del.mutate(row.original.id)
-              // if (del.isSuccess) toast.success("Employee Deleted");
-              // else toast.error("Failed to delete");
-              setIsModalOpen(true)
+              if (user.role === Role.OWNER) {
+                del.mutate(row.original.id)
+                if (del.isSuccess) toast.success("Employee Deleted");
+                else if (del.isError) toast.error("An Error Happened");
+                else toast.error("Failed to delete");
+              } else {
+                setIsModalOpen(true)
+              }
             }
             }
           >
