@@ -93,7 +93,7 @@ const navMainItems = [
     icon: Command,
     items: [
       { title: "Lead/Customer", url: "/crm/contacts" },
-      { title: "Sales Pipeline", url: "/crm/sales" },
+      // { title: "Sales Pipeline", url: "/crm/sales" },
     ],
   },
 ];
