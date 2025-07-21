@@ -302,7 +302,7 @@ export default function CreateCompanyForm({
 
           {step === 5 && (
             <div>
-              <ScrollArea className="h-94 w-full border rounded-md p-2">
+              <ScrollArea className="h-94 mb-3 w-full border rounded-md p-2">
                 <div className="space-y-2">
                   <p className='border-b'><strong>Name:</strong> {formData.name}</p>
                   <p className='border-b'><strong>Description:</strong> {formData.description || 'N/A'}</p>
@@ -346,10 +346,10 @@ export default function CreateCompanyForm({
                   Cancel
                 </Button>
               )}
-              {step > 1 && <Button type="button" onClick={prevStep} variant="outline">Previous</Button>}
-              {step < 4 && <Button type="button" onClick={nextStep}>Next</Button>}
+              {step > 1 && <Button className='bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white' type="button" onClick={prevStep} variant="outline">Previous</Button>}
+              {step < 4 && <Button className='bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white' type="button" onClick={nextStep}>Next</Button>}
               {step === 4 && (
-                <Button type="submit" disabled={createCompanyMutation.isPending} >
+                <Button className='bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white' type="submit" disabled={createCompanyMutation.isPending} >
                   {(createCompanyMutation.isPending ? 'Creating...' : 'Create Company')}
                 </Button>
               )}

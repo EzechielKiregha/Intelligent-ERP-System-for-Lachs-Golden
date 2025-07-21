@@ -46,7 +46,7 @@ export function UserButton() {
     user = {
       name: "John Doe",
       email: "john.doe@example.com",
-      avatar: "https://github.com/shadcn.png",
+      avatar: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
     };
   }
 

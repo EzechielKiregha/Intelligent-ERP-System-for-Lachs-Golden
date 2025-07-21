@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Intelligent ERP GOLD",
+  title: "ERP - Lachs Golden",
   description: "Intelligent ERP System for Modern Business Streamline your operations with AI-powered insights and automation at Golden Intelingent ERP.",
 };
 

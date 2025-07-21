@@ -96,13 +96,6 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="hover:bg-sidebar-accent">
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
               <DropdownMenuItem
                 onClick={() => router.push("/settings")}
                 className="hover:bg-sidebar-accent">
@@ -111,7 +104,7 @@ export function NavUser({
               </DropdownMenuItem>
               <DropdownMenuItem className="hover:bg-sidebar-accent">
                 <CreditCard />
-                Billing
+                Contract
               </DropdownMenuItem>
               <DropdownMenuItem className="hover:bg-sidebar-accent">
                 <Bell />

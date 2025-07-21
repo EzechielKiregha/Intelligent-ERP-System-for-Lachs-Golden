@@ -165,14 +165,14 @@ export default function SettingsPage() {
                       <div
                         className="h-40 w-full bg-cover bg-center rounded-t-lg"
                         style={{
-                          backgroundImage: `url(${userData?.company?.images?.[0]?.url || 'https://github.com/shadcn.png'})`,
+                          backgroundImage: `url(${userData?.company?.images?.[0]?.url || 'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'})`,
                         }}
                       ></div>
                       {/* Profile Section */}
                       <div className="relative p-6">
                         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                           <Image
-                            src={userData?.images?.[0]?.url || 'https://github.com/shadcn.png'}
+                            src={userData?.images?.[0]?.url || 'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'}
                             alt="Profile"
                             width={120}
                             height={120}

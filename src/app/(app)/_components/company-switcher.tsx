@@ -81,7 +81,7 @@ export function CompanySwitcher() {
               <div className=" flex aspect-square size-8 items-center justify-center rounded-lg">
                 <Avatar className="size-8 rounded-lg">
                   <AvatarImage
-                    src={activeCompany?.images[0] ? activeCompany?.images[0].url : "https://github.com/shadcn.png"}
+                    src={activeCompany?.images[0] ? activeCompany?.images[0].url : "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png"}
                     alt="Workspace logo"
                   />
                   <AvatarFallback className="bg-black text-white rounded-lg font-bold text-lg">
@@ -120,7 +120,7 @@ export function CompanySwitcher() {
                 <div className="flex size-6 items-center justify-center rounded-md border">
                   <Avatar className="size-8 rounded-lg">
                     <AvatarImage
-                      src={company?.images[0] ? company?.images[0].url : "https://github.com/shadcn.png"}
+                      src={company?.images[0] ? company?.images[0].url : "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png"}
                       alt="company logo"
                     />
                     <AvatarFallback className="bg-black text-white rounded-lg font-bold text-lg">

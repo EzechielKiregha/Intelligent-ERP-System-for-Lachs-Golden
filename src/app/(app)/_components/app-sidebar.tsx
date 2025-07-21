@@ -122,7 +122,7 @@ const company = [
 const userData = {
   name: "John Doe",
   email: "john.doe@example.com",
-  avatar: "https://github.com/shadcn.png",
+  avatar: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
 };
 
 function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -141,7 +141,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <>
       <CreateCompanyModal />
-      <Sidebar collapsible="icon" {...props}>
+      <Sidebar collapsible="icon" {...props} className="border-r-2 border-[#D4AF37]" >
         <SidebarHeader>
           <CompanySwitcher />
         </SidebarHeader>
@@ -158,7 +158,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <NavUser user={{
             name: user?.name || userData.name,
             email: user?.email || userData.email,
-            avatar: user?.avatar || userData.avatar,
+            avatar: user?.image || userData.avatar,
           }} />
         </SidebarFooter>
         <SidebarRail />

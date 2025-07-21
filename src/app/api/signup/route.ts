@@ -11,7 +11,7 @@ const signUpSchema = z.object({
   email: z.string().email('Invalid email'),
   role: z.enum([Role.ADMIN, Role.ADMIN, Role.USER]).optional(),
   status: z.enum([UserStatus.PENDING, UserStatus.ACCEPTED, UserStatus.BLOCKED]).optional(),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
   companyId: z.string().min(1, 'Company ID is required'),
 });
 
@@ -69,9 +69,9 @@ export async function POST(req: NextRequest) {
         currentCompanyId: companyId,
         images: {
           create: {
-            url: "https://github.com/shadcn.png",
-            pathname: "https://github.com/shadcn.png",
-            contentType: "https://github.com/shadcn.png",
+            url: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
+            pathname: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
+            contentType: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
             size: 10000,
           }
         }

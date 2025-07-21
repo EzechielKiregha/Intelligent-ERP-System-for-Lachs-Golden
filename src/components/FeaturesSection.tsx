@@ -44,7 +44,7 @@ export function FeaturesSection() {
   ];
 
   return (
-    <section id="features" className="py-16 bg-white dark:bg-[#111827]">
+    <section id="features" className="py-16 bg-transparent border-y-3 border-[#D4AF37]">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200 text-center mb-8">
           Comprehensive Business Solutions

@@ -1,20 +1,48 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, LayoutDashboard } from "lucide-react";
+import { ArrowLeft, LayoutDashboard, Square, SquareArrowDownRight } from "lucide-react";
+import {
+  LifeBuoy,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+} from 'lucide-react';
+import Image from "next/image";
 
 export default function TermsOfService() {
+  const solutions = [
+    { label: 'Financial Management', href: '#' },
+    { label: 'HR System', href: '#' },
+    { label: 'CRM', href: '#' },
+    { label: 'Analytics', href: '#' },
+  ];
+  const companyLinks = [
+    { label: 'Industries', href: 'https://lachsgolden.com/services/' },
+    { label: 'Contact us', href: 'https://lachsgolden.com/contact-us-2/' },
+    { label: 'Who we are', href: 'https://lachsgolden.com/about/' },
+  ];
+  const social = [
+    { icon: <LifeBuoy className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
+    { icon: <Facebook className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
+    { icon: <Twitter className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
+    { icon: <Linkedin className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
+    { icon: <Instagram className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
+  ];
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navigation */}
-      <header className="border-b border-b-gray-200 dark:border-b-gray-800 fixed w-full bg-background bg-gray-300 dark:bg-gray-900 rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-40 z-50">
+      <header className=" fixed w-full border-b-3 border-[#D4AF37] dark:bg-gray-950 bg-gray-50 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-40 z-50">
         <div className="container mx-auto flex h-16 items-center justify-between">
-          <Link href={"/"} className="flex items-center gap-2">
-            <LayoutDashboard className="h-6 w-6" />
-            <span className="text-xl font-bold">TaskPilot</span>
+          <Link href="/" className="text-xl items-center font-bold flex flex-row gap-1.5 text-sidebar-primary dark:text-[#D4AF37]">
+            <Image width="50" height="50" src="https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png"
+              alt="" sizes="(max-width: 371px) 100vw, 371px" />
+            <p>{'Intelligent ERP - Lachs Golden'}</p>
+            <span className="hidden md:flex text-sm text-muted-foreground">{'Inc.'}</span>
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 cursor-pointer text-[#80410e] dark:text-[#D4AF37]">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Home
               </Button>
@@ -35,11 +63,11 @@ export default function TermsOfService() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
               <p>
-                Welcome to TaskPilot (&quot;Company&quot;, &quot;we&quot;,
+                Welcome to Lachs Golden Intelligent ERP (&quot;Company&quot;, &quot;we&quot;,
                 &quot;our&quot;, &quot;us&quot;)! These Terms of Service
                 (&quot;Terms&quot;, &quot;Terms of Service&quot;) govern your
-                use of our website and software application TaskPilot (together
-                or individually &quot;Service&quot;) operated by TaskPilot.
+                use of our website and software application Lachs Golden Intelligent ERP (together
+                or individually &quot;Service&quot;) operated by Lachs Golden Intelligent ERP.
               </p>
               <p className="mt-2">
                 Our Privacy Policy also governs your use of our Service and
@@ -58,7 +86,7 @@ export default function TermsOfService() {
                 marketing or promotional materials and other information we may
                 send. However, you may opt out of receiving any, or all, of
                 these communications from us by following the unsubscribe link
-                or by emailing us at support@taskpilot.dev.
+                or by emailing us.
               </p>
             </section>
 
@@ -142,11 +170,11 @@ export default function TermsOfService() {
               <p>
                 The Service and its original content (excluding Content provided
                 by users), features and functionality are and will remain the
-                exclusive property of TaskPilot and its licensors. The Service
+                exclusive property of Lachs Golden Intelligent ERP and its licensors. The Service
                 is protected by copyright, trademark, and other laws of both the
                 United States and foreign countries. Our trademarks and trade
                 dress may not be used in connection with any product or service
-                without the prior written consent of TaskPilot.
+                without the prior written consent of Lachs Golden Intelligent ERP.
               </p>
             </section>
 
@@ -155,7 +183,7 @@ export default function TermsOfService() {
                 7. Open Source License
               </h2>
               <p>
-                TaskPilot is provided under the MIT License. You are free to
+                Lachs Golden Intelligent ERP is provided under the MIT License. You are free to
                 use, modify, and distribute the software according to the terms
                 of this license.
               </p>
@@ -188,7 +216,7 @@ export default function TermsOfService() {
                 9. Limitation of Liability
               </h2>
               <p>
-                In no event shall TaskPilot, nor its directors, employees,
+                In no event shall Lachs Golden Intelligent ERP, nor its directors, employees,
                 partners, agents, suppliers, or affiliates, be liable for any
                 indirect, incidental, special, consequential or punitive
                 damages, including without limitation, loss of profits, data,
@@ -229,7 +257,7 @@ export default function TermsOfService() {
                 at:
               </p>
               <p className="mt-2">
-                <strong>Email:</strong> arkar1712luffy@gmail.com
+                <strong>Email:</strong> kireghacorp@gmail.com
               </p>
             </section>
           </div>
@@ -237,34 +265,45 @@ export default function TermsOfService() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t py-6">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:h-16">
-          <div className="flex items-center gap-2">
-            <LayoutDashboard className="h-5 w-5" />
-            <p className="text-sm">© 2025 TaskPilot. All rights reserved.</p>
+      <footer id="contact" className="bg-transparent border-t-3 border-[#D4AF37] text-white py-10">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div>
+            <h3 className="text-[18px] font-semibold mb-4 text-gray-200">Solutions</h3>
+            <ul className="space-y-2">
+              {solutions.map((s, idx) => (
+                <li key={idx}>
+                  <a href={s.href} className="text-[14px] text-gray-200 hover:underline">
+                    {s.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="flex gap-4">
-            <Link
-              href="/privacy-policy"
-              className="text-sm text-muted-foreground hover:underline underline-offset-4"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/terms-of-service"
-              className="text-sm text-muted-foreground hover:underline underline-offset-4"
-            >
-              Terms of Service
-            </Link>
-            <Link
-              href="https://github.com/Kei-K23/task-pilot"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground hover:underline underline-offset-4"
-            >
-              GitHub
-            </Link>
+          <div>
+            <h3 className="text-[18px] font-semibold mb-4 text-gray-200">Company</h3>
+            <ul className="space-y-2">
+              {companyLinks.map((c, idx) => (
+                <li key={idx}>
+                  <a href={c.href} className="text-[14px] text-gray-200 hover:underline">
+                    {c.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
+          <div>
+            <h3 className="text-[18px] font-semibold mb-4 text-gray-200">Connect</h3>
+            <div className="flex space-x-4">
+              {social.map((s, idx) => (
+                <a key={idx} href={s.href} className="hover:text-gray-400">
+                  {s.icon}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="mt-8 text-center text-[12px] text-gray-400">
+          © {new Date().getFullYear()} Golden Intelingent ERP. All rights reserved.
         </div>
       </footer>
     </div>

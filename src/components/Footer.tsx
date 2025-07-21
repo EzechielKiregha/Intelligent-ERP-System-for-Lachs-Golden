@@ -14,10 +14,9 @@ export function Footer() {
     { label: 'Analytics', href: '#' },
   ];
   const companyLinks = [
-    { label: 'About Us', href: '#' },
-    { label: 'Careers', href: '#' },
-    { label: 'Partners', href: '#' },
-    { label: 'Contact', href: '#' },
+    { label: 'Industries', href: 'https://lachsgolden.com/services/' },
+    { label: 'Contact us', href: 'https://lachsgolden.com/contact-us-2/' },
+    { label: 'Who we are', href: 'https://lachsgolden.com/about/' },
   ];
   const social = [
     { icon: <LifeBuoy className="w-5 h-5 text-[#D4AF37] dark:text-[#D4AF37]" />, href: '#' },
@@ -28,14 +27,14 @@ export function Footer() {
   ];
 
   return (
-    <footer id="contact" className="bg-gradient-to-l from-[#80410e] to-[#c56a03] dark:bg-[#1E293B] text-white py-10">
+    <footer id="contact" className="bg-transparent border-t-3 border-[#D4AF37] dark:text-white py-10">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8">
         <div>
-          <h3 className="text-[18px] font-semibold mb-4 text-gray-200">Solutions</h3>
+          <h3 className="text-[18px] font-semibold mb-4 dark:text-gray-200">Solutions</h3>
           <ul className="space-y-2">
             {solutions.map((s, idx) => (
               <li key={idx}>
-                <a href={s.href} className="text-[14px] text-gray-200 hover:underline">
+                <a href={s.href} className="text-[14px] dark:text-gray-200 hover:underline">
                   {s.label}
                 </a>
               </li>
@@ -43,11 +42,11 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="text-[18px] font-semibold mb-4 text-gray-200">Company</h3>
+          <h3 className="text-[18px] font-semibold mb-4 dark:text-gray-200">Company</h3>
           <ul className="space-y-2">
             {companyLinks.map((c, idx) => (
               <li key={idx}>
-                <a href={c.href} className="text-[14px] text-gray-200 hover:underline">
+                <a href={c.href} className="text-[14px] dark:text-gray-200 hover:underline">
                   {c.label}
                 </a>
               </li>
@@ -55,7 +54,7 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="text-[18px] font-semibold mb-4 text-gray-200">Connect</h3>
+          <h3 className="text-[18px] font-semibold mb-4 dark:text-gray-200">Connect</h3>
           <div className="flex space-x-4">
             {social.map((s, idx) => (
               <a key={idx} href={s.href} className="hover:text-gray-400">

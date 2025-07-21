@@ -32,8 +32,8 @@ export async function POST(req: Request) {
           owners : { connect: { id: session.user.id } },
           images: {
             create: {
-              url: "https://github.com/shadcn.png",
-              pathname: "https://github.com/shadcn.png",
+              url: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
+              pathname: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
               contentType: "image/png",
               size: 10000,
             },
@@ -75,8 +75,8 @@ export async function POST(req: Request) {
           ...companyData,
           images: {
             create: {
-              url: "https://github.com/shadcn.png",
-              pathname: "https://github.com/shadcn.png",
+              url: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
+              pathname: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
               contentType: "image/png",
               size: 10000,
             },

@@ -47,7 +47,7 @@ export function EmployeeCellViewer({ item }: { item: Employee }) {
           {/* Avatar + Basic Info */}
           <div className="flex items-center gap-4">
             <Avatar>
-              <AvatarImage src={`https://github.com/shadcn.png`} alt={fullName} />
+              <AvatarImage src={`https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png`} alt={fullName} />
               <AvatarFallback>{item.firstName[0]}{item.lastName[0]}</AvatarFallback>
             </Avatar>
             <div>

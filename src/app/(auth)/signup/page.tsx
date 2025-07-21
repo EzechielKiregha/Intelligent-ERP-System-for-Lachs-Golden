@@ -22,7 +22,7 @@ const userSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -69,7 +69,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg">
+    <div className="flex items-center justify-center min-h-screen bg-transparent px-4 shadow-lg">
       <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
         <LeftAuthPanel />
         {/* <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg"> */}
@@ -108,57 +108,70 @@ export default function SignUpPage() {
 
               {step === 2 && (
                 <div className="space-y-4">
-                  <Label className="text-sm flex flex-row justify-between text-gray-800 dark:text-gray-200">
-                    Select Your Company
-                    <Link
-                      href={`/company/create?data=${encodeURIComponent(JSON.stringify(fowardUser))}&isOwner=true`}
-                      className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]"
-                    >
-                      Create a new company
-                    </Link>
+                  <Label className="text-sm text-gray-800 dark:text-gray-200">
+                    Last Step Confirm Company
                   </Label>
-                  <ScrollArea className="h-52 w-full border rounded-md p-2">
-                    {isLoading ? (
-                      <p>Loading companies...</p>
-                    ) : companies?.length ? (
-                      companies.map((company: { id: string; name: string; industry: string }) => (
-                        <Card
-                          key={company.id}
-                          onClick={() => setSelectedCompany(company.id)}
-                          className={`mb-1 cursor-pointer ${selectedCompany === company.id ? 'bg-[#80410e] text-white' : 'bg-white dark:bg-[#1F2A44]'}`}
-                        >
-                          <CardContent>
-                            <h3 className="font-medium">{company.name}</h3>
-                            <p className="text-sm">{company.industry}</p>
-                          </CardContent>
-                        </Card>
-                      ))
-                    ) : (
-                      <p>No companies available</p>
-                    )}
-                  </ScrollArea>
-
-                  {selectedCompany === null && <p className="text-xs text-[#E53E3E] dark:text-[#FC8181]">Please select a company</p>}
-                  <div className="flex items-center">
-                    <input
-                      id="terms"
-                      type="checkbox"
-                      className="h-4 w-4 text-[#A17E25] dark:text-[#D4AF37] border-gray-300 dark:border-[#374151] rounded"
-                    />
-                    <label htmlFor="terms" className="ml-2 text-sm text-gray-800 dark:text-gray-200">
-                      I agree to the{' '}
-                      <a href="/terms-of-service" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
-                        Terms of Service
-                      </a>{' '}
-                      and{' '}
-                      <a href="/privacy-policy" className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
-                        Privacy Policy
-                      </a>
-                    </label>
-                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    To confirm please click the company name to ensure you have access to the correct resources and permissions within the system.
+                  </p>
+                  {companies?.length === 1 ? (
+                    <Card
+                      onClick={() => setSelectedCompany(companies[0].id)}
+                      className={`cursor-pointer ${selectedCompany === companies[0].id
+                        ? 'bg-gradient-to-l from-[#80410e] to-[#c56a03] text-white'
+                        : 'bg-white dark:bg-[#1F2A44]'
+                        }`}
+                    >
+                      <CardContent>
+                        <h3 className="font-medium">{companies[0].name}</h3>
+                        <p className="text-sm">{companies[0].industry}</p>
+                      </CardContent>
+                    </Card>
+                  ) : companies?.length === 0 ? (
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        No companies found. You need to create a company to proceed with registration.
+                      </p>
+                      <Link
+                        href={`/company/create?data=${encodeURIComponent(
+                          JSON.stringify(fowardUser)
+                        )}&isOwner=true`}
+                        className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]"
+                      >
+                        Create a new company
+                      </Link>
+                    </div>
+                  ) : (
+                    <p>Loading companies...</p>
+                  )}
+                  {selectedCompany === null && companies?.length > 0 && (
+                    <p className="text-xs text-[#E53E3E] dark:text-[#FC8181]">
+                      Please select a company
+                    </p>
+                  )}
                 </div>
               )}
-
+              <div className="flex items-center">
+                <input
+                  id="terms"
+                  type="checkbox"
+                  className="h-4 w-4 text-[#A17E25] dark:text-[#D4AF37] border-gray-300 dark:border-[#374151] rounded"
+                />
+                <label htmlFor="terms" className="ml-2 text-sm text-gray-800 dark:text-gray-200">
+                  I agree to the{' '}
+                  <Link href="/terms-of-service" target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+                    Terms of Service
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="/privacy-policy" target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+                    Privacy Policy
+                  </Link>
+                </label>
+              </div>
               <div className="flex justify-between mt-6">
                 {step > 1 && (
                   <Button type="button" onClick={() => setStep(step - 1)} variant="outline" className="text-gray-800 dark:text-gray-200">
@@ -179,6 +192,7 @@ export default function SignUpPage() {
                   Sign in
                 </Link>
               </p>
+
             </form>
           </CardContent>
         </Card>

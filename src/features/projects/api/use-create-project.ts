@@ -51,9 +51,9 @@ export const useCreateProject = (workspaceId: string) => {
         const responseElse = await axios.post('/api/projects', {
           name: data.name,
           workspaceId,
-          url: "https://github.com/shadcn.png",
-          pathname: "https://github.com/shadcn.png",
-          contentType: "https://github.com/shadcn.png",
+          url: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
+          pathname: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
+          contentType: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
           size: 10000, // Default size if no image is provided
         }
       )
