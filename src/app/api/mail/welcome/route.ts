@@ -34,10 +34,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: `${userExist.company?.name}  <noreply@intelligenterp.dpdns.org>`,
+      from: `${userExist.company?.name}  <support@intelligenterp.dpdns.org>`,
       to: [toEmail],
-      subject: 'Welcome to Intelligent ERP',
+      subject: `Welcome to ${userExist.company?.name}'s Intelligent ERP`,
       html: await render(WelcomeEmail(PreviewProps)),
+      text:  `Welcome to ${userExist.company?.name}'s Intelligent ERP`,
     });
 
     if (error) {

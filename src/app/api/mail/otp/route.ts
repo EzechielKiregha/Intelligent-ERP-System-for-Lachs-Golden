@@ -52,10 +52,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: `${userExist.company?.name}  <noreply@intelligenterp.dpdns.org>`,
+      from: `${userExist.company?.name} ERP  <support@intelligenterp.dpdns.org>`,
       to: [user.email],
-      subject: 'Your OTP Code',
+      subject: `Your Intelligent ERP OTP: ${otp}`,
       html: await emailHtml,
+      text: `Your OTP is ${otp}. It will expire in 10 minutes. If you didn’t request this, ignore the message.`,
     });
 
     if (error) {

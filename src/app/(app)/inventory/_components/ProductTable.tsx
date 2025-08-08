@@ -72,17 +72,18 @@ export const productColumns: ColumnDef<z.infer<typeof productSchema>>[] = [
     accessorKey: "name",
     header: "Product",
     cell: ({ row }) => (
-      <TableCellViewer
-        item={{
-          id: row.original.id,
-          category: row.original.name,
-          type: row.original.sku,
-          quantity: row.original.quantity,
-          threshold: row.original.threshold,
-          unitPrice: row.original.unitPrice
-        }}
-        typeName="Products"
-      />
+      <div className="text-left font-mono">{row.original.name}</div>
+      // <TableCellViewer
+      //   item={{
+      //     id: row.original.id,
+      //     category: row.original.name,
+      //     type: row.original.sku,
+      //     quantity: row.original.quantity,
+      //     threshold: row.original.threshold,
+      //     unitPrice: row.original.unitPrice
+      //   }}
+      //   typeName="Products"
+      // />
     ),
   },
   {

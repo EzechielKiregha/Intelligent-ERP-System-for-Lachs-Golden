@@ -37,6 +37,9 @@ export const OtpEmail = ({ verificationCode }: OtpEmailProps) => {
             <Text style={{ color: '#5a3b02', fontSize: '14px' }}>
               Intelligent ERP will never email you and ask you to disclose or verify your password, credit card, or banking account number.
             </Text>
+            <Text style={{ color: '#5a3b02', fontSize: '14px' }}>
+              You're receiving this email because you have an account at intelligenterp.dpdns.org.
+            </Text>
           </Section>
         </Container>
       </Body>
