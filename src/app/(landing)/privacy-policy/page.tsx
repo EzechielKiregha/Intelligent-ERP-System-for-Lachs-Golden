@@ -178,7 +178,7 @@ export default function PrivacyPolicy() {
                 privacy practices, please contact us at:
               </p>
               <p className="mt-2">
-                <strong>Email:</strong> arkar1712luffy@gmail.com
+                <strong>Email:</strong> alicebunani5@gmail.com
               </p>
             </section>
           </div>

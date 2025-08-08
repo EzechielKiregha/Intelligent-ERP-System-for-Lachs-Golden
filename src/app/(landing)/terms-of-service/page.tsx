@@ -257,7 +257,7 @@ export default function TermsOfService() {
                 at:
               </p>
               <p className="mt-2">
-                <strong>Email:</strong> kireghacorp@gmail.com
+                <strong>Email:</strong> alicebunani5@gmail.com
               </p>
             </section>
           </div>
