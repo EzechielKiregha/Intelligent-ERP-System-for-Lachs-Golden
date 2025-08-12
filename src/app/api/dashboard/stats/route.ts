@@ -24,15 +24,15 @@ export async function GET(req: NextRequest) {
     });
     const orderPercentage = totalOrders > 0 ? (totalOrders / 100) * 100 : 0;
 
-    const totalCustomers = await prisma.customer.count({
+    const totalUsers = await prisma.user.count({
       where: { companyId },
     });
-    const customerPercentage = totalCustomers > 0 ? (totalCustomers / 100) * 100 : 0;
+    const customerPercentage = totalUsers > 0 ? (totalUsers / 100) * 100 : 0;
 
     return NextResponse.json({
       totalRevenue: totalRevenue || 0,
       totalOrders: totalOrders || 0,
-      totalCustomers: totalCustomers || 0,
+      totalUsers: totalUsers || 0,
       revPercentage: parseFloat(revPercentage.toFixed(2)) || 0,
       orderPercentage: parseFloat(orderPercentage.toFixed(2)) || 0,
       customerPercentage: parseFloat(customerPercentage.toFixed(2)) || 0,
