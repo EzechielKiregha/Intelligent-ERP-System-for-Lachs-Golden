@@ -4,7 +4,7 @@ import axiosdb from '@/lib/axios';
 export interface DashboardStats {
   totalRevenue: number;
   totalOrders: number;
-  totalCustomers: number;
+  totalUsers: number;
   revPercentage: number;
   orderPercentage: number;
   customerPercentage: number;
