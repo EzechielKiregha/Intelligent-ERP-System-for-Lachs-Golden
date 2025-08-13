@@ -29,7 +29,7 @@ export default function ManageReviewPage() {
           : 'Create a performance review for an employee based on evaluation period and observations.'}
       </p>
 
-      <div className="bg-sidebar rounded-lg border-[var(--sidebar-border)] p-6">
+      <div className="bg-sidebar flex justify-center w-full rounded-lg border-[var(--sidebar-border)] p-6">
         <ReviewForm reviewId={id} />
       </div>
     </div>

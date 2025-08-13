@@ -220,12 +220,43 @@ export function usePayrolls() {
   })
 }
 
+export function usePayrollsByEmpId(id?: string) {
+  return useQuery({
+    queryKey: ['hr', 'payroll', id],
+    queryFn: async () => {
+      const { data } = await axiosdb.get(`/api/hr/payroll/${id}`)
+      return data as Array<{
+        id: string;
+        employeeId: string;
+        payPeriod: string;
+        grossAmount: number ;
+        taxAmount: number ;
+        netAmount: number;
+        issuedDate: string;
+        notes: string;
+        employee?: { firstName:string; lastName:string }
+      }>
+    },
+    enabled: Boolean(id),
+  })
+}
+
 export function useSinglePayroll(id?: string) {
   return useQuery({
     queryKey: ['hr', 'payroll', id],
     queryFn: async () => {
       const { data } = await axiosdb.get(`/api/hr/payroll/${id}`)
-      return data
+      return data as {
+        id: string;
+        employeeId: string;
+        payPeriod: string;
+        grossAmount: number ;
+        taxAmount: number ;
+        netAmount: number;
+        issuedDate: string;
+        notes: string;
+        employee?: { firstName:string; lastName:string }
+      }
     },
     enabled: Boolean(id),
   })

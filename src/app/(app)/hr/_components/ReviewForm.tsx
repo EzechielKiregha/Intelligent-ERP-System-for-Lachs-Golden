@@ -11,7 +11,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar'
 import { ChevronDownIcon, Star } from 'lucide-react'
 import BasePopover from '@/components/BasePopover'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEmployees, useReviews, useSaveReview, useSingleEmployee } from '@/lib/hooks/hr'
 import { toast } from 'sonner'
 import { useAuth } from 'contents/authContext'
@@ -31,6 +31,7 @@ export default function ReviewForm({ reviewId }: { reviewId?: string }) {
   const { data: r } = useReviews() // for single you’d use useSingleReview; here quick
   const save = useSaveReview()
   const { data: employees, isLoading } = useEmployees();
+  const router = useRouter()
   const user = useAuth().user;
   const empId = params.get('employeeId') || ''
 
@@ -43,7 +44,7 @@ export default function ReviewForm({ reviewId }: { reviewId?: string }) {
     defaultValues: {
       employeeId: empId || '',
       reviewerId: user?.id || '',
-      reviewDate: date,
+      reviewDate: date || new Date(),
       rating: r?.find(x => x.id === id)?.rating,
       comments: r?.find(x => x.id === id)?.comments,
     } as any
@@ -64,12 +65,13 @@ export default function ReviewForm({ reviewId }: { reviewId?: string }) {
       onSuccess: () => {
         reset()
         toast.success('Review Saved')
+        router.push('/hr/employees')
       }
     })
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 bg-sidebar text-sidebar-foreground rounded-lg max-w-sm">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 bg-sidebar text-sidebar-foreground w-full rounded-lg max-w-sm">
       {eLoasing && !e ? "" : e && (
         <>
           <p>Employee Being Reviewed</p>

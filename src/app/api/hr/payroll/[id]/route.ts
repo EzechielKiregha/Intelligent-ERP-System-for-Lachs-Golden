@@ -11,6 +11,13 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+  const emp = await prisma.employee.findUnique({
+    where: { id },
+    include: { payrolls: true }
+  })
+  if (emp) {
+    return NextResponse.json(emp.payrolls)
+  }
   const item = await prisma.payroll.findUnique({
     where: { id },
     include: { employee: { select: { firstName: true, lastName: true } } }

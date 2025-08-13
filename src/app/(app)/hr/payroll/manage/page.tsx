@@ -29,7 +29,7 @@ export default function ManagePayrollPage() {
           : 'Fill out the payroll details for an employee and specify the pay period.'}
       </p>
 
-      <div className="bg-sidebar rounded-lg border-[var(--sidebar-border)] p-6">
+      <div className="bg-sidebar flex justify-center w-full rounded-lg border-[var(--sidebar-border)] p-6">
         <PayrollForm payrollId={id} />
       </div>
     </div>

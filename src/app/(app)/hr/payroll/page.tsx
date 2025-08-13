@@ -20,8 +20,8 @@ export default function PayrollPage() {
             </Button>
           </Link>
         </div>
+        <PayrollTable />
       </div>
-      <PayrollTable />
     </div>
   )
 }

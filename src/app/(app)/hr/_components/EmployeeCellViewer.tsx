@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { format } from 'date-fns'
-import { useReviews } from '@/lib/hooks/hr'
+import { usePayrollsByEmpId, useReviews, useSinglePayroll } from '@/lib/hooks/hr'
 import Link from 'next/link'
 
 interface Employee {
@@ -26,6 +26,7 @@ interface Employee {
 export function EmployeeCellViewer({ item }: { item: Employee }) {
   const isMobile = useIsMobile()
   const { data: reviews } = useReviews(item.id)
+  const { data: payrolls } = usePayrollsByEmpId(item.id) // Assuming you have a similar hook for payrolls
 
   const fullName = `${item.firstName} ${item.lastName}`
 
@@ -116,7 +117,7 @@ export function EmployeeCellViewer({ item }: { item: Employee }) {
           {/* Recent Reviews */}
           <div>
             <p className="font-medium mb-2">Payroll </p>
-            {!reviews ? (
+            {!payrolls ? (
               <>
                 <h3 className="text-lg font-semibold">No Pay-Check so far</h3>
                 <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
@@ -125,7 +126,7 @@ export function EmployeeCellViewer({ item }: { item: Employee }) {
                   </Link>
                 </div>
               </>
-            ) : reviews.length === 0 ? (
+            ) : payrolls.length === 0 ? (
               <>
                 <h3 className="text-lg font-semibold">No Pay-Check so far</h3>
                 <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
@@ -136,13 +137,18 @@ export function EmployeeCellViewer({ item }: { item: Employee }) {
               </>
             ) : (
               <ul className="space-y-2">
-                {reviews.slice(0, 5).map((r) => (
-                  <li key={r.id} className="text-sm">
-                    <span className="font-medium">{format(new Date(r.reviewDate), 'MMM d, yyyy')}:</span>{' '}
-                    {r.rating}
+                {payrolls.slice(0, 5).map((p) => (
+                  <li key={p.id} className="text-sm">
+                    <span className="font-medium">{format(new Date(p.issuedDate), 'MMM d, yyyy')}:</span>{' '}
+                    {p.netAmount} USD
                     <p className="text-xs text-muted-foreground">
-                      {r.comments || 'No comments'}
+                      {p.notes || 'No comments'}
                     </p>
+                    <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
+                      <Link href={`/hr/payroll/manage?employeeId=${item.id}`} className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+                        Generate a new Pay-Check
+                      </Link>
+                    </div>
                   </li>
                 ))}
               </ul>

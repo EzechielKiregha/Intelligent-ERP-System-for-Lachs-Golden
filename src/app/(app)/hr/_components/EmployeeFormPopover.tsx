@@ -14,6 +14,7 @@ import { useDepartments, useSaveEmployee, useSingleEmployee } from '@/lib/hooks/
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ChevronDownIcon } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
+import { useRouter } from 'next/navigation'
 
 const empSchema = z.object({
   firstName: z.string().min(1),
@@ -31,6 +32,7 @@ type EmpForm = z.infer<typeof empSchema>
 export default function EmployeeFormPopover() {
   const deps = useDepartments()
   const save = useSaveEmployee()
+  const router = useRouter()
   const [date, setDate] = useState<Date | undefined>()
 
   const { register, handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm<EmpForm>({
@@ -50,7 +52,13 @@ export default function EmployeeFormPopover() {
 
   const onSubmit = (data: EmpForm) => {
     save.mutate({ ...data, date },
-      { onSuccess: () => { toast.success('Employee Saved'); reset() } })
+      {
+        onSuccess: () => {
+          toast.success('Employee Saved');
+          reset()
+          router.refresh()
+        }
+      })
   }
 
   return (
