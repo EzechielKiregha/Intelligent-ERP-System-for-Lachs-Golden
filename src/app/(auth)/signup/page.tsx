@@ -114,7 +114,7 @@ export default function SignUpPage() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     To confirm please click the company name to ensure you have access to the correct resources and permissions within the system.
                   </p>
-                  {companies?.length === 1 ? (
+                  {companies && companies?.length === 1 ? (
                     <Card
                       onClick={() => setSelectedCompany(companies[0].id)}
                       className={`cursor-pointer ${selectedCompany === companies[0].id

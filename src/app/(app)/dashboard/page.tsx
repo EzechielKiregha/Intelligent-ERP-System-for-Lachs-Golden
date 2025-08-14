@@ -111,7 +111,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <MetricCard
                 icon={<DollarSign className="w-6 h-6 text-[#f0eadb] dark:text-[#f3edd8]" />}
-                title="Total Revenue"
+                title="Total Rev/Expenses"
                 value={`$${stats.totalRevenue || '0'}`}
                 delta={`${(stats.revPercentage || 0) * 100}%`}
                 deltaType={`${stats.revPercentage > 20 ? "increase" : stats.revPercentage < 20 ? "decrease" : "neutral"}`}

@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useAuth } from "contents/authContext"
 import { useRouter } from "next/navigation"
+import NotificationPopover from "@/components/NotificationPopover"
 
 interface userDetails {
   user: {
@@ -102,14 +103,13 @@ export function NavUser({
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-sidebar-accent">
+              {/* <DropdownMenuItem className="hover:bg-sidebar-accent">
                 <CreditCard />
                 Contract
-              </DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-sidebar-accent">
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
+              {/* <DropdownMenuItem className="hover:bg-sidebar-accent">
+                <NotificationPopover />
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="hover:bg-sidebar-accent" onClick={logout}>

@@ -16,6 +16,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import NotificationPopover from '@/components/NotificationPopover';
 
 const Topbar: React.FC = () => {
   const pathname = usePathname();
@@ -53,12 +54,7 @@ const Topbar: React.FC = () => {
 
         {/* Notifications Toggle theme*/}
         <ModeToggle />
-
-        {/* <Button variant="outline" size="icon" className="transition ease-in-out duration-150 hover:shadow-lg hover:scale-105 motion-safe:transform">
-          <Bell className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90 text-[#A17E25] dark:text-[#D4AF37]" />
-          <BellRingIcon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0 text-[#A17E25] dark:text-[#D4AF37]" />
-          <span className="sr-only">Notifications</span>
-        </Button> */}
+        <NotificationPopover />
         {/* User Profile (Placeholder) */}
         <NavUser user={
           {

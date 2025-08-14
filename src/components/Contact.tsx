@@ -5,14 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSaveNotification } from "@/hooks/useNotifications";
+import { toast } from "sonner";
 
 const userSchema = z.object({
-  name: z.string().min(1, 'First name is required'),
+  name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email'),
-  message: z.string().min(8, 'Password must be at least 8 characters'),
+  message: z.string().min(8, 'Message must be at least 8 characters'),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -21,15 +22,20 @@ export default function ContactPage() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutateAsync: saveNotification, isPending } = useSaveNotification();
 
-  const onSubmit = async (data: any) => {
-    setIsSubmitting(true);
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(data); // Replace with actual form submission logic
-    setIsSubmitting(false);
-    reset();
+  const onSubmit = async (data: UserFormData) => {
+    try {
+      await saveNotification({
+        message: data.message,
+        type: "contact",
+        email: data.email,
+      });
+      reset();
+      toast.success("Message sent successfully!");
+    } catch (error) {
+      console.error("Failed to send notification:", error);
+    }
   };
 
   return (
@@ -87,8 +93,8 @@ export default function ContactPage() {
               />
               {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
             </div>
-            <Button type="submit" className="w-full bg-sidebar-accent text-white" disabled={isSubmitting}>
-              {isSubmitting ? "Sending..." : "Send Message"}
+            <Button type="submit" className="w-full bg-sidebar-accent text-white" disabled={isPending}>
+              {isPending ? "Sending..." : "Send Message"}
             </Button>
           </form>
         </div>

@@ -29,6 +29,7 @@ import { Menu, LogOut, Sparkles, Bell, CreditCard, BadgeCheck, ChevronsUpDown, C
 import { useRouter } from 'next/navigation';
 import { useGetCompanyById } from '@/lib/hooks/use-owner-company';
 import Image from 'next/image';
+import NotificationPopover from './NotificationPopover';
 
 export function Navbar() {
   const router = useRouter();
@@ -106,7 +107,7 @@ export function Navbar() {
           })}
 
           <ModeToggle />
-
+          <NotificationPopover />
           {user ? (
             <div className="ml-8 space-x-3">
               <DropdownMenu>
@@ -161,14 +162,14 @@ export function Navbar() {
                       <BadgeCheck />
                       Account
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-sidebar-accent">
+                    {/* <DropdownMenuItem className="hover:bg-sidebar-accent">
                       <CreditCard />
                       Contract
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-sidebar-accent">
+                    </DropdownMenuItem> */}
+                    {/* <DropdownMenuItem className="hover:bg-sidebar-accent">
                       <Bell />
-                      Notifications
-                    </DropdownMenuItem>
+                      <NotificationPopover />
+                    </DropdownMenuItem> */}
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="hover:bg-sidebar-accent" onClick={logout}>
@@ -215,7 +216,7 @@ export function Navbar() {
                 ))}
 
                 <ModeToggle />
-
+                <NotificationPopover />
                 {user ? (
                   <>
                     <div className="flex items-center gap-2 mt-4 bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">

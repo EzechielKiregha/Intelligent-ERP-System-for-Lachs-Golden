@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useId, useState } from 'react';
 import { AnimatePresence, MotionConfig, Transition, motion } from 'framer-motion';
-import { ArrowLeftIcon, Cross, EyeClosed, Minus } from 'lucide-react';
+import { ArrowLeftIcon, Bell, Cross, EyeClosed, Minus } from 'lucide-react';
 import { Button } from './ui/button';
 
 // Explicitly cast TRANSITION to the correct type
@@ -11,6 +11,7 @@ interface PopoverProps {
   title: string;
   children: React.ReactNode;
   buttonLabel?: string;
+  icon?: boolean;
   isOpen?: boolean;
   onClose?: () => void;
   onClick?: () => void;
@@ -19,7 +20,8 @@ interface PopoverProps {
 export default function BasePopover({
   title,
   children,
-  buttonLabel = 'Open',
+  buttonLabel,
+  icon: Icon,
   isOpen: controlledIsOpen,
   onClose,
 }: PopoverProps) {
@@ -52,7 +54,7 @@ export default function BasePopover({
 
   return (
     <MotionConfig transition={TRANSITION}>
-      <div className="relative flex items-center justify-center bg-sidebar">
+      <div className="relative flex items-center justify-center bg-transparent">
         {/* Trigger Button */}
         <motion.div
           key="button"
@@ -62,9 +64,13 @@ export default function BasePopover({
         >
           <motion.button
             layoutId={`popover-label-${uniqueId}`}
-            className="transition-all duration-300 bg-transparent cursor-pointer"
+            className="transition-all duration-300 rounded-md bg-transparent cursor-pointer"
           >
-            {buttonLabel}
+            {buttonLabel ? buttonLabel : (
+              <Button variant="outline" size="icon" className="transition ease-in-out duration-150 hover:shadow-lg hover:scale-105 motion-safe:transform">
+                <Bell className="h-5 w-5 text-[#A17E25] dark:text-[#D4AF37]" />
+              </Button>
+            )}
           </motion.button>
           <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-full h-0.5 bg-sidebar-accent transition-all duration-300"></div>
         </motion.div>
