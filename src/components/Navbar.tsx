@@ -107,7 +107,12 @@ export function Navbar() {
           })}
 
           <ModeToggle />
-          <NotificationPopover />
+          {/* Notifications Icon */}
+          {
+            user && (
+              <NotificationPopover />
+            )
+          }
           {user ? (
             <div className="ml-8 space-x-3">
               <DropdownMenu>
