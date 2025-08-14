@@ -216,7 +216,12 @@ export function Navbar() {
                 ))}
 
                 <ModeToggle />
-                <NotificationPopover />
+                {/* Notifications Icon */}
+                {
+                  user && (
+                    <NotificationPopover />
+                  )
+                }
                 {user ? (
                   <>
                     <div className="flex items-center gap-2 mt-4 bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground">

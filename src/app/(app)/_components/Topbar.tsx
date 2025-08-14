@@ -51,10 +51,16 @@ const Topbar: React.FC = () => {
       {/* Right: Topbar Links and Notifications */}
       <div className="flex items-center space-x-4">
 
-
         {/* Notifications Toggle theme*/}
         <ModeToggle />
-        <NotificationPopover />
+        {/* Notifications Icon */}
+        {
+          user && (
+            <NotificationPopover />
+          )
+        }
+
+
         {/* User Profile (Placeholder) */}
         <NavUser user={
           {
