@@ -35,14 +35,10 @@ export function CompanySwitcher() {
   // Set the first company as active if no active company is set
   React.useEffect(() => {
     if (companies && companies.length > 0 && !activeCompany) {
-      for (let i = 0; i < companies.length; i++) {
-        if (user?.companyId === companies[i].id || user?.currentCompanyId === companies[i].id) {
-          setActiveCompany(companies[i]);
-          return;
-        } else {
-          setActiveCompany(companies[0]);
-        }
-      }
+      const defaultCompany = companies.find(
+        (c: any) => user?.companyId === c.id || user?.currentCompanyId === c.id
+      ) || companies[0];
+      setActiveCompany(defaultCompany);
     }
   }, [companies, activeCompany, user?.companyId, user?.currentCompanyId]);
 
@@ -54,27 +50,14 @@ export function CompanySwitcher() {
     );
   }
 
-  if (error) {
-    toast.error('Failed to load companies. Please try again later.');
+  // Ensure fallback rendering if activeCompany is not set
+  if (!activeCompany) {
     return (
-      <div className=" flex aspect-square size-8 items-center justify-center rounded-lg">
-        <Avatar className="size-8 rounded-lg">
-          <AvatarImage
-            src={"https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png"}
-            alt="Workspace logo"
-          />
-          <AvatarFallback className="bg-black text-white rounded-lg font-bold text-lg">
-            {activeCompany ? activeCompany?.name.charAt(0).toUpperCase() : "N-C"}
-          </AvatarFallback>
-        </Avatar>
+      <div className="text-center text-sm text-muted-foreground">
+        No active company selected.
       </div>
-    )
+    );
   }
-
-  // console.log("[Front Data] ", companies[0])
-
-  // Show loading state or nothing if no active company
-  if (isLoading || !activeCompany) return null;
 
   // Handle company switch
   const handleSwitch = (companyId: string) => {

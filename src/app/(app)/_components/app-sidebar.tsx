@@ -142,33 +142,34 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useAuth().user;
 
   React.useEffect(() => {
-    if (path.startsWith("/workspaces")) setPm(true)
-    else setPm(false)
+    if (path.startsWith("/workspaces")) {
+      setPm(true);
+    } else {
+      setPm(false);
+    }
+
+    if (!user?.role) return; // Ensure user.role is defined before proceeding
 
     const getNavItems = () => {
-      if (user.role === Role.CEO || user.role === Role.MANAGER) {
-        return [
-          ...dashboardLinks,
-          ...financeLinks,
-        ]
-      } else if (user.role === Role.HR || user.role === Role.ACCOUNTANT) {
-        return [
-          ...financeLinks,
-          ...hrLinks,
-        ]
-      } else if (user.role === Role.EMPLOYEE) {
-        return [
-          ...inventoryLinks,
-          ...crmLinks,
-        ]
-      } else if (user.role === Role.SUPER_ADMIN || user.role === Role.ADMIN) {
-        return navMainItems;
-      } else {
-        return [];
+      switch (user.role) {
+        case Role.CEO:
+        case Role.MANAGER:
+          return [...dashboardLinks, ...financeLinks];
+        case Role.HR:
+        case Role.ACCOUNTANT:
+          return [...financeLinks, ...hrLinks];
+        case Role.EMPLOYEE:
+          return [...inventoryLinks, ...crmLinks];
+        case Role.SUPER_ADMIN:
+        case Role.ADMIN:
+          return navMainItems;
+        default:
+          return [];
       }
-    }
+    };
+
     setNavItems(getNavItems());
-  }, [path, user.role]);
+  }, [path, user?.role]);
 
   return (
     <>
