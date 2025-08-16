@@ -42,10 +42,6 @@ export function NavMain({
   const { open: openCreateWorkspace } = useCreateWorkspace();
   const user = useAuth().user
 
-  items.push(
-    { title: "Settings", url: "/dashboard/settings", icon: Settings2 },
-  )
-
   return (
     <><CreateWorkspacesModal />
       <CompanySwitcher />
@@ -53,7 +49,7 @@ export function NavMain({
         <SidebarGroupLabel>ERP Modules</SidebarGroupLabel>
         <SidebarMenu>
           {items.map((item) => {
-            const isMainActive = path.startsWith(item.url);
+            const isMainActive = path.includes(item.url);
             return (
               <Collapsible
                 key={item.title}

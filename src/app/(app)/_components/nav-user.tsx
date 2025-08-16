@@ -6,6 +6,7 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
+  Settings2,
   Sparkles,
 } from "lucide-react"
 
@@ -100,8 +101,8 @@ export function NavUser({
               <DropdownMenuItem
                 onClick={() => router.push("/settings")}
                 className="hover:bg-sidebar-accent">
-                <BadgeCheck />
-                Account
+                <Settings2 />
+                Account/Settings
               </DropdownMenuItem>
               {/* <DropdownMenuItem className="hover:bg-sidebar-accent">
                 <CreditCard />

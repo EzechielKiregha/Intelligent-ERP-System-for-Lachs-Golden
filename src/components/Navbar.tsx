@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from './toggleTheme';
-import { Menu, LogOut, Sparkles, Bell, CreditCard, BadgeCheck, ChevronsUpDown, Cpu, ArrowUpRight } from 'lucide-react';
+import { Menu, LogOut, Sparkles, Bell, CreditCard, BadgeCheck, ChevronsUpDown, Cpu, ArrowUpRight, Settings2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useGetCompanyById } from '@/lib/hooks/use-owner-company';
 import Image from 'next/image';
@@ -164,8 +164,8 @@ export function Navbar() {
                     <DropdownMenuItem
                       onClick={() => router.push("/settings")}
                       className="hover:bg-sidebar-accent">
-                      <BadgeCheck />
-                      Account
+                      <Settings2 />
+                      Account/Settings
                     </DropdownMenuItem>
                     {/* <DropdownMenuItem className="hover:bg-sidebar-accent">
                       <CreditCard />
