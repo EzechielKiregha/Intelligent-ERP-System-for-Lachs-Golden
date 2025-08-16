@@ -34,14 +34,23 @@ export function CompanySwitcher() {
 
   // Set the first company as active if no active company is set
   React.useEffect(() => {
-    if (companies && companies.length > 0 && !activeCompany) {
-      // Prioritize session's companyId or currentCompanyId
-      const defaultCompany = companies.find(
-        (c: any) => c.id === user?.companyId || c.id === user?.currentCompanyId
-      ) || companies[0]; // Fallback to the first company if no match
-      setActiveCompany(defaultCompany);
-    }
-  }, [companies, activeCompany, user?.companyId, user?.currentCompanyId]);
+    const fetchActiveCompany = async () => {
+      if (!user?.companyId && !user?.currentCompanyId) {
+        setActiveCompany(undefined);
+        return;
+      }
+
+      try {
+        const { data } = await axiosdb.get(`/api/owner-companies/${user.companyId || user.currentCompanyId}`);
+        setActiveCompany(data.company);
+      } catch (error) {
+        console.error("Failed to fetch active company:", error);
+        setActiveCompany(undefined);
+      }
+    };
+
+    fetchActiveCompany();
+  }, [user?.companyId, user?.currentCompanyId]);
 
   if (isLoading) {
     return (
