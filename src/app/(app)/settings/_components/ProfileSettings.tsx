@@ -66,7 +66,7 @@ export default function ProfileSettings() {
   const lastActive = lastLogin ? new Date(lastLogin.timestamp) : new Date();
 
   // Pending task count
-  const pendingTasks = tasks.filter((t: any) => t.status !== 'COMPLETED').length;
+  const pendingTasks = tasks.filter((t: any) => t.status !== TASK_STATUS.DONE).length;
 
   return (
     <Card className="bg-sidebar border-[var(--sidebar-border)] shadow-lg">

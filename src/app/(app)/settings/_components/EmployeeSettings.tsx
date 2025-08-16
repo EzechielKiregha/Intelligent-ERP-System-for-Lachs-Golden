@@ -12,9 +12,14 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useGetTasks } from '@/features/tasks/api/use-get-tasks';
 import { useUserSettings } from '../hooks/useUserSettings';
+import { useGetMembersSwitcher } from '@/features/members/api/use-get-members';
+import { useAuth } from 'contents/authContext';
+import { TASK_STATUS } from '@/hooks/type';
 
 export default function EmployeeSettings() {
   const { userData } = useUserSettings();
+  const user = useAuth().user;
+  const tasks = new Array();
 
   if (!userData?.employee) {
     return (
@@ -30,16 +35,33 @@ export default function EmployeeSettings() {
   const { data: employee } = useSingleEmployee(userData.employee.id);
   const { data: reviews = [] } = useReviews(userData.employee.id);
   const { data: payrolls = [] } = usePayrollsByEmpId(userData.employee.id);
-  const { data: tasks = [] } = useGetTasks({
-    assigneeId: userData.id,
-    workspaceId: 'default', // replace with context if available
-  });
+  // const { data: tasks = [] } = useGetTasks({
+  //   assigneeId: userData.id,
+  //   workspaceId: 'default', // replace with context if available
+  // });
   const { data: pendingTasks = [] } = useHRPendingTasksPreview();
+
+  // 🔹 Fetch all member records for this user
+  const { data: memberRecords = [], isPending: isMembersPending } = useGetMembersSwitcher({
+    userId: user?.id,
+  });
+
+  // 🔹 Extract allowed workspace IDs
+  const allowedWorkspaceIds = memberRecords.map((m: any) => m.workspaceId);
+  allowedWorkspaceIds.forEach((id: string) => {
+    const { data: tsks } = useGetTasks({
+      workspaceId: id, // or from context
+      assigneeId: userData?.id,
+    });
+    if (tsks) {
+      tasks.push(...tsks.filter((t: any) => t.status !== TASK_STATUS.DONE));
+    }
+  });
 
   // Derived data
   const lastReview = reviews[0];
   const nextPayroll = payrolls.find((p: any) => new Date(p.issuedDate) > new Date());
-  const pendingPersonalTasks = tasks.filter((t: any) => t.status !== 'COMPLETED').length;
+  const pendingPersonalTasks = tasks.filter((t: any) => t.status !== TASK_STATUS.DONE).length;
   const pendingHRTasks = pendingTasks.filter((t: any) => t.assignee?.user?.id === userData.id).length;
 
   // Mock: Leave balance (extend with real hook later)

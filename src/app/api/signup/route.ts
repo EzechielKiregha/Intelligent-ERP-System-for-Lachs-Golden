@@ -120,16 +120,20 @@ export async function POST(req: NextRequest) {
         firstName,
         lastName,
         email,
-        userId: user.id,
+        user: {
+          connect : {
+            id : user.id
+          }
+        },
         companyId,
-        status: EmployeeStatus.INACTIVE, // Default to inactive
+        status: EmployeeStatus.ACTIVE, // Default to active
       },
     });
 
     // 🔹 6. Update User with employeeId
     await prisma.user.update({
       where: { id: user.id },
-      data: { employeeId: employee.id },
+      data: { employee: {connect : { id : employee.id }} },
     });
 
     // 🔹 7. Connect User to Workspace via Member
@@ -140,7 +144,7 @@ export async function POST(req: NextRequest) {
         role: role || Role.MEMBER,
         name: `${firstName} ${lastName}`,
         email,
-        color: '#D4AF37', // Gold accent
+        color: '#D4AF21', // Gold accent
       },
     });
 
@@ -168,7 +172,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { message: 'Account created successfully! Awaiting approval.' },
+      { message: 'Account created successfully.' },
       { status: 200 }
     );
   } catch (err: any) {

@@ -143,10 +143,10 @@ export function tabsForRole(role: Role, hasEmployee: boolean): TabKey[] {
 export function canAccessTab(tab: TabKey, role: Role, user: UserData | null): boolean {
   if (!user) return false;
   if (tab === 'profile') return true;
-  if (tab === 'employee') return !!user.employee;
-  if (tab === 'company') return role === Role.ADMIN || role === Role.SUPER_ADMIN;
-  if (tab === 'admin') return role === Role.ADMIN || role === Role.SUPER_ADMIN;
-  if (tab === 'owner') return role === Role.SUPER_ADMIN;
+  if (tab === 'employee') return true; // !!user.employee;
+  if (tab === 'company') return role === Role.ADMIN || role === Role.SUPER_ADMIN || role === Role.MANAGER || role === Role.CEO;
+  if (tab === 'admin') return role === Role.ADMIN || role === Role.SUPER_ADMIN || role === Role.CEO || role === Role.HR || role === Role.ACCOUNTANT || role === Role.MANAGER;
+  if (tab === 'owner') return role === Role.SUPER_ADMIN || role === Role.CEO;
   return false;
 }
 

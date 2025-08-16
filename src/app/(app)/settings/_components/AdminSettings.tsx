@@ -24,14 +24,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useUserSettings } from '../hooks/useUserSettings';
+import { Role } from '@/generated/prisma';
 
 export default function AdminSettings() {
   const { userData } = useUserSettings();
 
-  if (!userData || (userData.role !== 'ADMIN' && userData.role !== 'SUPER_ADMIN')) {
+  if (!userData || (userData.role !== 'ADMIN' && userData.role !== 'SUPER_ADMIN' && userData.role !== 'CEO' && userData.role !== Role.HR && userData.role !== Role.ACCOUNTANT && userData.role !== Role.MANAGER)) {
     return (
       <Card>
-        <CardContent className="p-6 text-center text-muted-foreground">
+        <CardContent className="p-6 text-center bg-sidebar text-muted-foreground">
           You do not have permission to access admin settings.
         </CardContent>
       </Card>

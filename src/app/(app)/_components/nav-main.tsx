@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Plus, type LucideIcon } from "lucide-react";
+import { ChevronRight, Plus, Settings2, type LucideIcon } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -20,6 +20,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCreateWorkspace } from "@/features/workspaces/hooks/use-create-workspace";
 import CreateWorkspacesModal from "@/features/workspaces/components/create-workspaces-modal";
 import { WorkspaceSwitcher } from "./workspace-switcher";
+import { useAuth } from "contents/authContext";
 
 export function NavMain({
   items,
@@ -38,6 +39,11 @@ export function NavMain({
   const router = useRouter();
   const path = usePathname();
   const { open: openCreateWorkspace } = useCreateWorkspace();
+  const user = useAuth().user
+
+  items.push(
+    { title: "Settings", url: "/dashboard/settings", icon: Settings2 },
+  )
 
   return (
     <><CreateWorkspacesModal />
@@ -58,10 +64,17 @@ export function NavMain({
                     <SidebarMenuButton
                       className={`${isMainActive ? "bg-sidebar-accent text-sidebar-foreground" : ""}`}
                       tooltip={item.title}
+                      onClick={() => {
+                        if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") {
+                          console.log("sidebar current page :", item.title)
+                        } else {
+                          router.replace(item.url)
+                        }
+                      }}
                     >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      {/* <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" /> */}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
