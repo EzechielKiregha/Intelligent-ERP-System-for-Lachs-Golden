@@ -14,6 +14,11 @@ import Link from "next/link";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { truncateText } from "@/lib/utils";
 import React from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "contents/authContext";
+import { Role } from "@/generated/prisma";
+import { toast } from "sonner";
+import { Edit2 } from "lucide-react";
 
 // Transaction schema
 const transactionSchema = z.object({
@@ -172,36 +177,22 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
       </Badge>
     ),
   },
-  // {
-  //   accessorKey: "user",
-  //   header: "User",
-  //   cell: ({ row }) => (
-  //     <div>{row.original.user?.name ?? "No user assigned"}</div>
-  //   ),
-  // },
   {
-    id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Duplicate</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
+    id: 'actions', cell: ({ row }) => {
+      const router = useRouter()
+      const user = useAuth().user
+      const hasAccess = user?.role === Role.ADMIN || user?.role === Role.SUPER_ADMIN || user?.role === Role.EMPLOYEE || user?.role === Role.MEMBER
+      return <div className="flex gap-2">
+        <Button variant="ghost" size="icon" onClick={() => {
+          if (hasAccess) {
+            router.push(`/inventory/products/manage?id=${row.original.id}`);
+          } else {
+            toast.warning("You do not have permission to edit this product.");
+          }
+        }}><Edit2 /></Button>
+      </div>
+    }
+  }
 ];
 
 export default function TransactionsPage() {

@@ -27,7 +27,7 @@ export default function RecentEmployeesPreview() {
 
   const canAccessProfile = (employee: Employee) => {
     if (!session?.user) return false;
-    return session.user.role === Role.ADMIN || session.user.id === employee.user?.id;
+    return session.user.role === Role.SUPER_ADMIN || session.user.role === Role.ADMIN || session.user.id === employee.user?.id;
   };
 
   const handleEmployeeClick = (employee: Employee) => {
@@ -52,13 +52,13 @@ export default function RecentEmployeesPreview() {
           data.map((emp: Employee) => (
             <Link
               key={emp.id}
-              href={`/settings`}
+              href={`/hr/employees/manage?id=${emp.id}`}
               onClick={(e) => {
                 if (!handleEmployeeClick(emp)) e.preventDefault();
               }}
               className="block"
             >
-              <div className="flex flex-col p-2 rounded-md hover:bg-muted transition-colors">
+              <div className="flex flex-col p-2 rounded-md hover:bg-sidebar-accent/60 transition-colors">
                 <span className="font-medium">{emp.firstName} {emp.lastName}</span>
                 <span className="text-xs text-muted-foreground">
                   {emp.jobTitle ?? 'No title'} • {emp.department?.name ?? 'No dept'}
@@ -74,6 +74,7 @@ export default function RecentEmployeesPreview() {
       {restrictedEmployeeId && (
         <RestrictedAccessModal
           isOpen={!!restrictedEmployeeId}
+          desc="You do not have permission to view this employee's profile."
           onClose={() => setRestrictedEmployeeId(null)}
         />
       )}

@@ -191,8 +191,8 @@ export default function ManageEmployeeForm({ employeeId }: { employeeId?: string
 
       <Button
         type="submit"
-        disabled={isSubmitting}
-        className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
+        disabled={isSubmitting || !deps.data}
+        className="w-full bg-sidebar-accent cursor-pointer hover:bg-sidebar-primary text-sidebar-accent-foreground"
       >
         {isEdit ? 'Update Employee' : 'Create Employee'}
       </Button>

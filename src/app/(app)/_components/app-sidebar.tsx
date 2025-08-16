@@ -40,6 +40,8 @@ const dashboardLinks = [
   { title: "Dashboard", url: "/dashboard", icon: GalleryVerticalEnd },
   { title: "Reports", url: "/dashboard/reports", icon: PieChart },
   { title: "Activity Feed", url: "/dashboard/activity", icon: Command },
+  { title: "Workspaces", url: "/workspaces", icon: Frame },
+  { title: "Settings", url: "/dashboard/settings", icon: Settings2 },
 
 ]
 
@@ -48,12 +50,14 @@ const financeLinks = [
   { title: "Transactions", url: "/finance/transactions", icon: SquareTerminal },
   { title: "Budget", url: "/finance/budget", icon: BookOpen },
   { title: "Analytics", url: "/finance/analytics", icon: IconAnalyze },
+  { title: "Settings", url: "/dashboard/settings", icon: Settings2 },
 ]
 
 const inventoryLinks = [
   { title: "Inventory", url: "/inventory", icon: Frame },
   { title: "Stock", url: "/inventory/manage", icon: SquareTerminal },
   { title: "Low Stock Alerts", url: "/inventory/alerts", icon: Bot },
+  { title: "Settings", url: "/dashboard/settings", icon: Settings2 },
 ]
 
 const hrLinks = [
@@ -62,6 +66,7 @@ const hrLinks = [
   { title: "Departments", url: "/hr/departments", icon: Settings2 },
   { title: "Payroll", url: "/hr/payroll", icon: Cpu },
   { title: "Performance Review", url: "/hr/reviews", icon: AudioWaveform },
+  { title: "Settings", url: "/dashboard/settings", icon: Settings2 },
 
 ]
 
@@ -123,6 +128,7 @@ const navMainItems = [
       // { title: "Sales Pipeline", url: "/crm/sales" },
     ],
   },
+  { title: "Settings", url: "/dashboard/settings", icon: Settings2 },
 ];
 
 const userData = {

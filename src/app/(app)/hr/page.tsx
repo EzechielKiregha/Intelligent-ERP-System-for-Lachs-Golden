@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import HRStatsCards from './_components/HRStatsCards'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -14,6 +14,7 @@ export default function HRDashboardPage() {
 
   const currentUser = useAuth().user;
   const { data: company, isLoading: companyLoading, isError: companyError } = useGetCompanyById(currentUser?.currentCompanyId || '');
+  const [hasAccess, setHasAccess] = useState(currentUser?.role === 'ADMIN' || currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'HR')
 
   if (companyLoading) {
     return (
@@ -41,31 +42,30 @@ export default function HRDashboardPage() {
             </h3>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Link href="/hr/employees">
-              <Button className="hover:bg-sidebar-primary bg-sidebar-accent cursor-pointer text-sidebar-accent-foreground">
-                Manage Employees
-              </Button>
-            </Link>
-            <Link href="/hr/departments">
-              <Button className="hover:bg-sidebar-primary bg-sidebar-accent cursor-pointer text-sidebar-accent-foreground">
-                Departments
-              </Button>
-            </Link>
-            <Link href="/hr/payroll">
-              <Button className="hover:bg-sidebar-primary bg-sidebar-accent cursor-pointer text-sidebar-accent-foreground">
-                Payroll
-              </Button>
-            </Link>
-            <Link href="/hr/reviews">
-              <Button className="hover:bg-sidebar-primary bg-sidebar-accent cursor-pointer text-sidebar-accent-foreground">
-                Performance Reviews
-              </Button>
-            </Link>
-            <Link href="/hr/documents">
-              <Button className="hover:bg-sidebar-primary bg-sidebar-accent cursor-pointer text-sidebar-accent-foreground">
-                Documents
-              </Button>
-            </Link>
+            {hasAccess && (
+              <>
+                <Link href="/hr/employees">
+                  <Button className="bg-sidebar-primary hover:bg-sidebar-accent text-sidebar-primary-foreground">
+                    Manage Employees
+                  </Button>
+                </Link>
+                <Link href="/hr/payroll">
+                  <Button className="bg-sidebar-primary hover:bg-sidebar-accent text-sidebar-primary-foreground">
+                    Payroll Management
+                  </Button>
+                </Link>
+                <Link href="/hr/reviews">
+                  <Button className="bg-sidebar-primary hover:bg-sidebar-accent text-sidebar-primary-foreground">
+                    Performance Reviews
+                  </Button>
+                </Link>
+                <Link href="/hr/documents">
+                  <Button className="bg-sidebar-primary hover:bg-sidebar-accent text-sidebar-primary-foreground">
+                    Document Management
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 

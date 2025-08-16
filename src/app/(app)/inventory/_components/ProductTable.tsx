@@ -153,12 +153,26 @@ export const productColumns: ColumnDef<z.infer<typeof productSchema>>[] = [
   {
     id: 'actions', cell: ({ row }) => {
       const router = useRouter(), del = useDeleteProduct(row.original.id)
+      const user = useAuth().user
+      const hasAccess = user?.role === Role.ADMIN || user?.role === Role.SUPER_ADMIN || user?.role === Role.EMPLOYEE || user?.role === Role.MEMBER
       return <div className="flex gap-2">
-        <Button variant="ghost" size="icon" onClick={() => router.push(`/inventory/manage?id=${row.original.id}`)}><Edit2 /></Button>
-        <Button variant="ghost" size="icon" onClick={() => del.mutate()}><Trash2 /></Button>
+        <Button variant="ghost" size="icon" onClick={() => {
+          if (hasAccess) {
+            router.push(`/inventory/products/manage?id=${row.original.id}`);
+          } else {
+            toast.warning("You do not have permission to edit this product.");
+          }
+        }}><Edit2 /></Button>
+        <Button variant="ghost" size="icon" onClick={() => {
+          if (hasAccess) {
+            del.mutate();
+          } else {
+            toast.warning("You do not have permission to delete this product.");
+          }
+        }}><Trash2 /></Button>
       </div>
     }
-  },
+  }
 ];
 
 // 3. Component

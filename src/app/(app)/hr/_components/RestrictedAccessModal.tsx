@@ -3,17 +3,18 @@ import { Button } from '@/components/ui/button';
 
 interface RestrictedAccessModalProps {
   isOpen: boolean;
+  desc?: string;
   onClose: () => void;
 }
 
-export function RestrictedAccessModal({ isOpen, onClose }: RestrictedAccessModalProps) {
+export function RestrictedAccessModal({ isOpen, desc, onClose }: RestrictedAccessModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-sidebar text-sidebar-foreground border-[var(--sidebar-border)]">
         <DialogHeader>
           <DialogTitle>Access Restricted</DialogTitle>
           <DialogDescription>
-            You are not the assignee of this task. Only the assigned user can view or edit this task.
+            {desc}
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-end mt-4">

@@ -82,6 +82,7 @@ export default function HRPendingTasksPreview() {
       {restrictedTaskId && (
         <RestrictedAccessModal
           isOpen={!!restrictedTaskId}
+          desc="You are not the assignee of this task. Only the assigned user can view or edit this task."
           onClose={() => setRestrictedTaskId(null)}
         />
       )}

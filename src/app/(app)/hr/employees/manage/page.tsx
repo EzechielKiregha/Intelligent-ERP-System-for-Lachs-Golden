@@ -4,7 +4,6 @@ import React from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import ManageEmployeeForm from '../_components/ManageEmployeeForm'
-import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 
 export default function ManageEmployeePage() {

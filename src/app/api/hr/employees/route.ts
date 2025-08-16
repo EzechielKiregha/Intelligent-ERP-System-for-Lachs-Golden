@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import z from 'zod';
+import { Role } from '@/generated/prisma';
 
 export async function GET(_: NextRequest) {
    const session = await getServerSession(authOptions);
@@ -71,5 +72,35 @@ export async function POST(req: NextRequest) {
     departmentId,
     companyId
   } })
+
+  // link employee to user
+  if (emp){
+    await prisma.user.create({
+      data: {
+        email,
+        firstName,
+        lastName,
+        password: 'erp12345',
+        name: `${firstName} ${lastName}`,
+        role: Role.EMPLOYEE,
+        images: {
+          create: {
+            url: 'https://github.com/evilrabbit.png',
+            pathname: `img-evilrabit.png`,
+            contentType: 'image/png',
+            size: 10000,
+          },
+        },
+        employee:{
+          connect: { id: emp.id }
+        },
+        currentCompanyId: companyId,
+        company: {
+          connect: { id: companyId }
+        },
+      }
+    })
+  }
+
   return NextResponse.json(emp)
 }
