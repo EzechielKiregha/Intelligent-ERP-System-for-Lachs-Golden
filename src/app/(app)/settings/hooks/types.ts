@@ -119,12 +119,19 @@ export function tabsForRole(role: Role, hasEmployee: boolean): TabKey[] {
       return [...base, 'company', 'admin', 'owner'];
     // Managers often have elevated employee context; adjust as needed
     case Role.MANAGER:
+      return [...base, 'employee', 'admin', 'company'];
     case Role.CEO:
+      return [...base, 'employee', 'company', 'admin', 'owner'];
     case Role.ACCOUNTANT:
+      return [...base, 'employee', 'admin'];
     case Role.HR:
+      return [...base, 'employee', 'admin'];
     case Role.EMPLOYEE:
+      return [...base, 'employee'];
     case Role.USER:
+      return [...base, 'employee'];
     case Role.MEMBER:
+      return [...base, 'employee'];
     default:
       return base;
   }

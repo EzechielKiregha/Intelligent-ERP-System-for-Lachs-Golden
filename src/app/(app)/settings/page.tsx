@@ -46,7 +46,7 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col min-h-full">
-      <h1 className="text-3xl font-semibold text-sidebar-foreground">Settings</h1>
+      {/* <h1 className="text-3xl font-semibold text-sidebar-foreground">Settings</h1> */}
       <div className="mt-4">
         <Tabs defaultValue="profile" onValueChange={onTabChange}>
           <div className="overflow-x-auto">

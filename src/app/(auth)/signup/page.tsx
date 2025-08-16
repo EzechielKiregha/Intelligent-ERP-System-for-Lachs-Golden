@@ -183,6 +183,7 @@ export default function SignUpPage() {
                           </SelectTrigger>
                           <SelectContent className='bg-white dark:bg-[#111827] text-gray-800 dark:text-gray-200'>
                             {[Role.CEO,
+                            Role.ADMIN,
                             Role.MANAGER,
                             Role.EMPLOYEE,
                             Role.MEMBER,

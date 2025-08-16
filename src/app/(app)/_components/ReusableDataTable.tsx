@@ -51,7 +51,6 @@ import {
   VisibilityState,
 } from "@tanstack/react-table"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import { toast } from "react-hot-toast"
 import { z } from "zod"
 
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -108,9 +107,12 @@ import {
 } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import NewTransactionPopover from "../finance/_components/TransactioForm"
-import { useNavigation } from "@/hooks/use-navigation"
 import ProductFormPopover from "../inventory/_components/ProductForm"
 import { useRouter } from "next/navigation"
+import { Role } from "@/generated/prisma"
+import { useAuth } from "contents/authContext"
+import { toast } from "sonner"
+import ContactAdminOrAcountant from "./ContactAdminOrAcountant"
 
 // Generic interface for data with required id
 interface DataWithId {
@@ -247,6 +249,7 @@ export function DataTable<TData extends DataWithId>({
   }
 
   const router = useRouter()
+  const user = useAuth().user
 
   return (
     <Tabs
@@ -320,12 +323,22 @@ export function DataTable<TData extends DataWithId>({
             {typeName === "Categories" && (
               <span className="hidden lg:inline">Add {typeName.slice(0, -1)}</span>
             )}
-            {typeName === "Products" && (
-              <ProductFormPopover />
-            )}
-            {typeName === "Transactions" && (
-              <NewTransactionPopover />
-            )}
+            {typeName === "Products" && [
+              Role.ADMIN,
+              Role.SUPER_ADMIN,
+              Role.EMPLOYEE,
+              Role.MEMBER
+            ].some((r) => r === user.role) && (
+                <ProductFormPopover />
+              )}
+            {typeName === "Transactions" && [
+              Role.ADMIN,
+              Role.SUPER_ADMIN,
+              Role.ACCOUNTANT,
+              Role.MANAGER
+            ].some((r) => r === user.role) && (
+                <NewTransactionPopover />
+              )}
           </Button>
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} >
             <DialogContent className="sm:max-w-md bg-sidebar text-sidebar-foreground">
@@ -339,8 +352,15 @@ export function DataTable<TData extends DataWithId>({
               <DialogFooter>
                 <Button
                   onClick={() => {
-                    router.push(`/finance/budget`)
-                    setIsModalOpen(false);
+                    const user = useAuth().user
+                    const [hasAccess, setHasAccess] = React.useState(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'ACCOUNTANT')
+                    if (hasAccess) {
+                      router.push(`/finance/budget`)
+                      setIsModalOpen(false);
+                    } else {
+                      toast.warning("You do not have permission to allocate budget.");
+                      <ContactAdminOrAcountant />
+                    }
                   }}
                   className="bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
                 >

@@ -181,13 +181,14 @@ const transactionColumns: ColumnDef<z.infer<typeof transactionSchema>>[] = [
     id: 'actions', cell: ({ row }) => {
       const router = useRouter()
       const user = useAuth().user
-      const hasAccess = user?.role === Role.ADMIN || user?.role === Role.SUPER_ADMIN || user?.role === Role.EMPLOYEE || user?.role === Role.MEMBER
+      const hasAccess = user?.role === Role.ADMIN || user?.role === Role.SUPER_ADMIN || user?.role === Role.ACCOUNTANT || user?.role === Role.MANAGER
       return <div className="flex gap-2">
         <Button variant="ghost" size="icon" onClick={() => {
           if (hasAccess) {
-            router.push(`/inventory/products/manage?id=${row.original.id}`);
+            toast.warning("You do not have permission to edit this Transaction.");
+            // router.push(`/inventory/products/manage?id=${row.original.id}`);
           } else {
-            toast.warning("You do not have permission to edit this product.");
+            toast.warning("You do not have permission to edit this Transaction.");
           }
         }}><Edit2 /></Button>
       </div>
