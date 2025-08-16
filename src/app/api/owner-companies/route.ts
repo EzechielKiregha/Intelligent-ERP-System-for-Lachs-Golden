@@ -23,11 +23,6 @@ export async function GET(req: NextRequest) {
           },
         },
       },
-      // select: {
-      //   id: true,
-      //   name: true,
-      //   industry: true,
-      // },
       include : { images : {
         select : { url : true },
         take : 1
@@ -44,11 +39,6 @@ export async function GET(req: NextRequest) {
             },
           },
         },
-        // select: {
-        //   id: true,
-        //   name: true,
-        //   industry: true,
-        // },
         include : { images : {
           select : { url : true },
           take : 1

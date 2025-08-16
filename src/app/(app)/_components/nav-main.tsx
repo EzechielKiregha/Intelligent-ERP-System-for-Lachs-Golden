@@ -44,7 +44,6 @@ export function NavMain({
 
   return (
     <><CreateWorkspacesModal />
-      <CompanySwitcher />
       <SidebarGroup>
         <SidebarGroupLabel>ERP Modules</SidebarGroupLabel>
         <SidebarMenu>

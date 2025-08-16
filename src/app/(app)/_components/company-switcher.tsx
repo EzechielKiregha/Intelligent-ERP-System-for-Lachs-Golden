@@ -35,9 +35,10 @@ export function CompanySwitcher() {
   // Set the first company as active if no active company is set
   React.useEffect(() => {
     if (companies && companies.length > 0 && !activeCompany) {
+      // Prioritize session's companyId or currentCompanyId
       const defaultCompany = companies.find(
-        (c: any) => user?.companyId === c.id || user?.currentCompanyId === c.id
-      ) || companies[0];
+        (c: any) => c.id === user?.companyId || c.id === user?.currentCompanyId
+      ) || companies[0]; // Fallback to the first company if no match
       setActiveCompany(defaultCompany);
     }
   }, [companies, activeCompany, user?.companyId, user?.currentCompanyId]);
@@ -54,7 +55,7 @@ export function CompanySwitcher() {
   if (!activeCompany) {
     return (
       <div className="text-center text-sm text-muted-foreground">
-        No active company selected.
+        No active company selected. Please check your session or company data.
       </div>
     );
   }
