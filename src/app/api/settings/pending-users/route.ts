@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || !session.user.currentCompanyId || ![Role.ADMIN, Role.OWNER].includes(session.user.role as "ADMIN" | "OWNER")) {
+  if (!session?.user?.id || !session.user.currentCompanyId || ![Role.ADMIN, Role.SUPER_ADMIN].includes(session.user.role as "ADMIN" | "SUPER_ADMIN")) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -40,7 +40,7 @@ const manageUserSchema = z.object({
 
 export async function PATCH(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || !session.user.currentCompanyId || ![Role.ADMIN, Role.OWNER].includes(session.user.role as "ADMIN" | "OWNER")) {
+  if (!session?.user?.id || !session.user.currentCompanyId || ![Role.ADMIN, Role.SUPER_ADMIN].includes(session.user.role as "ADMIN" | "SUPER_ADMIN")) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

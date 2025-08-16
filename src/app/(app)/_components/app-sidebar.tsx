@@ -34,14 +34,41 @@ import { DashboardProjects } from "./dashboard-projects"
 import dynamic from "next/dynamic"
 import { usePathname } from "next/navigation"
 import CreateCompanyModal from "./create-company-modal"
+import { Role } from "@/generated/prisma"
 
-// This is sample data.
+const dashboardLinks = [
+  { title: "Dashboard", url: "/dashboard", icon: GalleryVerticalEnd },
+  { title: "Reports", url: "/dashboard/reports", icon: PieChart },
+  { title: "Activity Feed", url: "/dashboard/activity", icon: Command },
 
-const companyData = {
-  name: "Intelligent ERP Inc.",
-  logo: "/logos/intelligent-erp.png",
-  plan: "Enterprise",
-};
+]
+
+const financeLinks = [
+  { title: "Finance", url: "/finance", icon: PieChart },
+  { title: "Transactions", url: "/finance/transactions", icon: SquareTerminal },
+  { title: "Budget", url: "/finance/budget", icon: BookOpen },
+  { title: "Analytics", url: "/finance/analytics", icon: IconAnalyze },
+]
+
+const inventoryLinks = [
+  { title: "Inventory", url: "/inventory", icon: Frame },
+  { title: "Stock", url: "/inventory/manage", icon: SquareTerminal },
+  { title: "Low Stock Alerts", url: "/inventory/alerts", icon: Bot },
+]
+
+const hrLinks = [
+  { title: "Human Resource", url: "/hr", icon: Map },
+  { title: "Employees", url: "/hr/employees", icon: Bot },
+  { title: "Departments", url: "/hr/departments", icon: Settings2 },
+  { title: "Payroll", url: "/hr/payroll", icon: Cpu },
+  { title: "Performance Review", url: "/hr/reviews", icon: AudioWaveform },
+
+]
+
+const crmLinks = [
+  { title: "Lead/Customer", url: "/crm/contacts", icon: Command },
+  // { title: "Sales Pipeline", url: "/crm/sales", icon: Bot },
+]
 
 const navMainItems = [
   {
@@ -98,27 +125,6 @@ const navMainItems = [
   },
 ];
 
-const company = [
-  {
-    id: "1",
-    name: "Intelligent ERP Inc.",
-    logo: Cpu,
-    plan: "Enterprise",
-  },
-  {
-    id: "2",
-    name: "Smart Solutions Ltd.",
-    logo: AudioWaveform,
-    plan: "Startup",
-  },
-  {
-    id: "3",
-    name: "NextGen Tech",
-    logo: Command,
-    plan: "Free",
-  },
-]
-
 const userData = {
   name: "John Doe",
   email: "john.doe@example.com",
@@ -130,10 +136,35 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: logs, isLoading } = useAuditLog();
   const path = usePathname();
   const [pm, setPm] = React.useState(false)
+  const [navItems, setNavItems] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     if (path.startsWith("/workspaces")) setPm(true)
     else setPm(false)
+
+    const getNavItems = () => {
+      if (user.role === Role.CEO || user.role === Role.MANAGER) {
+        return [
+          ...dashboardLinks,
+          ...financeLinks,
+        ]
+      } else if (user.role === Role.HR || user.role === Role.ACCOUNTANT) {
+        return [
+          ...hrLinks,
+          ...financeLinks,
+        ]
+      } else if (user.role === Role.EMPLOYEE) {
+        return [
+          ...crmLinks,
+          ...inventoryLinks,
+        ]
+      } else if (user.role === Role.SUPER_ADMIN || user.role === Role.ADMIN) {
+        return navMainItems;
+      } else {
+        return [];
+      }
+    }
+    setNavItems(getNavItems());
   }, [path])
 
   const user = useAuth().user;
@@ -149,7 +180,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {pm ? (
             <DashboardProjects />
           ) : (
-            <NavMain items={navMainItems} />
+            <NavMain items={navItems} />
           )}
           {isLoading && <SkeletonLoader type="list" height={40} />}
           <NavProjects auditLogs={logs} />

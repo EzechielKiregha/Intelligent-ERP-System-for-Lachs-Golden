@@ -73,6 +73,8 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         companyId,
+        description: `Workspace for ${session.user.name || 'Anonymous'}`,
+        coreDivisionType: [session.user.role || 'USER'], // Default to USER role
         members: {
           create: {
             userId: session.user.id,

@@ -64,7 +64,7 @@ export default function MemberActions({
             <LogOut /> Leave
           </DropdownMenuItem>
         )}
-        {isAdmin && !isCurrentUser && member.role !== MEMBER_ROLE.ADMIN && (
+        {isAdmin && !isCurrentUser && member.role !== MEMBER_ROLE.SUPER_ADMIN && (
           <DropdownMenuItem
             className="bg-red-500 text-white focus:bg-red-600/90 focus:text-white/90"
             onClick={() => onDeleteMember(member.id)}

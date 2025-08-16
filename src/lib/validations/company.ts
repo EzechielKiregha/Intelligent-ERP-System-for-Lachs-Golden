@@ -26,7 +26,17 @@ export const companySchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   email: z.string().optional(),
-  role: z.enum([Role.ADMIN, Role.OWNER, Role.USER]).optional(),
+  role: z.enum([
+    Role.CEO,
+    Role.MANAGER,
+    Role.EMPLOYEE,
+    Role.ADMIN,
+    Role.USER,
+    Role.MEMBER,
+    Role.SUPER_ADMIN,
+    Role.ACCOUNTANT,
+    Role.HR
+  ]).optional(),
   status: z.enum([UserStatus.PENDING, UserStatus.ACCEPTED, UserStatus.BLOCKED]).optional(),
   password: z.string().optional(),
   companyId: z.string().optional(),

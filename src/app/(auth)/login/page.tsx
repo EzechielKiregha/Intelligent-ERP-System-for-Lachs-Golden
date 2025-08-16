@@ -21,6 +21,8 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { Role } from '@/generated/prisma';
+import { useAuth } from 'contents/authContext';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,6 +30,7 @@ export default function LoginPage() {
   const [otpPopoverOpen, setOtpPopoverOpen] = useState(false);
   const [otp, setOtp] = useState<string>("");
   const [toEmail, setEmail] = useState<string>("");
+  const user = useAuth().user;
 
   const isCompanyCreated = searchParams.get('companycreated') === 'true';
   const isJoinWorkspace = searchParams.get('join-ws') === 'true';
@@ -80,7 +83,19 @@ export default function LoginPage() {
         if (isJoinWorkspace && wsId && inviteCode) {
           router.push(`/workspaces/${wsId}/join/${inviteCode}`);
         } else {
-          router.push("/dashboard");
+          if (user?.role === Role.SUPER_ADMIN) {
+            router.push('/dashboard');
+          } else if (user?.role === Role.ACCOUNTANT) {
+            router.push('/finance');
+          } else if (user?.role === Role.HR) {
+            router.push('/hr');
+          } else if (user?.role === Role.MEMBER || user?.role === Role.USER) {
+            router.push('/workspaces');
+          } else if (user?.role === Role.MANAGER || user?.role === Role.EMPLOYEE) {
+            router.push('/inventory');
+          } else if (user?.role === Role.CEO) {
+            router.push('/dashboard');
+          }
         }
       } else {
         console.error("OTP verification failed:", res.data);
@@ -97,7 +112,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-sidebar px-4">
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#0a0e16] px-4">
       <div className="bg-white dark:bg-[#111827] shadow-2xl rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
         <LeftAuthPanel />
         <div className="flex-1 flex items-center justify-center p-6 overflow-auto">

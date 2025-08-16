@@ -16,6 +16,20 @@ export interface M {
   updatedAt: Date;
 }
 
+export function useGetMembersSwitcher({ userId }: { userId?: string }) {
+  return useQuery({
+    queryKey: ['members', 'user', userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      const res = await axiosdb.get(
+        `/api/members?userId=${userId}`
+      );
+      return res.data.members;
+    },
+    enabled: !!userId,
+  });
+}
+
 export function useGetMembers(workspaceId: string){
   return useQuery({
     queryKey: ['members', workspaceId],

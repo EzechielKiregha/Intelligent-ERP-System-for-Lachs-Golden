@@ -82,7 +82,7 @@ export type Task =  {
 };
 
 export enum MEMBER_ROLE {
-  ADMIN = "ADMIN",
+  SUPER_ADMIN = "SUPER_ADMIN",
   MEMBER = "MEMBER",
 }
 

@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
         } }
       });
       comps.push(company)
-    } else if (session.user.role.match(Role.OWNER) || session.user.role.match(Role.ADMIN)){
+    } else if (session.user.role.match(Role.SUPER_ADMIN) || session.user.role.match(Role.ADMIN)){
       
       const userWithOwnedCompanies = await prisma.user.findUnique({
         where: {

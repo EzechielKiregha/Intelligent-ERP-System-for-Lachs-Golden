@@ -101,7 +101,7 @@ export function useDeleteProduct(id: string) {
 
   return useMutation({
     mutationFn: async () => {
-      if (user?.role === Role.ADMIN || user?.role === Role.OWNER) {
+      if (user?.role === Role.ADMIN || user?.role === Role.SUPER_ADMIN) {
         const res = await axiosdb.delete(`${API.delete}/${id}`)
         return res.data;
       } else {

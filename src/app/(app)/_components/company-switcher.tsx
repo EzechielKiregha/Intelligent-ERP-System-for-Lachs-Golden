@@ -138,7 +138,7 @@ export function CompanySwitcher() {
               <Plus
                 onClick={
                   () => {
-                    if (user?.role === Role.OWNER) {
+                    if (user?.role === Role.SUPER_ADMIN || user?.role === Role.ADMIN) {
                       openCreateCompany();
                     } else {
                       toast.error('You do not have permission to add a company.');

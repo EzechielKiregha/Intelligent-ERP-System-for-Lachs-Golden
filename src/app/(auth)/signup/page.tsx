@@ -13,15 +13,26 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LeftAuthPanel } from '@/components/LeftAuthPanel';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { CardFooter } from '@heroui/react';
-import { Separator } from '@/components/ui/separator';
+import { Controller, useForm } from 'react-hook-form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Role } from '@/generated/prisma';
 
 // Define form schema with Zod
 const userSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email'),
+  role: z.enum([
+    Role.CEO,
+    Role.MANAGER,
+    Role.EMPLOYEE,
+    Role.ADMIN,
+    Role.USER,
+    Role.MEMBER,
+    Role.SUPER_ADMIN,
+    Role.ACCOUNTANT,
+    Role.HR
+  ]).optional(),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
@@ -33,7 +44,7 @@ export default function SignUpPage() {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [fowardUser, setForwardUser] = useState<UserFormData | null>(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<UserFormData>({
+  const { register, control, handleSubmit, formState: { errors } } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
   });
 
@@ -69,11 +80,11 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-transparent px-4 shadow-lg">
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#0a0e16] px-4 shadow-lg">
       <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
         <LeftAuthPanel />
         {/* <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg"> */}
-        <Card className="w-full max-w-lg bg-white dark:bg-[#111827] shadow-lg rounded-2xl">
+        <Card className="w-full max-w-lg bg-white dark:bg-[#111827] shadow-lg">
           <CardHeader>
             <CardTitle className="text-[24px] font-semibold text-gray-800 dark:text-gray-200">
               Sign Up - Step {step} of 2
@@ -84,30 +95,42 @@ export default function SignUpPage() {
               {step === 1 && (
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="firstName" className="text-sm text-gray-800 dark:text-gray-200">First Name</Label>
+                    <div className="flex flex-row justify-between">
+                      <Label htmlFor="firstName" className="text-sm text-gray-800 dark:text-gray-200">First Name</Label>
+
+                      {errors.firstName && <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.firstName.message}</p>}
+                    </div>
                     <Input id="firstName" placeholder="John" {...register('firstName')} className="mt-1" />
-                    {errors.firstName && <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.firstName.message}</p>}
                   </div>
                   <div>
-                    <Label htmlFor="lastName" className="text-sm text-gray-800 dark:text-gray-200">Last Name</Label>
+                    <div className="flex flex-row justify-between">
+                      <Label htmlFor="lastName" className="text-sm text-gray-800 dark:text-gray-200">Last Name</Label>
+
+                      {errors.lastName && <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.lastName.message}</p>}
+                    </div>
                     <Input id="lastName" placeholder="Doe" {...register('lastName')} className="mt-1" />
-                    {errors.lastName && <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.lastName.message}</p>}
                   </div>
                   <div>
-                    <Label htmlFor="email" className="text-sm text-gray-800 dark:text-gray-200">Email</Label>
+                    <div className="flex flex-row justify-between">
+                      <Label htmlFor="email" className="text-sm text-gray-800 dark:text-gray-200">Email</Label>
+                      {errors.email && <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.email.message}</p>}
+
+                    </div>
                     <Input id="email" type="email" placeholder="you@company.com" {...register('email')} className="mt-1" />
-                    {errors.email && <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.email.message}</p>}
                   </div>
                   <div>
-                    <Label htmlFor="password" className="text-sm text-gray-800 dark:text-gray-200">Password</Label>
+                    <div className="flex flex-row justify-between">
+                      <Label htmlFor="password" className="text-sm text-gray-800 dark:text-gray-200">Password</Label>
+
+                      {errors.password && <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.password.message}</p>}
+                    </div>
                     <Input id="password" type="password" placeholder="••••••••" {...register('password')} className="mt-1" />
-                    {errors.password && <p className="mt-1 text-xs text-[#E53E3E] dark:text-[#FC8181]">{errors.password.message}</p>}
                   </div>
                 </div>
               )}
 
               {step === 2 && (
-                <div className="space-y-4">
+                <><div className="space-y-4">
                   <Label className="text-sm text-gray-800 dark:text-gray-200">
                     Last Step Confirm Company
                   </Label>
@@ -119,8 +142,7 @@ export default function SignUpPage() {
                       onClick={() => setSelectedCompany(companies[0].id)}
                       className={`cursor-pointer ${selectedCompany === companies[0].id
                         ? 'bg-gradient-to-l from-[#80410e] to-[#c56a03] text-white'
-                        : 'bg-white dark:bg-[#1F2A44]'
-                        }`}
+                        : 'bg-white dark:bg-[#1F2A44]'}`}
                     >
                       <CardContent>
                         <h3 className="font-medium">{companies[0].name}</h3>
@@ -150,6 +172,34 @@ export default function SignUpPage() {
                     </p>
                   )}
                 </div>
+                  {companies?.length !== 0 && (
+                    <><Label htmlFor="role" className="text-sm text-gray-800 dark:text-gray-200">Role</Label>
+                      <Controller name="role" control={control} render={({ field }) =>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger value={'Select Role'} className="w-full">
+                            {/* <Label className="text-sm text-gray-800 dark:text-gray-200">Select Role</Label> */}
+                            <SelectValue />
+
+                          </SelectTrigger>
+                          <SelectContent className='bg-white dark:bg-[#111827] text-gray-800 dark:text-gray-200'>
+                            {[Role.CEO,
+                            Role.MANAGER,
+                            Role.EMPLOYEE,
+                            Role.MEMBER,
+                            Role.ACCOUNTANT,
+                            Role.HR].map(s => (
+                              <SelectItem key={s} value={s}>{s}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>} />
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        The selected Role needs to be confirmed by system.
+                      </p>
+                    </>
+                  )}
+
+                </>
+
               )}
               <div className="flex items-center">
                 <input

@@ -16,10 +16,15 @@ datasource db {
 }
 
 enum Role {
-  OWNER
+  CEO
+  MANAGER
+  EMPLOYEE
   ADMIN
   USER
   MEMBER
+  SUPER_ADMIN
+  ACCOUNTANT
+  HR
 }
 enum UserStatus {
   ACCEPTED
@@ -168,11 +173,11 @@ model Workspace {
   name        String
   companyId   String
   company     Company   @relation(fields: [companyId], references: [id])
-  // imageId     String   @unique
-  // image       Image?    @relation("WorkspaceImage", fields: [imageId], references: [id])
   inviteCode  String    @unique @default(cuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  description String
+  coreDivisionType Role[] @default([SUPER_ADMIN]) // New: Core division type for the workspace
   members     Member[]
   projects    Project[]
   tasks       Task[]

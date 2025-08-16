@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { type NextAuthOptions } from "next-auth";
-import { Role, User } from "@/generated/prisma";
+import { Role } from "@/generated/prisma";
 
 // Extend NextAuth types to include additional fields in Session and JWT
 declare module "next-auth" {
@@ -66,11 +66,11 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (!user || !user.password) {
-          throw new Error("Invalid credentials");
+          throw new Error("User not found/Invalid credentials");
         }
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) {
-          throw new Error("Invalid credentials");
+          throw new Error("Wrong Password");
         }
         // Return only safe fields, combining firstName and lastName into name if needed
         return {

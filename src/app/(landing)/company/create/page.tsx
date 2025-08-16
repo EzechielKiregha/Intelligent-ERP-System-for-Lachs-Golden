@@ -12,7 +12,7 @@ function CreateCompanyPage() {
     : null; // Decode and parse the forwarded user data
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg">
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#0a0e16] px-4 shadow-lg">
       <div className="bg-sidebar shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[600px] overflow-hidden">
         <LeftAuthPanel />
         <CreateCompanyForm fowardUser={fowardUser} isOwner={isOwner} />

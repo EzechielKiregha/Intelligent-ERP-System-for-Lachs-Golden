@@ -49,7 +49,7 @@ const updateCompanySchema = z.object({
 
 export async function PATCH(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || !session.user.currentCompanyId || ![Role.ADMIN, Role.OWNER].includes(session.user.role as "ADMIN" | "OWNER")) {
+  if (!session?.user?.id || !session.user.currentCompanyId || ![Role.ADMIN, Role.SUPER_ADMIN].includes(session.user.role as "ADMIN" | "SUPER_ADMIN")) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -91,7 +91,7 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || !session.user.currentCompanyId || session.user.role !== Role.OWNER) {
+  if (!session?.user?.id || !session.user.currentCompanyId || session.user.role !== Role.SUPER_ADMIN) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

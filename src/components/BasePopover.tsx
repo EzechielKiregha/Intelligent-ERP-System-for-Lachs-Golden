@@ -21,7 +21,7 @@ export default function BasePopover({
   title,
   children,
   buttonLabel,
-  icon: Icon,
+  icon = false,
   isOpen: controlledIsOpen,
   onClose,
 }: PopoverProps) {
@@ -66,7 +66,7 @@ export default function BasePopover({
             layoutId={`popover-label-${uniqueId}`}
             className="transition-all duration-300 rounded-md bg-transparent cursor-pointer"
           >
-            {buttonLabel ? buttonLabel : (
+            {buttonLabel ? buttonLabel : icon && (
               <Button variant="outline" size="icon" className="transition ease-in-out duration-150 hover:shadow-lg hover:scale-105 motion-safe:transform">
                 <Bell className="h-5 w-5 text-[#A17E25] dark:text-[#D4AF37]" />
               </Button>

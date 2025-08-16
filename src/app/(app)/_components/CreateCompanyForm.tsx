@@ -73,7 +73,7 @@ export default function CreateCompanyForm({
   });
 
 
-  const formData = watch();
+  const formData = watch() as CompanyFormData;
 
   const stepFields: { [key: number]: (keyof CompanyFormData)[] } = {
     1: ['name', 'description', 'industry'],
@@ -100,7 +100,7 @@ export default function CreateCompanyForm({
     if (isOwner && fowardUser) {
       const userData = {
         ...fowardUser,
-        role: Role.OWNER,
+        role: Role.SUPER_ADMIN,
       };
       if (step === 4) {
         createCompanyMutation.mutate({
@@ -304,30 +304,34 @@ export default function CreateCompanyForm({
             <div>
               <ScrollArea className="h-94 mb-3 w-full border rounded-md p-2">
                 <div className="space-y-2">
-                  <p className='border-b'><strong>Name:</strong> {formData.name}</p>
-                  <p className='border-b'><strong>Description:</strong> {formData.description || 'N/A'}</p>
-                  <p className='border-b'><strong>Industry:</strong> {formData.industry || 'N/A'}</p>
-                  <p className='border-b'><strong>Email:</strong> {formData.contactEmail || 'N/A'}</p>
-                  <p className='border-b'><strong>Phone:</strong> {formData.contactPhone || 'N/A'}</p>
-                  <p className='border-b'><strong>Website:</strong> {formData.website || 'N/A'}</p>
-                  <p className='border-b'><strong>Address:</strong> {formData.addressLine1 || ''} {formData.addressLine2 || ''} {formData.city || ''} {formData.state || ''} {formData.postalCode || ''} {formData.country || ''}</p>
-                  <p className='border-b'><strong>Founded Date:</strong> {date?.toLocaleString() || 'N/A'}</p>
-                  <p className='border-b'><strong>Employee Count:</strong> {formData.employeeCount || 'N/A'}</p>
-                  <p className='border-b'><strong>Tax ID:</strong> {formData.taxId || 'N/A'}</p>
-                  <p className='border-b'><strong>Timezone:</strong> {formData.timezone}</p>
-                  <p className='border-b'><strong>Date Format:</strong> {formData.dateFormat}</p>
-                  <p className='border-b'><strong>Forecasted Revenue:</strong> {formData.forecastedRevenue || 'N/A'}</p>
-                  <p className='border-b'><strong>Forecasted Expenses:</strong> {formData.forecastedExpenses || 'N/A'}</p>
+                  <p className='border-b'><strong>Name:</strong> {String(formData.name) || 'N/A'}</p>
+                  <p className='border-b'><strong>Description:</strong> {String(formData.description) || 'N/A'}</p>
+                  <p className='border-b'><strong>Industry:</strong> {String(formData.industry) || 'N/A'}</p>
+                  <p className='border-b'><strong>Email:</strong> {String(formData.contactEmail) || 'N/A'}</p>
+                  <p className='border-b'><strong>Phone:</strong> {String(formData.contactPhone) || 'N/A'}</p>
+                  <p className='border-b'><strong>Website:</strong> {String(formData.website) || 'N/A'}</p>
+                  <p className='border-b'><strong>Address:</strong>
+                    {`${formData.addressLine1 || ''} ${formData.addressLine2 || ''} ${formData.city || ''} ${formData.state || ''} ${formData.postalCode || ''} ${formData.country || ''}`.trim() || 'N/A'}
+                  </p>
+                  <p className='border-b'><strong>Founded Date:</strong> {date instanceof Date ? date.toLocaleString() : 'N/A'}</p>
+                  <p className='border-b'><strong>Employee Count:</strong> {String(formData.employeeCount) || 'N/A'}</p>
+                  <p className='border-b'><strong>Tax ID:</strong> {String(formData.taxId) || 'N/A'}</p>
+                  <p className='border-b'><strong>Timezone:</strong> {String(formData.timezone) || 'N/A'}</p>
+                  <p className='border-b'><strong>Date Format:</strong> {String(formData.dateFormat) || 'N/A'}</p>
+                  <p className='border-b'><strong>Forecasted Revenue:</strong> {String(formData.forecastedRevenue) || 'N/A'}</p>
+                  <p className='border-b'><strong>Forecasted Expenses:</strong> {String(formData.forecastedExpenses) || 'N/A'}</p>
                 </div>
               </ScrollArea>
               <p>Please log back in to activate your new company.</p>
-              <Button type="button" onClick={() => {
-                if (isOwner) {
-                  router.push('/login')
-                } else {
-                  router.push('/login?companycreated=true')
-                }
-              }} className="w-full">
+              <Button
+                className='cursor-pointer w-full bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white'
+                type="button" onClick={() => {
+                  if (isOwner) {
+                    router.push('/login')
+                  } else {
+                    router.push('/login?companycreated=true')
+                  }
+                }}>
                 Log In
               </Button>
             </div>
@@ -349,14 +353,48 @@ export default function CreateCompanyForm({
               {step > 1 && <Button className='bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white' type="button" onClick={prevStep} variant="outline">Previous</Button>}
               {step < 4 && <Button className='bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white' type="button" onClick={nextStep}>Next</Button>}
               {step === 4 && (
-                <Button className='bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white' type="submit" disabled={createCompanyMutation.isPending} >
+                <Button className='cursor-pointer bg-gradient-to-l from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white'
+                  type="submit"
+                  disabled={createCompanyMutation.isPending}
+                >
                   {(createCompanyMutation.isPending ? 'Creating...' : 'Create Company')}
                 </Button>
               )}
             </div>
-          )}
-        </form>
+          )}</form>
+        {/* 
+        
+Lachs Golden
+Focus on long-term economic, environmental, and social sustainability in investment decisions, recognizing the importance of responsible stewardship of resources
+
+
+info@lachsgoldem.com
++23462395076
+https://lachsgolden.com
+
+
+Two Bloor West
+M7A 2T2
+Toronto
+Canada
+10001
+
+
+
+        10/15/2020
+200
+M7A 2T2
+
+America/New_York
+
+
+MM/DD/YYYY
+
+24000
+
+        */}
       </CardContent>
     </Card>
+
   );
 }

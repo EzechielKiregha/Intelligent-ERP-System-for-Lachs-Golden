@@ -97,7 +97,7 @@ export const employeeColumns: ColumnDef<Emp>[] = [
             variant="ghost"
             size="icon"
             onClick={() => {
-              if (user.role === Role.OWNER) {
+              if (user.role === Role.SUPER_ADMIN || user.role === Role.ADMIN) {
                 del.mutate(row.original.id)
                 if (del.isSuccess) toast.success("Employee Deleted");
               } else {

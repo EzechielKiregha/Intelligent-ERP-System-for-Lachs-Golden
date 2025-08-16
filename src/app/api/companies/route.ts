@@ -1,121 +1,181 @@
+// app/api/companies/route.ts
+
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import  prisma  from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import { companySchema } from '@/lib/validations/company';
 import { NextResponse } from 'next/server';
 import { Role, UserStatus } from '@/generated/prisma';
 import { hash } from 'bcryptjs';
 
-export async function POST(req: Request) {
+// 🔹 Define workspace configs for each core division
+const WORKSPACE_CONFIGS = [
+  {
+    name: 'Lachs Golden Space',
+    description: 'Central dashboard and system-wide insights',
+    coreDivisionType: [Role.SUPER_ADMIN, Role.ADMIN, Role.CEO, Role.MANAGER],
+  },
+  {
+    name: 'Finance Space',
+    description: 'Financial management, budgeting, and reporting',
+    coreDivisionType: [Role.SUPER_ADMIN, Role.ADMIN, Role.ACCOUNTANT],
+  },
+  {
+    name: 'Sales Space',
+    description: 'Inventory, product management, and sales tracking',
+    coreDivisionType: [Role.SUPER_ADMIN, Role.ADMIN, Role.EMPLOYEE, Role.MEMBER],
+  },
+  {
+    name: 'Human Resource Space',
+    description: 'HR, payroll, performance reviews, and employee management',
+    coreDivisionType: [Role.SUPER_ADMIN, Role.ADMIN, Role.HR],
+  },
+  {
+    name: 'Customer Relations Space',
+    description: 'CRM, leads, customer interactions, and deals',
+    coreDivisionType: [Role.SUPER_ADMIN, Role.ADMIN, Role.EMPLOYEE, Role.MEMBER],
+  },
+];
 
-  // no need to check for session here, because the user is creating a company and creating his/her account at the same time
-  // need to request body for isNewOwner field
+export async function POST(req: Request) {
   const isNewOwner = req.headers.get('is-new-owner') === 'true';
+
+  let userId: string;
+  
+
+  // ✅ 1. Create the Company
+  const body = await req.json();
+  const data = companySchema.parse(body);
+  const { firstName, lastName, email, password, role, status, ...companyData } = data;
+  
+  const hashedPassword = await hash(password || 'erp12345', 10);
+
+  const company = await prisma.company.create({
+    data: {
+      ...companyData,
+      images: {
+        create: {
+          url: 'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png',
+          pathname: 'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png',
+          contentType: 'image/png',
+          size: 10000,
+        },
+      },
+    },
+  });
 
   if (!isNewOwner) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
-
-    try {
-      const body = await req.json();
-
-      // console.log("[Server Data] ", body);
-
-      const data = companySchema.parse(body); // Server-side validation
-
-      const company = await prisma.company.create({
-        data: {
-          ...data,
-          users: { connect: { id: session.user.id } },
-          owners : { connect: { id: session.user.id } },
-          images: {
-            create: {
-              url: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
-              pathname: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
-              contentType: "image/png",
-              size: 10000,
-            },
-          },
-        },
-      });
-
-      if (company) {
-        // Update user's current company
-        await prisma.user.update({
-          where: { id: session.user.id },
-          data: {
-            currentCompanyId: company.id,
-            role: Role.OWNER, // Set the user as ADMIN for the new company
-            ownedCompanies: {
-              connect: { id: company.id },
-            },
-          },
-        });
-      }
-
-      return NextResponse.json(company, { status: 201 });
-    } catch (error) {
-      console.error(error);
-      return NextResponse.json({ message: 'Failed to create company' }, { status: 500 });
-    }
+    userId = session.user.id;
+    console.log('Creating user for existing company');
   } else {
-    try {
-      const body = await req.json();
+    const user = await prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        email : email || "",
+        password: hashedPassword,
+        role: role || Role.SUPER_ADMIN,
+        status: status || UserStatus.ACCEPTED,
+        currentCompanyId: company.id,
+        companyId: company.id,
+        ownedCompanies: {
+          connect: { id: company.id },
+        },
+        images: {
+          create: {
+            url: 'https://github.com/evilrabbit.png',
+            pathname: `img-evilrabit.png`,
+            contentType: 'image/png',
+            size: 10000,
+          },
+        },
+      },
+    });
 
-      const data = companySchema.parse(body); // Server-side validation
+    userId = user.id;
+  }
 
-      const { firstName, lastName, email, password, role, status, ...companyData } = data;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
 
-      const hashedPassword = await hash(password || "erp12345", 10);
+  if (!user) {
+    return NextResponse.json({ message: 'User not found' }, { status: 404 });
+  }
 
-      const company = await prisma.company.create({
+  // ✅ 2. Update Company and User: Set Company and Owners, role, ownedCompanies
+  await prisma.company.update({
+    where: { id: company.id },
+    data: {
+      owners: {
+        connect: { id: user.id },
+      },
+      users: {
+        connect: { id: user.id },
+      },
+    },
+  });
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      role: role || Role.SUPER_ADMIN,
+      status: status || UserStatus.ACCEPTED,
+      ownedCompanies: {
+        connect: { id: company.id },
+      },
+      currentCompanyId: company.id
+    },
+  });
+
+  // ✅ 3. Create 5 Workspaces
+  const workspaces = await prisma.$transaction(
+    WORKSPACE_CONFIGS.map((config) =>
+      prisma.workspace.create({
         data: {
-          ...companyData,
+          name: config.name,
+          description: config.description || '',
+          companyId: company.id,
+          coreDivisionType: config.coreDivisionType,
           images: {
             create: {
               url: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
               pathname: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
-              contentType: "image/png",
-              size: 10000,
+              contentType: 'image/png',
+              size: 5000,
             },
           },
         },
-      });
+      })
+    )
+  );
 
-      const user = await prisma.user.create({
+  await prisma.$transaction(
+    workspaces.map((workspace) =>
+      prisma.member.create({
         data: {
-          firstName,
-          lastName,
-          email : email || "",
-          password: hashedPassword,
-          role: role || Role.OWNER, // Default to OWNER if not provided
-          status: status || UserStatus.ACCEPTED, // Default to ACTIVE if not provided
-          currentCompanyId: company.id,
-          companyId: company.id,
-          ownedCompanies: {
-            connect: { id: company.id },
-          },
+          userId,
+          workspaceId: workspace.id,
+          role: Role.SUPER_ADMIN,
+          color: '#D4AF37', // Gold accent
+          name: user?.firstName || 'Admin',
+          email: user?.email || '',
         },
-      });
+      })
+    )
+  );
 
-      // Connect the user to the company
-      await prisma.company.update({
-        where: { id: company.id },
-        data: {
-          users: {
-            connect: { id: user.id },
-          },
-        },
-      });
-
-      return NextResponse.json(company, { status: 201 });
-    } catch (error) {
-      console.error(error);
-      return NextResponse.json({ message: 'Failed to create company' }, { status: 500 });
-    }
-  }
+  return NextResponse.json(
+    {
+      ...company,
+      message: 'Company and workspaces created successfully',
+    },
+    { status: 201 }
+  );
 }
 
 export async function GET() {

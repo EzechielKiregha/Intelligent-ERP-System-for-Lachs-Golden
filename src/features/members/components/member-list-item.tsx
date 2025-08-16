@@ -27,7 +27,7 @@ export default function MemberListItem({
   const renderDropdownMenu = (member: Member) => {
     if (!currentMember) return null;
 
-    const isAdmin = currentMember.role === MEMBER_ROLE.ADMIN;
+    const isAdmin = currentMember.role === MEMBER_ROLE.SUPER_ADMIN;
     const isCurrentUser = currentMember.id === member.id;
 
     return (
@@ -56,7 +56,7 @@ export default function MemberListItem({
             <span>{member.name}</span>
             <Badge
               variant={
-                member.role === MEMBER_ROLE.ADMIN ? "destructive" : "default"
+                member.role === MEMBER_ROLE.SUPER_ADMIN ? "destructive" : "default"
               }
               className="px-2 py-[1px] text-[8px]"
             >

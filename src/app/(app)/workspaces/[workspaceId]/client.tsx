@@ -21,11 +21,13 @@ import { useGetWorkspaceIdParam } from "@/features/workspaces/hooks/use-get-work
 import { Member } from "@/generated/prisma";
 import { MEMBER_ROLE, MemberWithUserData, Project, Task, TASK_STATUS } from "@/hooks/type";
 import { getGreeting } from "@/lib/utils";
+import { useAuth } from "contents/authContext";
 import { formatDistanceToNow } from "date-fns";
 import { Calendar, Dot, ExternalLink, Plus } from "lucide-react";
 import Link from "next/link";
 
 export default function WorkspaceIdClientPage() {
+  const user = useAuth().user;
   const workspaceId = useGetWorkspaceIdParam();
   const { data: currentMemberData, isLoading: isLoadingCurrentMemberData } =
     useGetCurrentMember(workspaceId);
@@ -60,6 +62,10 @@ export default function WorkspaceIdClientPage() {
   ) {
     return <PageError />;
   }
+
+  if (!user && !membersData.some((member: Member) => member.userId === user?.id)) {
+    return <PageError message="You are not a member of this workspace." />;
+  };
 
   return (
     <div>
@@ -262,7 +268,7 @@ const MembersContainer = ({ members, workspaceId }: MembersContainerProps) => {
               <span className="mt-3 text-lg">{member.name}</span>
               <Badge
                 variant={
-                  member.role === MEMBER_ROLE.ADMIN ? "destructive" : "default"
+                  member.role === MEMBER_ROLE.SUPER_ADMIN ? "destructive" : "default"
                 }
               >
                 <span className="text-xs">{member.role}</span>
