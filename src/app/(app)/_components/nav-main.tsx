@@ -21,6 +21,7 @@ import { useCreateWorkspace } from "@/features/workspaces/hooks/use-create-works
 import CreateWorkspacesModal from "@/features/workspaces/components/create-workspaces-modal";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { useAuth } from "contents/authContext";
+import { CompanySwitcher } from "./company-switcher";
 
 export function NavMain({
   items,
@@ -47,6 +48,7 @@ export function NavMain({
 
   return (
     <><CreateWorkspacesModal />
+      <CompanySwitcher />
       <SidebarGroup>
         <SidebarGroupLabel>ERP Modules</SidebarGroupLabel>
         <SidebarMenu>
