@@ -164,8 +164,8 @@ model User {
   reports      Report[]
   deals        Deal[]
   members      Member[]
-
   images Image[] @relation("UserImage")
+  auditLogs AuditLog[]
 }
 
 model Workspace {
@@ -375,6 +375,7 @@ model AuditLog {
   entity      String?
   entityId    String?
   userId      String?
+  user     User?     @relation(fields: [userId], references: [id])
   description String?
   url         String?
   timestamp   DateTime  @default(now())

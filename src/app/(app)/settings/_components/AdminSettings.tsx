@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuditLog } from '@/lib/hooks/dashboard';
+import { useAuditLog, useGenerateReportAdmin } from '@/lib/hooks/dashboard';
 import { useGenerateReport } from '@/lib/hooks/dashboard';
 import { useAIInsights } from '@/lib/hooks/dashboard';
 import { useMutation } from '@tanstack/react-query';
@@ -40,7 +40,7 @@ export default function AdminSettings() {
 
   // 🔹 Fetch system intelligence
   const { data: logs = [] } = useAuditLog();
-  const generateReport = useGenerateReport();
+  const generateReport = useGenerateReportAdmin();
   const { data: insights = [] } = useAIInsights();
 
   // 🔹 Auto-backup setting
@@ -66,7 +66,7 @@ export default function AdminSettings() {
 
   // 🔹 Generate report handler
   const handleGenerateReport = (type: string) => {
-    generateReport.mutate({ type, dateRange: 'last-30-days' });
+    generateReport.mutate({ type, dateRange: 'last30days' });
   };
 
   // Recent critical actions
@@ -90,7 +90,7 @@ export default function AdminSettings() {
             Security Settings
           </h3>
           <div className="space-y-4 text-sm">
-            <div className="flex items-center justify-between p-3 bg-sidebar-accent/10 rounded">
+            <div className="flex items-center justify-between p-3 bg-sidebar-primary/70 rounded">
               <div>
                 <Label>Enforce Two-Factor Authentication</Label>
                 <p className="text-sidebar-foreground/60">All users must enable 2FA</p>
@@ -98,7 +98,7 @@ export default function AdminSettings() {
               <Switch defaultChecked={true} />
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-sidebar-accent/10 rounded">
+            <div className="flex items-center justify-between p-3 bg-sidebar-primary/70 rounded">
               <div>
                 <Label>Session Timeout</Label>
                 <p className="text-sidebar-foreground/60">Auto-logout after 30 minutes</p>
@@ -106,7 +106,7 @@ export default function AdminSettings() {
               <Switch defaultChecked={true} />
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-sidebar-accent/10 rounded">
+            <div className="flex items-center justify-between p-3 bg-sidebar-primary/70 rounded">
               <div>
                 <Label>IP Whitelisting</Label>
                 <p className="text-sidebar-foreground/60">Restrict access to office IPs</p>
@@ -123,7 +123,7 @@ export default function AdminSettings() {
             Audit Logs
           </h3>
           {logs.length > 0 ? (
-            <div className="space-y-2 text-xs font-mono bg-sidebar-accent/10 p-3 rounded">
+            <div className="space-y-2 text-xs font-mono bg-sidebar-primary/70 p-3 rounded">
               {logs.slice(0, 5).map((log: any, i: number) => (
                 <div key={i} className="flex justify-between py-1 border-b border-sidebar-accent/20 last:border-b-0">
                   <span>{log.action}</span>
@@ -166,7 +166,7 @@ export default function AdminSettings() {
             Backup & Recovery
           </h3>
           <div className="space-y-4 text-sm">
-            <div className="flex items-center justify-between p-3 bg-sidebar-accent/10 rounded">
+            <div className="flex items-center justify-between p-3 bg-sidebar-primary/70 rounded">
               <div>
                 <Label>Auto-Backup Schedule</Label>
                 <p className="text-sidebar-foreground/60">Daily at 02:00 AM</p>
@@ -177,7 +177,7 @@ export default function AdminSettings() {
               />
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-sidebar-accent/10 rounded">
+            <div className="flex items-center justify-between p-3 bg-sidebar-primary/70 rounded">
               <div>
                 <Label>Data Retention Policy</Label>
                 <p className="text-sidebar-foreground/60">Keep logs for {retentionDays} days</p>

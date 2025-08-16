@@ -4,7 +4,6 @@ import FinanceSummaryCards from './_components/FinanceSummaryCards';
 import FinanceForecastSection from './_components/FinanceForecastSection';
 import FinancialInsights from './_components/FinancialInsights';
 import CategoriesList from './_components/CategoryList';
-import { useFinanceTransactions } from '@/lib/hooks/finance';
 import BudgetSection from './_components/BudgetSection';
 import { useAuth } from 'contents/authContext';
 import { useGetCompanyById } from '@/lib/hooks/use-owner-company';
@@ -22,7 +21,6 @@ export default function FinancePage() {
           className={`h-full bg-sidebar-primary transition-all duration-500 ${companyLoading ? 'animate-loading-bar' : 'w-0'
             }`}
         >
-
         </div>
       </div>
     );
@@ -33,10 +31,10 @@ export default function FinancePage() {
       <div className="@container/main flex flex-1 flex-col gap-2">
         <div>
           <h2 className="text-2xl font-semibold">
-            {getGreeting()} {currentUser.name}
+            {getGreeting()} {currentUser ? currentUser.name : 'User'}
           </h2>
           <h3 className="text-lg text-muted-foreground">
-            Welcome to &quot;{company?.name || 'Your Company'}&quot; Finance
+            Welcome to &quot;{company ? company.name : 'Your Company'}&quot; Finance
           </h3>
         </div>
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">

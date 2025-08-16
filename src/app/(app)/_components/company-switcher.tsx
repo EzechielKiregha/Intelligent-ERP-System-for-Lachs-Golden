@@ -24,7 +24,7 @@ import { Role } from '@/generated/prisma';
 
 // Company Switcher Component
 export function CompanySwitcher() {
-  const { data: companies, isLoading } = useGetOwnerCompanies();
+  const { data: companies, isLoading, error } = useGetOwnerCompanies();
   const switchCompanyMutation = useSwitchCompany();
   const [activeCompany, setActiveCompany] = React.useState<C>();
   const isMobile = useIsMobile()
@@ -52,6 +52,23 @@ export function CompanySwitcher() {
         <Skeleton className="bg-sidebar-ring flex-1 w-full h-full py-6" />
       </div>
     );
+  }
+
+  if (error) {
+    toast.error('Failed to load companies. Please try again later.');
+    return (
+      <div className=" flex aspect-square size-8 items-center justify-center rounded-lg">
+        <Avatar className="size-8 rounded-lg">
+          <AvatarImage
+            src={"https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png"}
+            alt="Workspace logo"
+          />
+          <AvatarFallback className="bg-black text-white rounded-lg font-bold text-lg">
+            {activeCompany ? activeCompany?.name.charAt(0).toUpperCase() : "N-C"}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+    )
   }
 
   // console.log("[Front Data] ", companies[0])
@@ -109,7 +126,7 @@ export function CompanySwitcher() {
               <DropdownMenuItem
                 key={company.name}
                 onClick={() => {
-                  if (user?.role === 'ADMIN' || user?.role === 'OWNER') {
+                  if (user?.role === Role.ADMIN || user?.role === Role.SUPER_ADMIN) {
                     handleSwitch(company.id);
                   } else {
                     toast.error('You do not have permission to switch companies.');

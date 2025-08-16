@@ -77,7 +77,7 @@ export default function OwnerSettings() {
               {forecast.forecast.slice(0, 6).map((f: any, i: number) => (
                 <div
                   key={i}
-                  className="flex justify-between p-3 bg-sidebar-accent/10 rounded text-sm border border-sidebar-accent/20"
+                  className="flex justify-between p-3 bg-sidebar-primary/50 rounded text-sm border border-sidebar-accent/20"
                 >
                   <span className="font-medium">{f.month}</span>
                   <div className="text-right">
@@ -136,7 +136,7 @@ export default function OwnerSettings() {
             <TrendingUp className="h-4 w-4" />
             Revenue Growth (YoY)
           </h3>
-          <div className="p-4 bg-sidebar-accent/10 rounded text-center">
+          <div className="p-4 bg-sidebar-primary/50 rounded text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingUp
                 className={`h-5 w-5 ${isGrowing ? 'text-emerald-400' : 'text-red-400'}`}

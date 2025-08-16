@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosdb from '@/lib/axios';
+import { toast } from 'sonner';
 
 export interface DashboardStats {
   totalRevenue: number;
@@ -60,6 +61,23 @@ export function useGenerateReport() {
     onSuccess: () => {
       // Optionally: invalidate or refetch queries
       queryClient.invalidateQueries({ queryKey: ['dashboard', 'stats'] });
+    },
+  });
+}
+
+export function useGenerateReportAdmin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (params: { type: string; dateRange?: string }) => {
+      const res = await axiosdb.post('/api/reports/generate', params);
+      return res.data; // or just trigger download
+    },
+    onSuccess: () => {
+      toast.success('Report generated');
+      queryClient.invalidateQueries({ queryKey: ['auditLog'] });
+    },
+    onError: () => {
+      toast.error('Failed to generate report');
     },
   });
 }

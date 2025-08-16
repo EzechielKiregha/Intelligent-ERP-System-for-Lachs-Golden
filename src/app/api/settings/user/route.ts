@@ -39,6 +39,16 @@ export async function GET(req: NextRequest) {
             state: true,
             postalCode: true,
             country: true,
+            contactPhone: true,
+            industry: true,
+            foundedDate: true,
+            website: true,
+            
+          },
+        },
+        images: {
+          select: {
+            url: true,
           },
         },
       },

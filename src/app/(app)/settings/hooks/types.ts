@@ -19,6 +19,10 @@ export interface Company {
   state: string | null;
   postalCode: string | null;
   country: string | null;
+  contactPhone: string | null;
+  industry: string | null;
+  foundedDate: string | null; // ISO date
+  website: string | null;
   images: CompanyImage[] | null;
 }
 

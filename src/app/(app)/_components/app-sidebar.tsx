@@ -137,6 +137,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const path = usePathname();
   const [pm, setPm] = React.useState(false)
   const [navItems, setNavItems] = React.useState<any[]>([]);
+  const user = useAuth().user;
 
   React.useEffect(() => {
     if (path.startsWith("/workspaces")) setPm(true)
@@ -150,13 +151,13 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ]
       } else if (user.role === Role.HR || user.role === Role.ACCOUNTANT) {
         return [
-          ...hrLinks,
           ...financeLinks,
+          ...hrLinks,
         ]
       } else if (user.role === Role.EMPLOYEE) {
         return [
-          ...crmLinks,
           ...inventoryLinks,
+          ...crmLinks,
         ]
       } else if (user.role === Role.SUPER_ADMIN || user.role === Role.ADMIN) {
         return navMainItems;
@@ -165,9 +166,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
       }
     }
     setNavItems(getNavItems());
-  }, [path])
-
-  const user = useAuth().user;
+  }, [path, user.role]);
 
   return (
     <>

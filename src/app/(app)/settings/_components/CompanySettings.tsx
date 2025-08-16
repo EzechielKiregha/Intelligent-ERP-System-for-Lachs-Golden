@@ -104,15 +104,15 @@ export default function CompanySettings() {
             </div>
             <div>
               <Label>Industry</Label>
-              <p className="text-sidebar-foreground mt-1">Technology & SaaS</p>
+              <p className="text-sidebar-foreground mt-1">{company.industry}</p>
             </div>
             <div>
               <Label>Founded</Label>
-              <p className="text-sidebar-foreground mt-1">2018</p>
+              <p className="text-sidebar-foreground mt-1">{company.foundedDate}</p>
             </div>
             <div>
               <Label>Legal Name</Label>
-              <p className="text-sidebar-foreground mt-1">Lachs Golden Inc.</p>
+              <p className="text-sidebar-foreground mt-1">{company.name} Inc.</p>
             </div>
           </div>
         </section>
@@ -174,11 +174,11 @@ export default function CompanySettings() {
             </div>
             <div>
               <Label>Phone</Label>
-              <p className="text-sidebar-foreground mt-1">+1 (415) 555-0198</p>
+              <p className="text-sidebar-foreground mt-1">{company.contactPhone}</p>
             </div>
             <div>
               <Label>Website</Label>
-              <p className="text-sidebar-foreground mt-1">https://lachsgolden.com</p>
+              <p className="text-sidebar-foreground mt-1">{company.website}</p>
             </div>
           </div>
         </section>
@@ -187,7 +187,7 @@ export default function CompanySettings() {
         <section>
           <h3 className="text-lg font-medium text-sidebar-foreground mb-4">Inventory Settings</h3>
           <div className="space-y-4 text-sm">
-            <div className="flex justify-between items-center p-3 bg-sidebar-accent/10 rounded">
+            <div className="flex justify-between items-center p-3 bg-sidebar-primary/70 rounded">
               <div>
                 <Label>Default Low-Stock Threshold</Label>
                 <p className="text-sidebar-foreground/70">Products below this quantity trigger alerts</p>
@@ -204,7 +204,7 @@ export default function CompanySettings() {
                     });
                   }}
                 />
-                <span className="text-xs text-sidebar-foreground/60">units</span>
+                <span className="text-xs text-sidebar-foreground">units</span>
               </div>
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function CompanySettings() {
         <section>
           <h3 className="text-lg font-medium text-sidebar-foreground mb-4">CRM Settings</h3>
           <div className="space-y-4 text-sm">
-            <div className="p-3 bg-sidebar-accent/10 rounded">
+            <div className="p-3 bg-sidebar-primary/70 rounded">
               <Label>Customer Tagging Rules</Label>
               <p className="text-sidebar-foreground/70 mb-2">Automatically tag customers based on behavior</p>
               <Button variant="outline" size="sm">Configure Rules</Button>
@@ -229,7 +229,7 @@ export default function CompanySettings() {
 // 🔹 Reusable Stat Component
 function Stat({ label, value, icon, helpText }: { label: string; value: string | number; icon: React.ReactNode; helpText?: string }) {
   return (
-    <div className="p-3 bg-sidebar-accent/20 rounded border border-sidebar-accent/30 hover:border-sidebar-accent/50 transition-colors group relative">
+    <div className="p-3 bg-sidebar-primary/70 rounded border border-sidebar-accent/30 hover:border-sidebar-accent/50 transition-colors group relative">
       <div className="flex items-center gap-2 mb-1">
         {icon}
         <Label className="text-xs uppercase tracking-wide opacity-90">{label}</Label>

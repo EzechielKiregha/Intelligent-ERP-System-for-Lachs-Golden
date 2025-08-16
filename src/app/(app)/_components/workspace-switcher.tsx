@@ -105,7 +105,7 @@ export function WorkspaceSwitcher() {
                   <SelectItem
                     key={workspace.id}
                     value={workspace.id}
-                    className="bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/80"
+                    className="bg-sidebar hover:bg-sidebar-primary"
                   >
                     <div className="flex items-center gap-x-2">
                       <Avatar className="size-8 rounded-none">

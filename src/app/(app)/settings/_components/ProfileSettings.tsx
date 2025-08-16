@@ -6,28 +6,51 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import BasePopover from '@/components/BasePopover';
-import { toast } from 'sonner';
 import Image from 'next/image';
-import { format } from 'date-fns';
-import { Calendar, Clock, User, Briefcase, MessageSquare, Building2 } from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
+import { Calendar, Clock, User, Briefcase, MessageSquare, Building2, Dot, ExternalLink } from 'lucide-react';
 import { useUserSettings } from '../hooks/useUserSettings';
 import { useUpdateUser } from '../hooks/useUpdateUser';
 import { fullName } from '../hooks/types';
 import { Label } from '@/components/ui/label';
 import { useGetTasks } from '@/features/tasks/api/use-get-tasks';
 import { TASK_STATUS } from '@/hooks/type';
+import { useGetMembersSwitcher } from '@/features/members/api/use-get-members';
+import { useAuth } from 'contents/authContext';
+import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 export default function ProfileSettings() {
   const { userData } = useUserSettings();
   const { userForm, updateUser, isUpdating } = useUpdateUser(userData);
+  const user = useAuth().user;
+  const tasks = new Array();
 
   // 🔹 Fetch user-specific data
   const { data: activities = [] } = useRecentActivities();
   const { data: employees = [] } = useHREmployeesPreview();
-  const { data: tasks = [] } = useGetTasks({
-    workspaceId: 'default', // or from context
-    assigneeId: userData?.id,
-    status: TASK_STATUS.IN_PROGRESS,
+  // const { data: alltasks = [] } = useGetTasks({
+  //   workspaceId: '1b31e4c7-5a41-45bf-8703-64705726dd17', // or from context
+  //   assigneeId: userData?.id,
+  //   status: TASK_STATUS.IN_PROGRESS,
+  // });
+
+  // 🔹 Fetch all member records for this user
+  const { data: memberRecords = [], isPending: isMembersPending } = useGetMembersSwitcher({
+    userId: user?.id,
+  });
+
+  // 🔹 Extract allowed workspace IDs
+  const allowedWorkspaceIds = memberRecords.map((m: any) => m.workspaceId);
+
+  allowedWorkspaceIds.forEach((id: string) => {
+    const { data: tsks } = useGetTasks({
+      workspaceId: id, // or from context
+      assigneeId: userData?.id,
+    });
+    if (tsks) {
+      tasks.push(...tsks.filter((t: any) => t.status !== TASK_STATUS.DONE));
+    }
   });
 
   if (!userData) return null;
@@ -173,10 +196,46 @@ export default function ProfileSettings() {
             <div className="space-y-4 text-sm">
               {/* Recent Tasks */}
               {pendingTasks > 0 && (
-                <div className="p-3 bg-sidebar-accent/10 rounded border border-sidebar-accent/20">
+                <><div className="p-3 bg-sidebar-primary/70 rounded border border-sidebar-accent/20">
                   <p className="font-medium">You have {pendingTasks} pending task(s)</p>
                   <p className="text-sidebar-foreground/70 mt-1">Complete them to stay on track</p>
-                </div>
+                </div><ul className="space-y-3">
+                    {tasks.slice(0, 3).map((task) => (
+                      <li
+                        key={task.id}
+                        className="border p-4 rounded-md flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                      >
+                        <div>
+                          <div className="flex items-center gap-x-3">
+                            <span className="font-semibold">{task.title}</span>
+                            <Badge variant={task.status as TASK_STATUS}>
+                              {task.status}
+                            </Badge>
+                          </div>
+                          <div className="mt-1 text-muted-foreground text-sm flex items-center gap-x-1">
+                            <span>{task.project.name}</span>
+                            <Dot />
+                            <span className="flex items-center gap-x-1">
+                              <Calendar className="size-4" />{" "}
+                              {formatDistanceToNow(task.createdAt || " ")}
+                            </span>
+                          </div>
+                        </div>
+                        <Link href={`/workspaces/${task.workspaceId}/tasks/${task.id}`}>
+                          <Button
+                            variant={"outline"}
+                            size='sm'
+                            className="w-full md:w-auto cursor-pointer"
+                          >
+                            <ExternalLink />
+                          </Button>
+                        </Link>
+                      </li>
+                    ))}
+                    <li className="hidden text-center text-base text-muted-foreground first-of-type:block">
+                      No tasks found
+                    </li>
+                  </ul></>
               )}
 
               {/* Recent Activities */}
