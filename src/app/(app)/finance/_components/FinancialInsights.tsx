@@ -20,13 +20,14 @@ export default function FinancialInsights() {
       <div className="bg-sidebar text-sidebar-foreground p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold">No Financial Insights Found</h3>
         <p className="text-sm">
-          Start leveraging financial insights by adding transactions and enabling analytics.
+          Start leveraging financial insights by adding transactions and enabling analytics.{' '}
+          This is set in the settings.
         </p>
         <div className="mt-4 space-y-2 flex flex-row justify-between items-start">
           <Link href="/finance/transactions" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
             Add Transactions
           </Link>
-          <Link href="/finance/analytics" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+          <Link href="/settings" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
             Enable Analytics
           </Link>
         </div>

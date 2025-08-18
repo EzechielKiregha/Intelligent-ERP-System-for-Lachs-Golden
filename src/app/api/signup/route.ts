@@ -86,11 +86,17 @@ export async function POST(req: NextRequest) {
         companyId,
       },
     });
+    const dpt = await prisma.department.findFirst({
+      where: {
+        name: workspaceName,
+        companyId,
+      },
+    });
 
     if (!workspace) {
       return NextResponse.json({ message: `Workspace "${workspaceName}" not found` }, { status: 400 });
     }
-
+    
     // 🔹 4. Create User
     const user = await prisma.user.create({
       data: {
@@ -113,6 +119,10 @@ export async function POST(req: NextRequest) {
         }
       },
     });
+    
+    if (!dpt) {
+      return NextResponse.json({ message: `Department "${workspaceName}" not found` }, { status: 400 });
+    }
 
     // 🔹 5. Create Employee record
     const employee = await prisma.employee.create({
@@ -127,8 +137,20 @@ export async function POST(req: NextRequest) {
         },
         companyId,
         status: EmployeeStatus.ACTIVE, // Default to active
+        departmentId: dpt.id,
       },
     });
+
+    await prisma.department.update({
+      where : { id : dpt.id, companyId : company.id },
+      data : {
+        employees : {
+          connect : {
+            id : employee.id
+          }
+        }
+      }
+    })
 
     // 🔹 6. Update User with employeeId
     await prisma.user.update({

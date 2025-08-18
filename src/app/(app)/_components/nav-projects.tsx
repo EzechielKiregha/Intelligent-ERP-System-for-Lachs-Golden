@@ -49,13 +49,13 @@ export function NavProjects({ auditLogs }: AuditLog) {
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Recent Activity</SidebarGroupLabel>
       <SidebarMenu>
-        {auditLogs && auditLogs.slice(0, 4).map((log) => (
+        {auditLogs && auditLogs.slice(0, 4).map((log, i) => (
           <SidebarMenuItem key={log.id}>
             <SidebarMenuButton asChild>
               <div
                 className="flex items-center gap-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               >
-                <span className="text-sidebar-foreground">{log.action}</span>
+                <span className="text-sidebar-foreground">{i + 1}</span>
                 <span className="text-xs text-gray-500">({log.description})</span>
               </div>
             </SidebarMenuButton>

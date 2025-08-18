@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 export default function DocumentsPage() {
   const user = useAuth().user
-  const [hasAccess, setHasAccess] = useState(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'HR')
+  const [hasAccess, setHasAccess] = useState(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'HR' || user?.role === 'ACCOUNTANT')
 
   return (
     <div className="flex flex-col min-h-full">

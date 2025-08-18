@@ -27,7 +27,7 @@ export default function RecentEmployeesPreview() {
 
   const canAccessProfile = (employee: Employee) => {
     if (!session?.user) return false;
-    return session.user.role === Role.SUPER_ADMIN || session.user.role === Role.ADMIN || session.user.id === employee.user?.id;
+    return session.user.role === Role.SUPER_ADMIN || session.user.role === Role.ADMIN || session.user.role === Role.CEO || session.user.role === Role.ACCOUNTANT || session.user.role === Role.HR || session.user.id === employee.user?.id;
   };
 
   const handleEmployeeClick = (employee: Employee) => {

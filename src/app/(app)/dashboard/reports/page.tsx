@@ -3,17 +3,27 @@ import React, { useState } from 'react';
 import ExportReportButton from '../../finance/_components/ExportReportButton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useAuth } from 'contents/authContext';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 const ReportsPage = () => {
 
   const user = useAuth().user
+  const router = useRouter()
   const [hasAccess, setHasAccess] = useState(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'HR')
 
   return (
     <div className="p-2 space-y-6">
       {/* Page Header */}
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold text-sidebar-foreground">Reports</h1>
+        <div className="flex items-center justify-between">
+          <Button variant='link' onClick={() => router.back()}
+            className="flex items-center gap-2 text-sidebar-primary hover:text-sidebar-accent">
+            <ArrowLeft size={16} /> Back
+          </Button>
+          <h1 className="text-3xl font-bold text-sidebar-foreground">Reports</h1>
+        </div>
         <p className="text-gray-600 dark:text-gray-400">
           Gain insights into your business performance by exporting detailed reports for transactions, revenue, and expenses.
         </p>

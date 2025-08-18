@@ -29,7 +29,7 @@ export default function BudgetSection() {
           <Link href="/finance/budget" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
             Setup Budget
           </Link>
-          <Link href="/finance/categories" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
+          <Link href="/finance/budget" className="text-sm text-[#A17E25] hover:underline dark:text-[#D4AF37]">
             Manage Categories
           </Link>
         </div>

@@ -132,7 +132,7 @@ export async function POST(req: Request) {
     },
   });
 
-  // ✅ 3. Create 5 Workspaces
+  // ✅ 3.1 Create 5 Workspaces
   const workspaces = await prisma.$transaction(
     WORKSPACE_CONFIGS.map((config) =>
       prisma.workspace.create({
@@ -149,6 +149,18 @@ export async function POST(req: Request) {
               size: 5000,
             },
           },
+        },
+      })
+    )
+  );
+  // ✅ 3.2 Create 5 departments
+  const departments = await prisma.$transaction(
+    WORKSPACE_CONFIGS.map((config) =>
+      prisma.department.create({
+        data: {
+          name: config.name,
+          description: config.description || '',
+          companyId: company.id,
         },
       })
     )

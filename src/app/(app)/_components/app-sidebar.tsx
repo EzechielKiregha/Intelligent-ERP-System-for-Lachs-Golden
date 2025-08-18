@@ -48,7 +48,7 @@ const financeLinks = [
   { title: "Finance", url: "/finance", icon: PieChart },
   { title: "Transactions", url: "/finance/transactions", icon: SquareTerminal },
   { title: "Budget", url: "/finance/budget", icon: BookOpen },
-  { title: "Analytics", url: "/finance/analytics", icon: IconAnalyze },
+  { title: "Analytics", url: "/settings", icon: IconAnalyze },
 ]
 
 const inventoryLinks = [

@@ -1,16 +1,20 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import ExportReportButton from '../../finance/_components/ExportReportButton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import BudgetSection from '../_components/BudgetSection';
 import CategoryForm from '../_components/CategoryForm';
 import { useSearchParams } from 'next/navigation';
+import { useAuth } from 'contents/authContext';
 
 export default function BudgetPage() {
 
   const searchParams = useSearchParams();
   const catId = searchParams.get('catId')
+  const user = useAuth().user
+  const [hasAccess, setHasAccess] = useState(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'HR' || user?.role === 'ACCOUNTANT')
+
 
   return (
     <div className="p-6 space-y-8">
@@ -81,8 +85,13 @@ export default function BudgetPage() {
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-        <CategoryForm id={catId} />
-        <BudgetSection />
+
+        {hasAccess && (
+          <>
+            <CategoryForm id={catId} />
+            <BudgetSection />
+          </>
+        )}
       </div>
     </div>
   );

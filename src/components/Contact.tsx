@@ -9,6 +9,7 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSaveNotification } from "@/hooks/useNotifications";
 import { toast } from "sonner";
+import { LeftAuthPanel } from "./LeftAuthPanel";
 
 const userSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -42,7 +43,7 @@ export default function ContactPage() {
     <div id="contact" className="flex items-center justify-center min-h-screen bg-transparent px-4 pt-4 shadow-lg">
       <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
         {/* Google Map Section */}
-        <div className="w-full md:w-1/2 h-[200px] md:h-full">
+        {/* <div className="w-full md:w-1/2 h-[200px] md:h-full">
           <iframe
             className="w-full h-full"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15950.297170402976!2d30.058585!3d-1.944072!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca42596b27c3b%3A0xadf2d2f8b055b2d7!2sKigali%2C%20Rwanda!5e0!3m2!1sen!2sus!4v1697051234567"
@@ -50,7 +51,17 @@ export default function ContactPage() {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           ></iframe>
-        </div>
+        </div> */}
+        <LeftAuthPanel
+          name="Contact US"
+          desc="If you have any inqueries please leave us message"
+          bullets={[
+            'Toronto, Ontario, Canada',
+            'info@lachsgolden.com',
+            '+12342395076',
+          ]}
+          backgroundImage="https://images.unsplash.com/photo-1653289755854-a41949e96282?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        />
         {/* Contact Form Section */}
         <div className="flex flex-col justify-center items-center w-full md:w-1/2 max-w-lg bg-white dark:bg-[#111827] p-6">
           <h2 className="text-2xl font-bold mb-6">Contact Us</h2>

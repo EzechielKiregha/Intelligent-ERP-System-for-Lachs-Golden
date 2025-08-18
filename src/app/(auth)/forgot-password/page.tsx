@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
+import { sendForgotPasswordRequest } from '@/lib/emailClients';
 
 const forgotSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -53,15 +54,21 @@ export default function ForgotPasswordPage() {
     },
   });
 
-  const onSubmit = (data: ForgotInput) => {
-    mutation.mutate(data);
+  const onSubmit = async (d: ForgotInput) => {
+    // mutation.mutate(data);
+    try {
+      const { data } = await sendForgotPasswordRequest(d.email)
+      console.log('forgot response', data);
+    } catch (err) {
+      console.error('forgot error', err);
+    }
   };
 
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-sidebar px-4">
         <div className="bg-white dark:bg-[#111827] shadow-2xl rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
-          <LeftAuthPanel />
+          <LeftAuthPanel backgroundImage='https://plus.unsplash.com/premium_photo-1700592624090-8407e5c1dd52?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' />
           <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
             <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
               <h1 className="text-[24px] font-semibold text-gray-800 dark:text-gray-200">Forgot Password</h1>

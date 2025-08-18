@@ -82,9 +82,9 @@ export default function SignUpPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#0a0e16] px-4 shadow-lg">
       <div className="bg-white dark:bg-[#111827] shadow-lg rounded-2xl flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
-        <LeftAuthPanel />
+        <LeftAuthPanel backgroundImage='https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3' />
         {/* <div className="flex items-center justify-center min-h-screen bg-sidebar px-4 shadow-lg"> */}
-        <Card className="w-full max-w-lg bg-white dark:bg-[#111827] shadow-lg">
+        <Card className="flex-1 max-w-lg bg-white dark:bg-[#111827] shadow-lg">
           <CardHeader>
             <CardTitle className="text-[24px] font-semibold text-gray-800 dark:text-gray-200">
               Sign Up - Step {step} of 2

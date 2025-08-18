@@ -1,68 +1,137 @@
+// app/api/mail/otp/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { render } from '@react-email/render';
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+import prisma from '@/lib/prisma';
 import OtpEmail from 'emails/OtpEmail';
-import prisma from "@/lib/prisma";
+import { sendEmailJS } from '@/lib/emailjs';
 
-// Initialize MailerSend
-const mailerSend = new MailerSend({
-  apiKey: process.env.MAILERSEND_API_KEY || '',
-});
+const SERVICE = process.env.EMAILJS_SERVICE_ID!;
+const TEMPLATE = process.env.EMAILJS_TEMPLATE_OTP_ID!;
+const USER_ID = process.env.EMAILJS_USER_ID!;
+const ACCESSTOKEN = process.env.EMAILJS_PRIVATE_KEY!;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://intelligenterp.dpdns.org';
 
 export async function POST(req: NextRequest) {
-  console.log('[POST] Received request to send OTP');
-  const { toEmail } = await req.json();
-
-  if (!toEmail) {
-    return NextResponse.json({ error: 'Missing required field: toEmail' }, { status: 400 });
-  }
-
-  // Generate OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  console.log(`[POST] Generated OTP: ${otp}`);
-
-  // Lookup user
-  const userExist = await prisma.user.findUnique({
-    where: { email: toEmail },
-    include: { company: true },
-  });
-
-  if (!userExist) {
-    return NextResponse.json({ error: 'User not found' }, { status: 400 });
-  }
-
-  // Update OTP in DB
-  await prisma.user.update({
-    where: { email: toEmail },
-    data: { otpSecret: otp },
-  });
-
-  // Render email HTML
-  const emailHtml = render(OtpEmail({ verificationCode: otp }));
-
-  const correctedEmail = await Promise.resolve(emailHtml);
-
   try {
-    const emailParams = new EmailParams()
-      .setFrom(new Sender("support@intelligenterp.dpdns.org", `${userExist.company?.name || "Intelligent ERP"} Support`))
-      .setTo([new Recipient(userExist.email, userExist.name || "User")])
-      .setSubject(`Your Intelligent ERP OTP: ${otp}`)
-      .setHtml(correctedEmail)
-      .setText(`Your OTP is ${otp}. It will expire in 10 minutes. If you didn’t request this, ignore the message.`);
+    const body = await req.json();
+    const toEmail = body?.toEmail;
+    if (!toEmail) return NextResponse.json({ error: 'Missing toEmail' }, { status: 400 });
 
-    const response = await mailerSend.email.send(emailParams);
+    const user = await prisma.user.findUnique({ where: { email: toEmail }, include: { company: true } });
+    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-    console.log('[POST] OTP email sent:', response);
+    // Generate 6-digit OTP and expiry
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+    // Persist OTP (and optional expiry field)
+    await prisma.user.update({
+      where: { email: toEmail },
+      data: { otpSecret: otp },
+    });
+
+    // Render HTML from React Email
+    const html = render(OtpEmail({ verificationCode: otp }));
+
+    // Send via EmailJS
+    await sendEmailJS({
+      service_id: SERVICE,
+      template_id: TEMPLATE,
+      user_id: USER_ID,
+      template_params: {
+        to_name: user.firstName ?? user.name ?? 'User',
+        email: user.email,
+        company: user.company?.name ?? 'Intelligent ERP',
+        company_website: BASE_URL,
+        code: otp,
+        // html, // optional — if your EmailJS template places {{html}}
+      },
+      accessToken : ACCESSTOKEN,
+    });
+
+    console.log("OTP was sent is :", otp)
+
     return NextResponse.json({ message: 'OTP sent successfully' });
   } catch (err: any) {
-    console.error('[POST] MailerSend failed:', err);
-    return NextResponse.json({ error: 'Failed to send OTP email', details: err.message }, { status: 500 });
+    console.error('OTP route error:', err);
+    const status = err?.status ?? 500;
+    const details = err?.body ?? err?.message ?? err;
+    return NextResponse.json({ error: 'Failed to send OTP', details }, { status });
   }
 }
 
-export async function GET() {
-  return NextResponse.json({ message: 'OTP route ready with MailerSend' });
-}
+
+
+
+
+
+
+
+// import { NextRequest, NextResponse } from 'next/server';
+// import { render } from '@react-email/render';
+// import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+// import OtpEmail from 'emails/OtpEmail';
+// import prisma from "@/lib/prisma";
+
+// // Initialize MailerSend
+// const mailerSend = new MailerSend({
+//   apiKey: process.env.MAILERSEND_API_KEY || '',
+// });
+
+// export async function POST(req: NextRequest) {
+//   console.log('[POST] Received request to send OTP');
+//   const { toEmail } = await req.json();
+
+//   if (!toEmail) {
+//     return NextResponse.json({ error: 'Missing required field: toEmail' }, { status: 400 });
+//   }
+
+//   // Generate OTP
+//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//   console.log(`[POST] Generated OTP: ${otp}`);
+
+//   // Lookup user
+//   const userExist = await prisma.user.findUnique({
+//     where: { email: toEmail },
+//     include: { company: true },
+//   });
+
+//   if (!userExist) {
+//     return NextResponse.json({ error: 'User not found' }, { status: 400 });
+//   }
+
+//   // Update OTP in DB
+//   await prisma.user.update({
+//     where: { email: toEmail },
+//     data: { otpSecret: otp },
+//   });
+
+//   // Render email HTML
+//   const emailHtml = render(OtpEmail({ verificationCode: otp }));
+
+//   const correctedEmail = await Promise.resolve(emailHtml);
+
+//   try {
+//     const emailParams = new EmailParams()
+//       .setFrom(new Sender("support@intelligenterp.dpdns.org", `${userExist.company?.name || "Intelligent ERP"} Support`))
+//       .setTo([new Recipient(userExist.email, userExist.name || "User")])
+//       .setSubject(`Your Intelligent ERP OTP: ${otp}`)
+//       .setHtml(correctedEmail)
+//       .setText(`Your OTP is ${otp}. It will expire in 10 minutes. If you didn’t request this, ignore the message.`);
+
+//     const response = await mailerSend.email.send(emailParams);
+
+//     console.log('[POST] OTP email sent:', response);
+//     return NextResponse.json({ message: 'OTP sent successfully' });
+//   } catch (err: any) {
+//     console.error('[POST] MailerSend failed:', err);
+//     return NextResponse.json({ error: 'Failed to send OTP email', details: err.message }, { status: 500 });
+//   }
+// }
+
+// export async function GET() {
+//   return NextResponse.json({ message: 'OTP route ready with MailerSend' });
+// }
 
 
 

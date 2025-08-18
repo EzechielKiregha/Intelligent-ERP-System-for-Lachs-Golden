@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/input-otp";
 import { Role } from '@/generated/prisma';
 import { useAuth } from 'contents/authContext';
+import { sendOtpRequest } from '@/lib/emailClients';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function LoginPage() {
   const [otp, setOtp] = useState<string>("");
   const [toEmail, setEmail] = useState<string>("");
   const user = useAuth().user;
+  const logout = useAuth().logout
 
   const isCompanyCreated = searchParams.get('companycreated') === 'true';
   const isJoinWorkspace = searchParams.get('join-ws') === 'true';
@@ -63,10 +65,17 @@ export default function LoginPage() {
           toast.success('Login successful!');
           router.push('/dashboard');
         } else {
-          await axiosdb.post('/api/mail/otp', { toEmail: data.email });
-          toast.success('Please verify to continue.');
-          setEmail(data.email || '');
-          setOtpPopoverOpen(true);
+          // await axiosdb.post('/api/mail/otp', { toEmail: data.email });
+          try {
+            const res = await sendOtpRequest(data.email);
+            toast.success(res.data.message);
+            setEmail(data.email || '');
+            setOtpPopoverOpen(true);
+            return res.data;
+          } catch (err: any) {
+            console.error(err?.message ?? 'Failed to send OTP');
+            toast.warning("Internal Server Error")
+          }
         }
       }
     },
@@ -89,9 +98,10 @@ export default function LoginPage() {
             router.push('/finance');
           } else if (user?.role === Role.HR) {
             router.push('/hr');
-          } else if (user?.role === Role.MEMBER || user?.role === Role.USER) {
-            router.push('/workspaces');
-          } else if (user?.role === Role.MANAGER || user?.role === Role.EMPLOYEE) {
+          } else if (user?.role === Role.USER) {
+            toast.warning("No permission to system. Leave a message in Contact Us section")
+            logout()
+          } else if (user?.role === Role.MANAGER || user?.role === Role.EMPLOYEE || user?.role === Role.MEMBER) {
             router.push('/inventory');
           } else if (user?.role === Role.CEO) {
             router.push('/dashboard');
@@ -114,7 +124,7 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#0a0e16] px-4">
       <div className="bg-white dark:bg-[#111827] shadow-2xl rounded-lg flex flex-col md:flex-row w-full max-w-[900px] md:h-[535px] overflow-hidden">
-        <LeftAuthPanel />
+        <LeftAuthPanel backgroundImage='https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1415&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' />
         <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
             <h1 className="text-[24px] font-semibold text-gray-800 dark:text-gray-200">Sign In</h1>
@@ -206,7 +216,7 @@ export default function LoginPage() {
           </InputOTP>
           <Button
             onClick={handleVerifyOtp}
-            className="bg-gradient-to-l mt-3.5 mx-auto from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
+            className="bg-gradient-to-l cursor-pointer mt-3.5 mx-auto from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
           >
             Verify OTP
           </Button>

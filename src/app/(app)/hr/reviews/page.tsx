@@ -8,7 +8,7 @@ import { useAuth } from 'contents/authContext'
 
 export default function ReviewsPage() {
   const user = useAuth().user
-  const [hasAccess, setHasAccess] = useState(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'HR')
+  const [hasAccess, setHasAccess] = useState(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'HR' || user?.role === 'ACCOUNTANT')
 
   return (
     <div className="flex flex-col min-h-full">
