@@ -270,12 +270,12 @@ export function DataTable<TData extends DataWithId>({
           </SelectTrigger>
           <SelectContent className="border-[var(--sidebar-border)]">
             <SelectItem value="main">{typeName}</SelectItem>
-            <SelectItem value="summary">Summary</SelectItem>
+            {/* <SelectItem value="summary">Summary</SelectItem> */}
           </SelectContent>
         </Select>
         <TabsList className="hidden @4xl/main:flex bg-[var(--sidebar)] text-[var(--sidebar-foreground)]">
           <TabsTrigger value="main">{typeName}</TabsTrigger>
-          <TabsTrigger value="summary">Summary</TabsTrigger>
+          {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
         </TabsList>
         <div className="flex items-center gap-2">
           <DropdownMenu>
@@ -507,7 +507,7 @@ export function DataTable<TData extends DataWithId>({
           </div>
         </div>
       </TabsContent>
-      <TabsContent
+      {/* <TabsContent
         value="summary"
         className="flex flex-col px-4 lg:px-6"
       >
@@ -516,7 +516,7 @@ export function DataTable<TData extends DataWithId>({
             {typeName} summary view resizing soon...
           </p>
         </div>
-      </TabsContent>
+      </TabsContent> */}
     </Tabs>
   );
 }

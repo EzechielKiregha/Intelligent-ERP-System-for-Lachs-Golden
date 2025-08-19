@@ -374,12 +374,12 @@ export function TransactionList({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="transactions">Transactions</SelectItem>
-            <SelectItem value="summary">Summary</SelectItem>
+            {/* <SelectItem value="summary">Summary</SelectItem> */}
           </SelectContent>
         </Select>
         <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
-          <TabsTrigger value="summary">Summary</TabsTrigger>
+          {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
         </TabsList>
         <div className="flex items-center gap-2">
           <DropdownMenu>
@@ -548,15 +548,6 @@ export function TransactionList({
               </Button>
             </div>
           </div>
-        </div>
-      </TabsContent>
-      <TabsContent
-        value="summary"
-        className="flex flex-col px-4 lg:px-6"
-      >
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed">
-          {/* Placeholder for summary view */}
-          <p className="text-center text-muted-foreground pt-20">Summary view coming soon...</p>
         </div>
       </TabsContent>
     </Tabs>
