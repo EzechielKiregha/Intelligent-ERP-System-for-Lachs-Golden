@@ -67,8 +67,10 @@ const hrLinks = [
 ]
 
 const crmLinks = [
+  { title: "CRM", url: "/crm", icon: Command },
   { title: "Lead/Customer", url: "/crm/contacts", icon: Command },
-  // { title: "Sales Pipeline", url: "/crm/sales", icon: Bot },
+  { title: "Deals", url: "/crm/deals", icon: Bot },
+  { title: "Reports", url: "/crm/reports", icon: Bot },
 ]
 
 const navMainItems = [
@@ -120,16 +122,24 @@ const navMainItems = [
     url: "/crm",
     icon: Command,
     items: [
-      { title: "Lead/Customer", url: "/crm/contacts" },
-      // { title: "Sales Pipeline", url: "/crm/sales" },
+      { title: "CRM", url: "/crm", icon: Command },
+      { title: "Lead/Customers", url: "/crm/contacts", icon: Command },
+      { title: "Deals", url: "/crm/deals", icon: Bot },
+      { title: "Reports", url: "/crm/reports", icon: Bot },
     ],
   },
-  { title: "Settings", url: "/dashboard/settings", icon: Settings2 },
+  {
+    title: "Settings", url: "/settings", icon: Settings2,
+    items: [
+      { title: "Settings", url: "/settings" },
+    ]
+  },
 ];
 
 const userData = {
   name: "John Doe",
   email: "john.doe@example.com",
+  role: "USER",
   avatar: "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
 };
 
@@ -156,9 +166,11 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
         case Role.MANAGER:
           return [...dashboardLinks, ...financeLinks];
         case Role.HR:
+          return [...financeLinks, ...hrLinks, ...crmLinks];
         case Role.ACCOUNTANT:
           return [...financeLinks, ...hrLinks];
         case Role.EMPLOYEE:
+        case Role.MEMBER:
           return [...inventoryLinks, ...crmLinks];
         case Role.SUPER_ADMIN:
         case Role.ADMIN:
@@ -192,6 +204,8 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
             name: user?.name || userData.name,
             email: user?.email || userData.email,
             avatar: user?.image || userData.avatar,
+            role: user?.role || userData.role,
+
           }} />
         </SidebarFooter>
         <SidebarRail />

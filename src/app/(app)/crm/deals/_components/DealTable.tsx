@@ -1,39 +1,50 @@
-// app/crm/contacts/_components/ContactTable.tsx
+// app/crm/deals/_components/DealTable.tsx
 'use client';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, Pencil, Trash } from 'lucide-react';
+import { Eye, Pencil, Trash, DollarSign } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Contact } from '@/lib/hooks/crm';
-import { useDeleteContact } from '@/lib/hooks/crm';
+import { useDeleteDeal } from '@/lib/hooks/crm';
 import { toast } from 'sonner';
+import { DealStage } from '@/generated/prisma';
+import { Deal } from '../types/types';
 
-interface ContactTableProps {
-  contacts: Contact[];
+interface DealTableProps {
+  deals: Deal[];
 }
 
-export default function ContactTable({ contacts }: ContactTableProps) {
+// Stage color mapping
+const STAGE_COLORS: Record<DealStage, string> = {
+  NEW: 'bg-blue-500/20 text-blue-300',
+  QUALIFIED: 'bg-cyan-500/20 text-cyan-300',
+  PROPOSAL: 'bg-emerald-500/20 text-emerald-300',
+  NEGOTIATION: 'bg-amber-500/20 text-amber-300',
+  WON: 'bg-green-500/20 text-green-300',
+  LOST: 'bg-red-500/20 text-red-300',
+};
+
+export default function DealTable({ deals }: DealTableProps) {
   const router = useRouter();
-  const deleteContact = useDeleteContact();
+  const deleteDeal = useDeleteDeal();
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm('Are you sure you want to delete this contact?')) {
-      deleteContact.mutate(id, {
+    if (confirm('Are you sure you want to delete this deal?')) {
+      deleteDeal.mutate(id, {
         onSuccess: () => {
-          toast.success('Contact deleted successfully');
+          toast.success('Deal deleted successfully');
         },
         onError: () => {
-          toast.error('Failed to delete contact');
+          toast.error('Failed to delete deal');
         },
       });
     }
   };
 
   const handleView = (id: string) => {
-    router.push(`/crm/contacts/manage?id=${id}`);
+    router.push(`/crm/deals/manage/${id}`);
   };
 
   return (
@@ -41,42 +52,43 @@ export default function ContactTable({ contacts }: ContactTableProps) {
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-sidebar-accent/50">
-            <TableHead className="text-sidebar-foreground">Name</TableHead>
-            <TableHead className="text-sidebar-foreground">Email</TableHead>
-            <TableHead className="text-sidebar-foreground">Phone</TableHead>
-            <TableHead className="text-sidebar-foreground">Company</TableHead>
-            <TableHead className="text-sidebar-foreground">Job Title</TableHead>
+            <TableHead className="text-sidebar-foreground">Title</TableHead>
+            <TableHead className="text-sidebar-foreground">Amount</TableHead>
+            <TableHead className="text-sidebar-foreground">Stage</TableHead>
+            <TableHead className="text-sidebar-foreground">Contact</TableHead>
             <TableHead className="text-sidebar-foreground text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {contacts.length === 0 ? (
+          {deals.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center text-sidebar-foreground/70">
-                No contacts found
+              <TableCell colSpan={5} className="h-24 text-center text-sidebar-foreground/70">
+                No deals found
               </TableCell>
             </TableRow>
           ) : (
-            contacts.map((contact) => (
+            deals.map((deal) => (
               <TableRow
-                key={contact.id}
+                key={deal.id}
                 className="hover:bg-sidebar-accent/50 cursor-pointer"
-                onClick={() => handleView(contact.id)}
+                onClick={() => handleView(deal.id)}
               >
                 <TableCell className="font-medium text-sidebar-foreground">
-                  {contact.fullName}
+                  {deal.title}
                 </TableCell>
                 <TableCell className="text-sidebar-foreground/80">
-                  {contact.email}
+                  <div className="flex items-center">
+                    <DollarSign className="h-3 w-3 mr-1" />
+                    {deal.amount.toLocaleString()}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge className={STAGE_COLORS[deal.stage]}>
+                    {deal.stage}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-sidebar-foreground/80">
-                  {contact.phone || 'N/A'}
-                </TableCell>
-                <TableCell className="text-sidebar-foreground/80">
-                  {contact.companyName || 'N/A'}
-                </TableCell>
-                <TableCell className="text-sidebar-foreground/80">
-                  {contact.jobTitle || 'N/A'}
+                  {deal.contact?.fullName || 'N/A'}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button
@@ -84,7 +96,7 @@ export default function ContactTable({ contacts }: ContactTableProps) {
                     size="icon"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleView(contact.id);
+                      handleView(deal.id);
                     }}
                     className="hover:text-sidebar-foreground"
                   >
@@ -95,7 +107,7 @@ export default function ContactTable({ contacts }: ContactTableProps) {
                     size="icon"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/crm/contacts/manage?id=${contact.id}`);
+                      router.push(`/crm/deals/manage/${deal.id}`);
                     }}
                     className="hover:text-sidebar-foreground"
                   >
@@ -104,7 +116,7 @@ export default function ContactTable({ contacts }: ContactTableProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={(e) => handleDelete(contact.id, e)}
+                    onClick={(e) => handleDelete(deal.id, e)}
                     className="hover:text-red-400"
                   >
                     <Trash className="h-4 w-4" />

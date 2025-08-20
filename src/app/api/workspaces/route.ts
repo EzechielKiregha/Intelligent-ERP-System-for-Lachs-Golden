@@ -19,6 +19,9 @@ export async function GET(req: NextRequest) {
       images : {
         select : { url : true},
         take: 1 // Get only one image per workspace
+      },
+      members:{
+        select: { userId:true }
       }
     },
     orderBy: { createdAt: 'desc' },

@@ -1,132 +1,181 @@
+// app/crm/contacts/_components/ManageContactForm.tsx
+'use client';
 
-'use client'
-
-import { useState, useEffect } from 'react'
-import { z } from 'zod'
-import { toast } from 'sonner'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { useCreateContact, useUpdateContact } from '@/lib/hooks/crm'
-
-export const contactSchema = z.object({
-  fullName: z.string().min(3, 'Full name must be at least 3 characters'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().optional(),
-  jobTitle: z.string().optional(),
-  notes: z.string().optional(),
-})
-
-type ContactForm = z.infer<typeof contactSchema>
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useCreateContact, useUpdateContact } from '@/lib/hooks/crm';
+import { toast } from 'sonner';
+import { Contact } from '@/lib/hooks/crm';
 
 interface ManageContactFormProps {
-  contactToEdit?: ContactForm & { id: string }
-  standalone?: boolean
+  contact?: Contact | null;
+  onSuccess?: () => void;
 }
 
-export default function ManageContactForm({ contactToEdit, standalone }: ManageContactFormProps) {
-  const isEdit = Boolean(contactToEdit)
-  const [fullName, setFullName] = useState(contactToEdit?.fullName || '')
-  const [email, setEmail] = useState(contactToEdit?.email || '')
-  const [phone, setPhone] = useState(contactToEdit?.phone || '')
-  const [jobTitle, setJobTitle] = useState(contactToEdit?.jobTitle || '')
-  const [notes, setNotes] = useState(contactToEdit?.notes || '')
+export default function ManageContactForm({ contact, onSuccess }: ManageContactFormProps) {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    companyName: '',
+    jobTitle: '',
+    notes: '',
+  });
 
-  const createContact = useCreateContact()
-  const updateContact = useUpdateContact()
+  const createContact = useCreateContact();
+  const updateContact = useUpdateContact();
 
-  const handleSubmit = async () => {
-    try {
-      const data: ContactForm = { fullName, email, phone, jobTitle, notes }
-      contactSchema.parse(data)
-
-      if (isEdit && contactToEdit) {
-        await updateContact.mutateAsync({ id: contactToEdit.id, ...data })
-        toast.success('Contact updated successfully')
-      } else {
-        await createContact.mutateAsync(data)
-        toast.success('Contact created successfully')
-        setFullName('')
-        setEmail('')
-        setPhone('')
-        setJobTitle('')
-        setNotes('')
-      }
-    } catch (err: any) {
-      const message = err?.errors?.[0]?.message || 'Validation or server error'
-      toast.error(message)
+  useEffect(() => {
+    if (contact) {
+      setFormData({
+        fullName: contact.fullName,
+        email: contact.email,
+        phone: contact.phone || '',
+        companyName: contact.companyName || '',
+        jobTitle: contact.jobTitle || '',
+        notes: contact.notes || '',
+      });
+    } else {
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        companyName: '',
+        jobTitle: '',
+        notes: '',
+      });
     }
-  }
+  }, [contact]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.email) {
+      toast.error('Email is required');
+      return;
+    }
+
+    if (contact) {
+      updateContact.mutate(
+        { id: contact.id, ...formData },
+        {
+          onSuccess: () => {
+            toast.success('Contact updated successfully');
+            onSuccess?.();
+          },
+          onError: () => {
+            toast.error('Failed to update contact');
+          },
+        }
+      );
+    } else {
+      createContact.mutate(formData, {
+        onSuccess: () => {
+          toast.success('Contact created successfully');
+          onSuccess?.();
+        },
+        onError: (error: any) => {
+          const errorMessage = error.response?.data?.error || 'Failed to create contact';
+          toast.error(errorMessage);
+        },
+      });
+    }
+  };
 
   return (
-    <div className="w-full max-w-3xl space-y-6 text-sidebar-foreground">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="fullName" className="text-sidebar-foreground">Full Name</Label>
+        <div className="space-y-2">
+          <Label htmlFor="fullName">Full Name</Label>
           <Input
             id="fullName"
-            value={fullName}
-            onChange={e => setFullName(e.target.value)}
-            placeholder="e.g. Jane Doe"
-            className="bg-sidebar text-sidebar-foreground"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            placeholder="John Doe"
+            required
           />
         </div>
-
-        <div>
-          <Label htmlFor="email" className="text-sidebar-foreground">Email</Label>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
+            name="email"
             type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="e.g. jane.doe@example.com"
-            className="bg-sidebar text-sidebar-foreground"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="phone" className="text-sidebar-foreground">Phone</Label>
-          <Input
-            id="phone"
-            value={phone}
-            onChange={e => setPhone(e.target.value)}
-            placeholder="e.g. +1234567890"
-            className="bg-sidebar text-sidebar-foreground"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="jobTitle" className="text-sidebar-foreground">Job Title</Label>
-          <Input
-            id="jobTitle"
-            value={jobTitle}
-            onChange={e => setJobTitle(e.target.value)}
-            placeholder="e.g. Account Manager"
-            className="bg-sidebar text-sidebar-foreground"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="john@example.com"
+            required
           />
         </div>
       </div>
 
-      <div>
-        <Label htmlFor="notes" className="text-sidebar-foreground">Notes</Label>
-        <Textarea
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="phone">Phone</Label>
+          <Input
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="+1 (555) 123-4567"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="companyName">Company</Label>
+          <Input
+            id="companyName"
+            name="companyName"
+            value={formData.companyName}
+            onChange={handleChange}
+            placeholder="Company Inc."
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="jobTitle">Job Title</Label>
+          <Input
+            id="jobTitle"
+            name="jobTitle"
+            value={formData.jobTitle}
+            onChange={handleChange}
+            placeholder="Software Engineer"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="notes">Notes</Label>
+        <textarea
           id="notes"
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
-          placeholder="Additional information..."
-          className="bg-sidebar text-sidebar-foreground"
+          name="notes"
+          value={formData.notes}
+          onChange={handleChange}
+          placeholder="Additional notes about this contact..."
+          className="w-full min-h-[100px] p-2 border border-[var(--sidebar-border)] rounded bg-sidebar text-sidebar-foreground focus:outline-none focus:ring-2 focus:ring-sidebar-accent"
         />
       </div>
 
-      <div className="pt-4">
-        <Button
-          onClick={handleSubmit}
-          className="w-full bg-sidebar-accent hover:bg-sidebar-primary text-sidebar-accent-foreground"
-        >
-          {isEdit ? 'Update Contact' : 'Create Contact'}
-        </Button>
-      </div>
-    </div>
-  )
+      <Button
+        type="submit"
+        className="w-full bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/90"
+        disabled={createContact.isPending || updateContact.isPending}
+      >
+        {createContact.isPending || updateContact.isPending
+          ? 'Saving...'
+          : contact
+            ? 'Update Contact'
+            : 'Create Contact'}
+      </Button>
+    </form>
+  );
 }

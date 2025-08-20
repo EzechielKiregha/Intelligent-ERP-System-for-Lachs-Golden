@@ -61,7 +61,7 @@ export default function AdminSettings() {
       toast.success('Backup completed successfully');
     },
     onError: () => {
-      toast.error('Backup failed. Please try again.');
+      toast.error('Coming soom...');
     },
   });
 
