@@ -1,9 +1,9 @@
+// app/settings/components/AdminSettings.tsx
 'use client';
 
 import { useAuditLog, useGenerateReportAdmin } from '@/lib/hooks/dashboard';
-import { useGenerateReport } from '@/lib/hooks/dashboard';
 import { useAIInsights } from '@/lib/hooks/dashboard';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -20,11 +20,27 @@ import {
   Zap,
   BarChart3,
   Lock,
+  Users,
+  Search,
+  Eye,
+  Pencil,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  UserCog,
+  Briefcase,
+  DollarSign,
+  BookOpen,
+  FileText as FileTextIcon,
+  MessageSquare,
+  Settings
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { Role, UserStatus } from '@/generated/prisma';
+import UserTable from './UserTable';
+import UserDetailPopover from './UserDetailPopover';
 import { useUserSettings } from '../hooks/useUserSettings';
-import { Role } from '@/generated/prisma';
 
 export default function AdminSettings() {
   const { userData } = useUserSettings();
@@ -44,6 +60,16 @@ export default function AdminSettings() {
   const generateReport = useGenerateReportAdmin();
   const { data: insights = [] } = useAIInsights();
 
+  // 🔹 Fetch users for management
+  const { data: users = [], isLoading: isUsersLoading, refetch: refetchUsers } = useQuery({
+    queryKey: ['users', 'management'],
+    queryFn: async () => {
+      const res = await fetch('/api/settings/pending-users');
+      if (!res.ok) throw new Error('Failed to fetch users');
+      return res.json();
+    }
+  });
+
   // 🔹 Auto-backup setting
   const [autoBackup, setAutoBackup] = useState(true);
 
@@ -61,7 +87,7 @@ export default function AdminSettings() {
       toast.success('Backup completed successfully');
     },
     onError: () => {
-      toast.error('Coming soom...');
+      toast.error('Coming soon...');
     },
   });
 
@@ -84,6 +110,38 @@ export default function AdminSettings() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
+        {/* 👥 User Management */}
+        <section>
+          <h3 className="text-lg font-medium text-sidebar-foreground mb-4 flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            User Management
+          </h3>
+
+          <div className="mb-4 flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/50" />
+              <Input
+                placeholder="Search users..."
+                className="pl-9 bg-sidebar-accent/10 border-sidebar-accent/30"
+              />
+            </div>
+            <Button variant="outline" size="sm">
+              <FilterIcon className="mr-2 h-4 w-4" />
+              Filter
+            </Button>
+            <Button variant="outline" size="sm">
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Refresh
+            </Button>
+          </div>
+
+          <UserTable
+            users={users}
+            isLoading={isUsersLoading}
+            refetchUsers={refetchUsers}
+          />
+        </section>
+
         {/* 🛡️ Security Settings */}
         <section>
           <h3 className="text-lg font-medium text-sidebar-foreground mb-4 flex items-center gap-2">
@@ -299,6 +357,15 @@ export default function AdminSettings() {
         </section>
       </CardContent>
     </Card>
+  );
+}
+
+// Helper component for filter icon
+function FilterIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    </svg>
   );
 }
 

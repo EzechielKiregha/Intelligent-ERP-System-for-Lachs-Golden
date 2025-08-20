@@ -59,7 +59,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+
+  const id = (await params).id
+
+  if (!id) return NextResponse.json({ error: 'Contact ID is missing' }, { status: 400 });
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.currentCompanyId) {
@@ -72,7 +76,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     // Verify user has access to this contact
     const contact = await prisma.contact.findFirst({
       where: { 
-        id: params.id,
+        id,
         company: { 
           users: { 
             some: { 
@@ -89,7 +93,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     // Update contact
     const updatedContact = await prisma.contact.update({
-      where: { id: params.id },
+      where: { id },
       data: validatedData,
     });
 
@@ -108,7 +112,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+
+  const id = (await params).id
+
+  if (!id) return NextResponse.json({ error: 'Contact ID is missing' }, { status: 400 });
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.currentCompanyId) {
@@ -118,7 +126,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     // Verify user has access to this contact
     const contact = await prisma.contact.findFirst({
       where: { 
-        id: params.id,
+        id,
         company: { 
           users: { 
             some: { 
@@ -135,7 +143,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
     // Delete contact
     await prisma.contact.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: 'Contact deleted successfully' });
