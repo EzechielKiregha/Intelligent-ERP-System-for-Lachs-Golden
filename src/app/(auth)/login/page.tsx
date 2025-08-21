@@ -73,6 +73,7 @@ export default function LoginPage() {
             setOtpPopoverOpen(true);
             return res.data;
           } catch (err: any) {
+            logout()
             console.error(err?.message ?? 'Failed to send OTP');
             toast.warning("Internal Server Error")
           }
@@ -110,10 +111,12 @@ export default function LoginPage() {
       } else {
         console.error("OTP verification failed:", res.data);
         toast.error("Invalid OTP. Please try again.");
+        logout()
       }
     } catch (err) {
       console.error("OTP verification error:", err);
       toast.error("OTP verification failed. Please try again.");
+      logout()
     }
   };
 

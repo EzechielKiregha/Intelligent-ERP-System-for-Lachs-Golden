@@ -33,7 +33,8 @@ import {
   BookOpen,
   FileText as FileTextIcon,
   MessageSquare,
-  Settings
+  Settings,
+  UserPlus
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useState, useMemo } from 'react';
@@ -41,6 +42,7 @@ import { Role, UserStatus } from '@/generated/prisma';
 import UserTable from './UserTable';
 import UserDetailPopover from './UserDetailPopover';
 import { useUserSettings } from '../hooks/useUserSettings';
+import UserFormPopover from './UserFormPopover';
 
 export default function AdminSettings() {
   const { userData } = useUserSettings();
@@ -133,6 +135,14 @@ export default function AdminSettings() {
               <RefreshCw className="mr-2 h-4 w-4" />
               Refresh
             </Button>
+
+            {/* Add Create User button */}
+            <UserFormPopover>
+              <Button>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Create User
+              </Button>
+            </UserFormPopover>
           </div>
 
           <UserTable

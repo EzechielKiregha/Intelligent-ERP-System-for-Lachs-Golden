@@ -1,4 +1,3 @@
-// app/api/settings/user/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
@@ -16,7 +15,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const id = (await params).id
 
-  if (!id) return NextResponse.json({ error: 'Contact ID is missing' }, { status: 400 });
+  if (!id) return NextResponse.json({ error: 'Account ID is missing' }, { status: 400 });
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.currentCompanyId) {

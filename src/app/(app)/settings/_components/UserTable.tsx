@@ -16,9 +16,11 @@ import {
   Pencil,
   Eye,
   Trash2,
-  Users
+  Users,
+  UserPlus
 } from 'lucide-react';
 import UserDetailPopover from './UserDetailPopover';
+import UserFormPopover from './UserFormPopover';
 
 interface UserTableProps {
   users: any[];
@@ -157,17 +159,11 @@ export default function UserTable({ users, isLoading, refetchUsers }: UserTableP
                   </Button>
                 </UserDetailPopover>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hover:text-sidebar-foreground"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Implement edit user functionality
-                  }}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
+                <UserFormPopover user={user}>
+                  <Button variant="ghost" size="icon" className="hover:text-sidebar-foreground">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </UserFormPopover>
 
                 {user.status === UserStatus.PENDING && (
                   <Button

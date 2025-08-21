@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { type NextAuthOptions } from "next-auth";
-import { Role } from "@/generated/prisma";
+import { Role, UserStatus } from "@/generated/prisma";
 
 // Extend NextAuth types to include additional fields in Session and JWT
 declare module "next-auth" {
@@ -13,6 +13,7 @@ declare module "next-auth" {
       role: Role; // Use Prisma Role enum
       name?: string | null;
       email?: string | null;
+      status?:  UserStatus;
       companyId?: string | null;
       currentCompanyId?: string | null;
       firstName?: string | null;
@@ -24,6 +25,7 @@ declare module "next-auth" {
   }
   interface JWT {
     role?: Role;
+    status?:  UserStatus;
     companyId?: string | null;
     currentCompanyId?: string | null;
     firstName?: string | null;
@@ -57,6 +59,7 @@ export const authOptions: NextAuthOptions = {
             firstName: true,
             lastName: true,
             role: true,
+            status: true,
             companyId: true,
             currentCompanyId: true,
             employeeId: true,
@@ -72,12 +75,16 @@ export const authOptions: NextAuthOptions = {
         if (!isValid) {
           throw new Error("Wrong Password");
         }
+        if (user.status === UserStatus.PENDING){
+          throw new Error("This Account is not authorized to login yet. contact your administrator")
+        }
         // Return only safe fields, combining firstName and lastName into name if needed
         return {
           id: user.id,
           email: user.email,
           name: user.name || (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : null),
           role: user.role,
+          status: user.status,
           companyId: user.companyId,
           currentCompanyId : user.currentCompanyId,
           firstName: user.firstName,
@@ -93,6 +100,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role;
+        token.status = (user as any).status;
         token.companyId = (user as any).companyId;
         token.currentCompanyId = (user as any).currentCompanyId;
         token.firstName = (user as any).firstName;
@@ -117,6 +125,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.sub!;
         session.user.role = token.role! as Role;
+        session.user.status = token.role! as UserStatus;
         session.user.companyId = token.companyId as string;
         session.user.currentCompanyId = token.currentCompanyId as string;
         session.user.firstName = token.firstName as string;

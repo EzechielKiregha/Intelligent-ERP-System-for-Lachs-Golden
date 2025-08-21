@@ -43,6 +43,7 @@ export default function UserDetailPopover({ children, user }: UserDetailPopoverP
     <BasePopover
       title={`${user.firstName} ${user.lastName}`}
       isOpen={isOpen}
+      buttonLabel={`${user.firstName} ${user.lastName}`}
       onClose={() => setIsOpen(false)}
     >
       <div style={{ width: '800px', maxWidth: '90vw' }}>
