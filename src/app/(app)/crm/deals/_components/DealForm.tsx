@@ -34,6 +34,7 @@ export default function DealForm({
   const [formData, setFormData] = useState({
     title: '',
     amount: 0,
+    expectedCloseDate: new Date(),
     stage: 'NEW' as DealStage,
     contactId: preSelectedContactId || '',
   });
@@ -47,6 +48,7 @@ export default function DealForm({
       setFormData({
         title: deal.title,
         amount: deal.amount,
+        expectedCloseDate: deal.expectedCloseDate,
         stage: deal.stage,
         contactId: deal.contactId,
       });
@@ -57,6 +59,7 @@ export default function DealForm({
       setFormData({
         title: '',
         amount: 0,
+        expectedCloseDate: new Date(),
         stage: 'NEW',
         contactId: '',
       });
@@ -68,6 +71,15 @@ export default function DealForm({
     setFormData(prev => ({
       ...prev,
       [name]: name === 'amount' ? Number(value) : value
+    }));
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const dateValue = e.target.value;
+    // Convert string date to Date object
+    setFormData(prev => ({
+      ...prev,
+      expectedCloseDate: dateValue ? new Date(dateValue) : new Date()
     }));
   };
 
@@ -146,6 +158,20 @@ export default function DealForm({
           />
         </div>
 
+        <div className="space-y-2">
+          <Label htmlFor="expectedCloseDate">Expected Close Date</Label>
+          <Input
+            id="expectedCloseDate"
+            name="expectedCloseDate"
+            type="date"
+            value={formData.expectedCloseDate.toISOString().split('T')[0]}
+            onChange={handleDateChange}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="stage">Stage</Label>
           <select

@@ -321,6 +321,7 @@ model Employee {
   userId       String?        @unique
   user         User?          @relation
   salary       Float?
+  backgroundCheckCompleted  Boolean @default(false)
   createdAt    DateTime       @default(now())
   company      Company        @relation(fields: [companyId], references: [id])
   companyId    String
@@ -368,13 +369,20 @@ model Document {
   company     Company   @relation(fields: [companyId], references: [id])
   companyId   String
 }
-
+enum Severity {
+  NONE
+  MEDIUM
+  HIGH
+  CRITICAL
+}
 model AuditLog {
   id          String    @id @default(cuid())
   action      String?
   entity      String?
   entityId    String?
   userId      String?
+  ip          String?
+  severity    Severity  @default(NONE)
   user     User?     @relation(fields: [userId], references: [id])
   description String?
   url         String?
@@ -413,6 +421,7 @@ model Deal {
   stage       DealStage  @default(NEW)
   contact     Contact    @relation(fields: [contactId], references: [id])
   contactId   String
+  expectedCloseDate DateTime @default(now())
   owner       User?      @relation(fields: [ownerId], references: [id])
   ownerId     String?
   createdAt   DateTime   @default(now())

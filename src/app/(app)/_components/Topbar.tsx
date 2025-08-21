@@ -1,8 +1,6 @@
 'use client';
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { Bell, BellRingIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/toggleTheme';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
@@ -67,6 +65,7 @@ const Topbar: React.FC = () => {
             name: user?.name,
             email: user?.email,
             avatar: user?.image || "https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png",
+            role: user?.role || "USER"
           }
         } />
 

@@ -73,7 +73,7 @@ const crmLinks = [
   { title: "Reports", url: "/crm/reports", icon: Bot },
 ]
 
-const navMainItems = [
+export const navMainItems = [
   {
     title: "Dashboard",
     url: "/dashboard",
@@ -93,6 +93,7 @@ const navMainItems = [
       { title: "Finance", url: "/finance" },
       { title: "Transactions", url: "/finance/transactions" },
       { title: "Budget", url: "/finance/budget" },
+      { title: "Reports", url: "/finance/reports" },
     ],
   },
   {
@@ -103,6 +104,7 @@ const navMainItems = [
       { title: "Inventory", url: "/inventory" },
       { title: "Stock", url: "/inventory/manage" },
       { title: "Low Stock Alerts", url: "/inventory/alerts" },
+      { title: "Reports", url: "/inventory/reports" },
     ],
   },
   {
@@ -114,7 +116,8 @@ const navMainItems = [
       { title: "Employees", url: "/hr/employees" },
       { title: "Departments", url: "/hr/departments" },
       { title: "Payroll", url: "/hr/payroll" },
-      { title: "Perfornance Review", url: "/hr/reviews" },
+      { title: "Performance Review", url: "/hr/reviews" },
+      { title: "Reports", url: "/hr/reports" },
     ],
   },
   {
@@ -124,12 +127,14 @@ const navMainItems = [
     items: [
       { title: "CRM", url: "/crm", icon: Command },
       { title: "Lead/Customers", url: "/crm/contacts", icon: Command },
-      { title: "Deals", url: "/crm/deals", icon: Bot },
-      { title: "Reports", url: "/crm/reports", icon: Bot },
+      { title: "Deals", url: "/crm/deals", icon: Command },
+      { title: "Reports", url: "/crm/reports", icon: Command },
     ],
   },
   {
-    title: "Settings", url: "/settings", icon: Settings2,
+    title: "Settings",
+    url: "/settings",
+    icon: Settings2,
     items: [
       { title: "Settings", url: "/settings" },
     ]

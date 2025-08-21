@@ -11,6 +11,7 @@ const dealSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   amount: z.number().min(0, 'Amount must be positive'),
   stage: z.nativeEnum(DealStage).default('NEW'),
+  expectedCloseDate: z.coerce.date(),
   contactId: z.string().min(1, 'Contact is required'),
 });
 

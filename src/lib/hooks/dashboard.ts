@@ -69,15 +69,35 @@ export function useGenerateReportAdmin() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (params: { type: string; dateRange?: string }) => {
-      const res = await axiosdb.post('/api/reports/generate', params);
-      return res.data; // or just trigger download
+      // Call the specific report endpoint based on type
+      const response = await fetch(`/api/reports/${params.type}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dateRange: params.dateRange })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate report');
+      }
+      
+      // Handle the PDF download directly
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${params.type}-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      
+      return true;
     },
     onSuccess: () => {
-      toast.success('Report generated');
+      toast.success('Report downloaded successfully');
       queryClient.invalidateQueries({ queryKey: ['auditLog'] });
     },
-    onError: () => {
-      toast.error('Failed to generate report');
+    onError: (error: any) => {
+      toast.error(`Failed to generate report: ${error.message}`);
     },
   });
 }

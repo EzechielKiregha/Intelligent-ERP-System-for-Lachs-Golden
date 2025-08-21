@@ -19,6 +19,7 @@ export interface Deal {
   id: string;
   title: string;
   amount: number;
+  expectedCloseDate: Date,
   contactId: string;
   contact: Contact;
   ownerId: string | null;
