@@ -3,23 +3,8 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import { vfs } from 'pdfmake/build/vfs_fonts';  // Correct import for 0.2.18
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 
-pdfMake.vfs = {
-  ...vfs,
-  'Roboto-Regular.ttf': 'base64 string of Roboto-Regular.ttf',
-  'Roboto-Bold.ttf': 'base64 string of Roboto-Bold.ttf',
-  'Roboto-Italic.ttf': 'base64 string of Roboto-Italic.ttf',
-  'Roboto-BoldItalic.ttf': 'base64 string of Roboto-BoldItalic.ttf'
-};
-
-// Configure pdfmake to use Roboto
-(pdfMake as any).fonts = {
-  Roboto: {
-    normal: 'Roboto-Regular.ttf',
-    bold: 'Roboto-Bold.ttf',
-    italics: 'Roboto-Italic.ttf',
-    bolditalics: 'Roboto-BoldItalic.ttf'
-  }
-};
+  // Initialize with default fonts ONCE (critical for Vercel)
+  pdfMake.vfs = vfs;
 
 /**
  * Generates a simple PDF document with Lachs Golden branding
@@ -29,11 +14,8 @@ export const generateSimplePdf = (
   title: string,
   dateRange: string
 ): Promise<Buffer> => {
-  
+
   const docDefinition: TDocumentDefinitions = {
-    defaultStyle: {
-      font: 'Roboto'
-    },
     content: [
       { text: title, style: 'header' },
       { text: `Report Period: ${dateRange}\n`, style: 'subheader' },
