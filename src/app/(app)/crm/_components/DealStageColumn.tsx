@@ -16,12 +16,12 @@ interface DealStageColumnProps {
 
 // Stage color mapping
 const STAGE_COLORS: Record<DealStage, string> = {
-  NEW: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-  QUALIFIED: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-  PROPOSAL: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  NEW: 'bg-blue-500/20 text-blue-700 border-blue-500/30',
+  QUALIFIED: 'bg-cyan-500/20 text-cyan-700 border-cyan-500/30',
+  PROPOSAL: 'bg-emerald-500/20 text-emerald-700 border-emerald-500/30',
   NEGOTIATION: 'bg-amber-500/20 text-amber-500/30 border-amber-500/30',
-  WON: 'bg-green-500/20 text-green-300 border-green-500/30',
-  LOST: 'bg-red-500/20 text-red-300 border-red-500/30',
+  WON: 'bg-green-500/20 text-green-700 border-green-500/30',
+  LOST: 'bg-red-500/20 text-red-700 border-red-500/30',
 };
 
 // Stage title mapping
@@ -176,8 +176,8 @@ export default function DealStageColumn({
                 onDragStart={(e) => handleDragStart(e, index, deal.id)}
                 onDragEnter={(e) => handleDragEnter(e, index)}
                 className={`p-3 bg-sidebar-accent/10 rounded border border-sidebar-accent/20 cursor-move hover:border-sidebar-accent/50 transition-colors deal-card ${(dragItemIndex.current === index && dragItemStage.current === stage)
-                    ? 'opacity-50'
-                    : ''
+                  ? 'opacity-50'
+                  : ''
                   }`}
               >
                 <div className="flex items-start">
