@@ -81,7 +81,7 @@ export default function OwnerSettings() {
                 >
                   <span className="font-medium">{f.month}</span>
                   <div className="text-right">
-                    <p className="font-semibold text-emerald-300">
+                    <p className="font-semibold text-emerald-700">
                       ${f.projectedRevenue?.toLocaleString()}
                     </p>
                     <p className="text-sidebar-foreground/60 text-xs">
@@ -111,7 +111,7 @@ export default function OwnerSettings() {
             </div>
             <div className="w-full bg-sidebar-accent/20 rounded-full h-2">
               <div
-                className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${Math.min(budgetUtilization, 100)}%` }}
               ></div>
             </div>
@@ -139,10 +139,10 @@ export default function OwnerSettings() {
           <div className="p-4 bg-sidebar-primary/50 rounded text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingUp
-                className={`h-5 w-5 ${isGrowing ? 'text-emerald-400' : 'text-red-400'}`}
+                className={`h-5 w-5 ${isGrowing ? 'text-emerald-500' : 'text-red-500'}`}
               />
               <span
-                className={`text-2xl font-bold ${isGrowing ? 'text-emerald-300' : 'text-red-300'}`}
+                className={`text-2xl font-bold ${isGrowing ? 'text-emerald-600' : 'text-red-600'}`}
               >
                 {isGrowing ? '+' : ''}{growthRate.toFixed(1)}%
               </span>
@@ -177,7 +177,7 @@ export default function OwnerSettings() {
         </section>
 
         {/* 💳 Billing & Subscription */}
-        <section>
+        {/* <section>
           <h3 className="text-lg font-medium text-sidebar-foreground mb-4 flex items-center gap-2">
             <CreditCard className="h-4 w-4" />
             Billing & Subscription
@@ -207,7 +207,7 @@ export default function OwnerSettings() {
               Update Payment
             </Button>
           </div>
-        </section>
+        </section> */}
 
         {/* 🗑️ Danger Zone: Delete Company */}
         <section>
@@ -218,7 +218,7 @@ export default function OwnerSettings() {
             onClose={() => setIsDeleteModalOpen(false)}
           >
             <div className="space-y-4">
-              <p className="text-sm text-red-200">
+              <p className="text-sm text-red-800">
                 Confirm deletion of <strong>{userData.company?.name}</strong>.
               </p>
               <ul className="text-xs text-red-300 list-disc list-inside space-y-1">

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import BasePopover from '@/components/BasePopover';
 import { Button } from '@/components/ui/button';
+import { format } from 'date-fns';
 import { MapPin, Mail, Building2, Users, Package, Contact, DollarSign, AlertTriangle } from 'lucide-react';
 import { useUserSettings } from '../hooks/useUserSettings';
 import { useCompanySettings, useUpdateCompanySetting } from '../hooks/useCompanySettings';
@@ -59,7 +60,7 @@ export default function CompanySettings() {
             <Stat
               label="Employees"
               value={hrSummary?.totalEmployees || 0}
-              icon={<Users className="h-4 w-4 text-blue-400" />}
+              icon={<Users className="h-4 w-4 text-blue-500" />}
               helpText="Total active employees in the system"
             />
             <Stat
@@ -71,7 +72,7 @@ export default function CompanySettings() {
             <Stat
               label="Customers"
               value={totalCustomers}
-              icon={<Contact className="h-4 w-4 text-purple-400" />}
+              icon={<Contact className="h-4 w-4 text-purple-700" />}
               helpText="Total CRM contacts"
             />
             <Stat
@@ -108,7 +109,7 @@ export default function CompanySettings() {
             </div>
             <div>
               <Label>Founded</Label>
-              <p className="text-sidebar-foreground mt-1">{company.foundedDate}</p>
+              <p className="text-sidebar-foreground mt-1">{format(new Date(company.foundedDate ? company.foundedDate : new Date()), 'MMM d, yyyy')}</p>
             </div>
             <div>
               <Label>Legal Name</Label>
