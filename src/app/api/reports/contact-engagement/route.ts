@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { Role } from '@/generated/prisma';
 import { generateSimplePdf } from '@/lib/pdf/simplePdfGenerator';
 import { format } from 'date-fns';
 
@@ -11,18 +10,18 @@ export async function POST(req: NextRequest) {
   try {
     // 1. Authentication check
     const session = await getServerSession(authOptions);
-    if (!session?.user?.currentCompanyId ){
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const companyId = session.user.currentCompanyId;
     
-    // 2. Get date range (simplified for demo)
+    // 2. Get date range
     const end = new Date();
     const start = new Date(end);
     start.setDate(end.getDate() - 30);
     
-    // 3. Fetch real data from database
+    // 3. Fetch contacts with related data in BULK (critical for speed)
     const contacts = await prisma.contact.findMany({
       where: { 
         company: { 
@@ -32,54 +31,94 @@ export async function POST(req: NextRequest) {
             } 
           } 
         }
-      },
+      }
     });
     
-    // 4. Calculate engagement metrics
+    if (contacts.length === 0) {
+      return NextResponse.json({ error: 'No contacts found' }, { status: 404 });
+    }
+    
+    // 4. Batch fetch all communication logs (ONE query instead of 28)
+    const contactIds = contacts.map(c => c.id);
+    const allLogs = await prisma.communicationLog.findMany({
+      where: {
+        contactId: { in: contactIds },
+        timestamp: { gte: start, lte: end }
+      }
+    });
+    
+    // 5. Group logs by contactId for quick lookup (in-memory)
+    const logsByContact = new Map<string, typeof allLogs>();
+    for (const log of allLogs) {
+      if (log.contactId){
+        if (!logsByContact.has(log.contactId)) {
+          logsByContact.set(log.contactId, []);
+        }
+        logsByContact.get(log.contactId)!.push(log);
+      }
+    }
+    
+    // 6. Batch fetch all deals (ONE query instead of 28)
+    const allDeals = await prisma.deal.findMany({
+      where: {
+        contactId: { in: contactIds }
+      }
+    });
+    
+    // 7. Group deals by contactId for quick lookup (in-memory)
+    const dealsByContact = new Map<string, typeof allDeals>();
+    for (const deal of allDeals) {
+      if (!dealsByContact.has(deal.contactId)) {
+        dealsByContact.set(deal.contactId, []);
+      }
+      dealsByContact.get(deal.contactId)!.push(deal);
+    }
+    
+    // 8. Calculate metrics (all in-memory, no DB calls)
     const totalContacts = contacts.length;
-    const activeContacts = contacts.filter(async (c) => {
-      const logs = await prisma.communicationLog.findMany({
-        where: { contactId:c.id, timestamp: { gte: start, lte: end } },
-        orderBy: { timestamp: 'desc' }
-      })
-      const lastInteraction = logs.length > 0 ? logs[0].timestamp : null;
-      return lastInteraction && new Date(lastInteraction) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    
+    const activeContacts = contacts.filter(c => {
+      const logs = logsByContact.get(c.id) || [];
+      return logs.length > 0;
     }).length;
     
-    const highEngagement = contacts.filter(async (c) => {
-      const logs = await prisma.communicationLog.findMany({
-        where: { contactId:c.id, timestamp: { gte: start, lte: end } },
-        orderBy: { timestamp: 'desc' }
-      })
-
-      const deals = await prisma.deal.findMany({
-        where: {
-          contactId: c.id
-        }
-      })
-
+    const highEngagement = contacts.filter(c => {
+      const logs = logsByContact.get(c.id) || [];
+      const deals = dealsByContact.get(c.id) || [];
       const interactionCount = logs.length;
       const dealsWon = deals.filter(d => d.stage === 'WON').length;
       return interactionCount > 5 && dealsWon > 0;
     }).length;
     
-    const mediumEngagement = contacts.filter(async (c) => {
-      const logs = await prisma.communicationLog.findMany({
-        where: { contactId:c.id, timestamp: { gte: start, lte: end } },
-        orderBy: { timestamp: 'desc' }
-      })
-
-      const deals = await prisma.deal.findMany({
-        where: {
-          contactId: c.id
-        }
-      })
+    const mediumEngagement = contacts.filter(c => {
+      const logs = logsByContact.get(c.id) || [];
+      const deals = dealsByContact.get(c.id) || [];
       const interactionCount = logs.length;
       const dealsWon = deals.filter(d => d.stage === 'WON').length;
       return (interactionCount > 2 && interactionCount <= 5) || (dealsWon > 0 && interactionCount > 0);
     }).length;
     
-    // 5. Format data for PDF
+    // 9. Get top engaged contacts (all in-memory)
+    const contactEngagements = contacts.map(c => {
+      const logs = logsByContact.get(c.id) || [];
+      const deals = dealsByContact.get(c.id) || [];
+      const interactionCount = logs.length;
+      const dealsWon = deals.filter(d => d.stage === 'WON').length;
+      const engagementScore = interactionCount + (dealsWon * 5);
+      
+      return {
+        contact: c,
+        interactionCount,
+        lastInteraction: interactionCount > 0 ? logs[0].timestamp : null,
+        engagementScore
+      };
+    });
+    
+    const sortedContacts = contactEngagements
+      .sort((a, b) => b.engagementScore - a.engagementScore)
+      .slice(0, 5);
+    
+    // 10. Format data for PDF
     const engagementOverview = [
       { text: 'Engagement Overview', style: 'subheader', margin: [0, 0, 0, 10] },
       {
@@ -96,7 +135,7 @@ export async function POST(req: NextRequest) {
       }
     ];
     
-    // 6. Create engagement score distribution
+    // 11. Create engagement score distribution
     const scoreDistribution = [
       { text: 'Engagement Score Distribution', style: 'subheader', margin: [0, 20, 0, 10] },
       {
@@ -113,66 +152,40 @@ export async function POST(req: NextRequest) {
       }
     ];
     
-    // 7. Create top engaged contacts
+    // 12. Create top engaged contacts table
+    const contactBody = [
+      ['Contact', 'Company', 'Interactions', 'Last Contact', 'Engagement']
+    ];
+    
+    sortedContacts.forEach(item => {
+      const lastInteraction = item.lastInteraction ? 
+        format(new Date(item.lastInteraction), 'MMM dd, yyyy') : 'Never';
+      
+      const engagementScore = item.engagementScore;
+      const engagementLevel = engagementScore > 80 ? 'HIGH' : 
+                             engagementScore > 50 ? 'MEDIUM' : 'LOW';
+      
+      contactBody.push([
+        item.contact.fullName,
+        item.contact.companyName || 'N/A',
+        item.interactionCount.toString(),
+        lastInteraction,
+        engagementLevel
+      ]);
+    });
+    
     const topContacts = [
       { text: 'Top Engaged Contacts', style: 'subheader', margin: [0, 20, 0, 10] },
       {
         table: {
           headerRows: 1,
           widths: ['*', 'auto', 'auto', 'auto', 'auto'],
-          body: [
-            ['Contact', 'Company', 'Interactions', 'Last Contact', 'Engagement']
-          ]
+          body: contactBody
         }
       }
     ];
     
-    // Sort contacts by engagement (simplified)
-    const contactEngagements = await Promise.all(
-      contacts.map(async (contact) => {
-        const logs = await prisma.communicationLog.findMany({
-          where: { contactId: contact.id, timestamp: { gte: start, lte: end } },
-          orderBy: { timestamp: 'desc' }
-        });
-        const deals = await prisma.deal.findMany({
-          where: {
-            contactId: contact.id
-          }
-        })
-        const dealsWon = deals.filter(d => d.stage === 'WON').length;
-        const engagementScore = logs.length + (dealsWon * 5);
-        return { contact, engagementScore };
-      })
-    );
-
-    const sortedContacts = contactEngagements
-      .sort((a, b) => b.engagementScore - a.engagementScore)
-      .map(({ contact }) => contact);
-    
-    const contactBody = topContacts[1]?.table?.body ?? [];
-    sortedContacts.slice(0, 5).forEach(async (c) => {
-      const logs = await prisma.communicationLog.findMany({
-        where: { contactId: c.id, timestamp: { gte: start, lte: end } },
-        orderBy: { timestamp: 'desc' }
-      });
-      const deals = await prisma.deal.findMany({
-        where: {
-          contactId: c.id
-        }
-      })
-      const lastInteraction = logs.length > 0 ? format(new Date(logs[0].timestamp), 'MMM dd, yyyy') : 'Never';
-      const engagementScore = logs.length + (deals.filter(d => d.stage === 'WON').length * 5);
-      
-      contactBody.push([
-        c.fullName,
-        c.companyName || 'N/A',
-        logs.length.toString(),
-        lastInteraction,
-        engagementScore > 80 ? 'HIGH' : engagementScore > 50 ? 'MEDIUM' : 'LOW'
-      ]);
-    });
-    
-    // 8. Create contact type analysis
+    // 13. Create contact type analysis
     const contactTypeAnalysis = [
       { text: 'Contact Type Analysis', style: 'subheader', margin: [0, 20, 0, 10] },
       {
@@ -189,7 +202,7 @@ export async function POST(req: NextRequest) {
       }
     ];
     
-    // 9. Create PDF content
+    // 14. Create PDF content
     const content = [
       engagementOverview,
       scoreDistribution,
@@ -197,14 +210,14 @@ export async function POST(req: NextRequest) {
       contactTypeAnalysis
     ];
     
-    // 10. Generate PDF
+    // 15. Generate PDF
     const pdfBuffer = await generateSimplePdf(
       content,
       'Lachs Golden - Contact Engagement Report',
       `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`
     );
     
-    // 11. Return PDF response
+    // 16. Return PDF response
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
