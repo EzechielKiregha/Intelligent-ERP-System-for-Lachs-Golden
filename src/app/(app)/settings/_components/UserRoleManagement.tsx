@@ -10,6 +10,9 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { useGetWorkspaces } from '@/features/workspaces/api/use-get-workspaces';
+import { useGetMembersSwitcher } from '@/features/members/api/use-get-members';
+import { Workspace } from '@/hooks/type';
 
 interface UserRoleManagementProps {
   user: User;
@@ -19,26 +22,54 @@ interface UserRoleManagementProps {
 export default function UserRoleManagement({ user, onSuccess }: UserRoleManagementProps) {
   const queryClient = useQueryClient();
 
-  // Fetch workspaces
-  const { data: workspaces = [], isLoading: isWorkspacesLoading } = useQuery({
-    queryKey: ['workspaces', 'user', user.id],
-    queryFn: async () => {
-      const res = await fetch(`/api/workspaces?userId=${user.id}`);
-      if (!res.ok) throw new Error('Failed to fetch workspaces');
-      return res.json();
-    },
-    enabled: !!user.id
+  // 🔹 Fetch all workspaces in the company
+  const { data: allWorkspaces = [], isPending: isWorkspacesPending } = useGetWorkspaces();
+
+  // 🔹 Fetch all member records for this user
+  const { data: memberRecords = [], isPending: isMembersPending } = useGetMembersSwitcher({
+    userId: user?.id,
   });
 
-  // Fetch available roles
-  const { data: availableRoles = [], isLoading: isRolesLoading } = useQuery({
-    queryKey: ['roles', 'available'],
-    queryFn: async () => {
-      const res = await fetch('/api/settings/roles');
-      if (!res.ok) throw new Error('Failed to fetch available roles');
-      return res.json();
-    }
-  });
+  // 🔹 Extract allowed workspace IDs
+  const allowedWorkspaceIds = memberRecords.map((m: any) => m.workspaceId);
+
+  // 🔹 Filter workspaces to only those the user is a member of
+  const allowedWorkspaces = allWorkspaces.filter((ws: Workspace) =>
+    allowedWorkspaceIds.includes(ws.id)
+  );
+
+  // 🔹 Loading state
+  if (isWorkspacesPending || isMembersPending) {
+    return (
+      <>
+        <div className="flex items-center justify-between my-2">
+          <span className="text-[11px] text-muted-foreground">WORKSPACE</span>
+        </div>
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </>
+
+    );
+  }
+
+  const availableRoles = [
+    Role.CEO,
+    Role.ADMIN,
+    Role.MANAGER,
+    Role.EMPLOYEE,
+    Role.MEMBER,
+    Role.ACCOUNTANT,
+    Role.HR
+  ]
+
+  // // Fetch available roles
+  // const { data: availableRoles = [], isLoading: isRolesLoading } = useQuery({
+  //   queryKey: ['roles', 'available'],
+  //   queryFn: async () => {
+  //     const res = await fetch('/api/settings/roles');
+  //     if (!res.ok) throw new Error('Failed to fetch available roles');
+  //     return res.json();
+  //   }
+  // });
 
   const [selectedRole, setSelectedRole] = useState<Role | null>(user.role);
   const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
@@ -88,7 +119,7 @@ export default function UserRoleManagement({ user, onSuccess }: UserRoleManageme
   };
 
   // Get current workspace
-  const currentWorkspace = workspaces.find((ws: any) =>
+  const currentWorkspace = allWorkspaces.find((ws: any) =>
     ws.members.some((m: any) => m.userId === user.id)
   );
 
@@ -145,7 +176,7 @@ export default function UserRoleManagement({ user, onSuccess }: UserRoleManageme
             <Select
               value={selectedRole || ''}
               onValueChange={handleRoleChange}
-              disabled={isRolesLoading || updateRole.isPending}
+              disabled={updateRole.isPending}
             >
               <SelectTrigger className="bg-sidebar border-sidebar-accent/30">
                 <SelectValue placeholder="Select a role" />
@@ -175,13 +206,13 @@ export default function UserRoleManagement({ user, onSuccess }: UserRoleManageme
               <Select
                 value={selectedWorkspace || ''}
                 onValueChange={handleWorkspaceChange}
-                disabled={isWorkspacesLoading || updateRole.isPending}
+                disabled={isWorkspacesPending || updateRole.isPending}
               >
                 <SelectTrigger className="bg-sidebar border-sidebar-accent/30">
                   <SelectValue placeholder="Select a workspace" />
                 </SelectTrigger>
                 <SelectContent className="bg-sidebar border-sidebar-accent">
-                  {workspaces.map((workspace: any) => (
+                  {allWorkspaces.map((workspace: any) => (
                     <SelectItem
                       key={workspace.id}
                       value={workspace.id}

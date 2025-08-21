@@ -75,7 +75,7 @@ export const authOptions: NextAuthOptions = {
         if (!isValid) {
           throw new Error("Wrong Password");
         }
-        if (user.status === UserStatus.PENDING){
+        if (user.status === UserStatus.PENDING && user.role !== Role.SUPER_ADMIN){
           throw new Error("This Account is not authorized to login yet. contact your administrator")
         }
         // Return only safe fields, combining firstName and lastName into name if needed

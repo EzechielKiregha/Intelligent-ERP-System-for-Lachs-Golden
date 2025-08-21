@@ -12,6 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from 'contents/authContext';
 import { useGetWorkspaceIdParam } from '@/features/workspaces/hooks/use-get-workspace-param';
 import { useGetMembersSwitcher } from '@/features/members/api/use-get-members';
+import { toast } from 'sonner';
 
 interface Workspace {
   id: string;
@@ -78,7 +79,7 @@ export function WorkspaceSwitcher() {
             onValueChange={(newWorkspaceId) => {
               // ✅ Optional: Validate switch is allowed
               if (!allowedWorkspaceIds.includes(newWorkspaceId)) {
-                alert('You do not have access to this workspace');
+                toast('You do not have access to this workspace');
                 return;
               }
 
