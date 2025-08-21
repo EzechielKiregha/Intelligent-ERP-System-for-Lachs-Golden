@@ -11,8 +11,7 @@ export async function POST(req: NextRequest) {
   try {
     // 1. Authentication check
     const session = await getServerSession(authOptions);
-    if (!session?.user?.currentCompanyId || 
-        (session.user.role !== Role.ADMIN && session.user.role !== Role.SUPER_ADMIN)) {
+    if (!session?.user?.currentCompanyId ){
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -34,13 +33,6 @@ export async function POST(req: NextRequest) {
           } 
         }
       },
-      include: {
-        logs: {
-          where: { timestamp: { gte: start, lte: end } },
-          orderBy: { timestamp: 'desc' }
-        },
-        deals: true
-      }
     });
     
     // 4. Calculate engagement metrics
