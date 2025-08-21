@@ -1,11 +1,9 @@
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import pdfMake from 'pdfmake/build/pdfmake';
-import { vfs } from 'pdfmake/build/vfs_fonts';  // Correct import
-// Use require for better compatibility with the vfs_fonts module
-const pdfFonts = require('pdfmake/build/vfs_fonts');
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-// Initialize the virtual file system
-pdfMake.vfs = pdfFonts.vfs;
+// // Initialize the virtual file system
+// pdfMake.vfs = pdfFonts.vfs;
 
 export const generateSimplePdf = (
   content: any,
@@ -50,7 +48,7 @@ export const generateSimplePdf = (
       }
     };
 
-  const pdfDoc = pdfMake.createPdf(docDefinition);
+  const pdfDoc = pdfMake.createPdf(docDefinition,undefined,undefined,pdfFonts.vfs);
 
   return new Promise<Buffer>((resolve) => {
     pdfDoc.getBuffer((buffer: Buffer) => {
