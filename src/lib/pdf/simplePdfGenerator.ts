@@ -23,7 +23,7 @@ export const generateSimplePdf = async (
     content: [
       {
         image: imageDataUrl, // Logo from URL
-        width: 150, // Normal size
+        width: 110, // Normal size
         alignment: 'center',
         margin: [0, 0, 0, 10]
       },

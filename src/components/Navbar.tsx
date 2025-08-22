@@ -160,22 +160,22 @@ export function Navbar() {
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
+                  {/* <DropdownMenuGroup>
                     <DropdownMenuItem
                       onClick={() => router.push("/settings")}
                       className="hover:bg-sidebar-accent">
                       <Settings2 />
                       Account/Settings
                     </DropdownMenuItem>
-                    {/* <DropdownMenuItem className="hover:bg-sidebar-accent">
+                    <DropdownMenuItem className="hover:bg-sidebar-accent">
                       <CreditCard />
                       Contract
-                    </DropdownMenuItem> */}
-                    {/* <DropdownMenuItem className="hover:bg-sidebar-accent">
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="hover:bg-sidebar-accent">
                       <Bell />
                       <NotificationPopover />
-                    </DropdownMenuItem> */}
-                  </DropdownMenuGroup>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup> */}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="hover:bg-sidebar-accent" onClick={logout}>
                     <LogOut />
