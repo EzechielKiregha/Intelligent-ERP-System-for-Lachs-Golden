@@ -1,31 +1,31 @@
-// lib/pdf/simplePdfGenerator.ts
 import pdfMake from 'pdfmake/build/pdfmake';
-import { vfs } from 'pdfmake/build/vfs_fonts';  // Correct import for 0.2.18
+import { vfs } from 'pdfmake/build/vfs_fonts';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
-import fs from 'fs';
+import fetch from 'node-fetch';
 
-const logoBase64 = fs.readFileSync('public/images/logo.png').toString('base64');
-const imageDataUrl = `data:image/png;base64,${logoBase64}`;
+pdfMake.vfs = vfs;
 
-  // Initialize with default fonts ONCE (critical for Vercel)
-  pdfMake.vfs = vfs;
+async function getBase64FromUrl(url: string): Promise<string> {
+  const response = await fetch(url);
+  const buffer = await response.arrayBuffer();
+  return `data:image/png;base64,${Buffer.from(buffer).toString('base64')}`;
+}
 
-/**
- * Generates a simple PDF document with Lachs Golden branding
- */
-export const generateSimplePdf = (
+export const generateSimplePdf = async (
   content: any,
   title: string,
-  dateRange: string
+  dateRange: string,
+  logoUrl: string // Accept URL as parameter
 ): Promise<Buffer> => {
+  const imageDataUrl = await getBase64FromUrl(logoUrl);
 
   const docDefinition: TDocumentDefinitions = {
     content: [
       {
-        image: logoBase64, // Logo at the top
-        width: 120, // Adjust size
+        image: imageDataUrl, // Logo from URL
+        width: 150, // Normal size
         alignment: 'center',
-        margin: [0, 0, 0, 10] // Spacing below logo
+        margin: [0, 0, 0, 10]
       },
       { text: title, style: 'header' },
       { text: `Report Period: ${dateRange}\n`, style: 'subheader' },
@@ -38,24 +38,22 @@ export const generateSimplePdf = (
         style: 'notes'
       }
     ],
-    footer: (currentPage: number, pageCount: number) => {
-      return {
-        columns: [
-          {
-            text: 'Toronto, Ontario, Canada\ninfo@lachsgolden.com\n+12362395076',
-            alignment: 'left',
-            margin: [40, 10, 0, 0],
-            fontSize: 9
-          },
-          {
-            text: `Page ${currentPage} of ${pageCount}`,
-            alignment: 'right',
-            margin: [0, 10, 40, 0],
-            fontSize: 9
-          }
-        ]
-      };
-    },
+    footer: (currentPage: number, pageCount: number) => ({
+      columns: [
+        {
+          text: 'Toronto, Ontario, Canada\ninfo@lachsgolden.com\n+12362395076',
+          alignment: 'left',
+          margin: [40, 10, 0, 0],
+          fontSize: 9
+        },
+        {
+          text: `Page ${currentPage} of ${pageCount}`,
+          alignment: 'right',
+          margin: [0, 10, 40, 0],
+          fontSize: 9
+        }
+      ]
+    }),
     styles: {
       header: {
         fontSize: 22,
@@ -68,10 +66,6 @@ export const generateSimplePdf = (
         alignment: 'center',
         color: '#555'
       },
-      tableHeader: {
-        bold: true,
-        fillColor: '#f0f0f0'
-      },
       notes: {
         fontSize: 10,
         color: '#777',
@@ -81,7 +75,7 @@ export const generateSimplePdf = (
   };
 
   const pdfDoc = pdfMake.createPdf(docDefinition);
-  
+
   return new Promise<Buffer>((resolve) => {
     pdfDoc.getBuffer((buffer) => {
       resolve(buffer);

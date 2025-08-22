@@ -97,7 +97,8 @@ export async function POST(req: NextRequest) {
     const pdfBuffer = await generateSimplePdf(
       content,
       'Lachs Golden - Financial Summary Report',
-      `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`
+      `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`,
+      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
     );
     
     // 9. Return PDF response

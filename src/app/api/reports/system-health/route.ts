@@ -147,7 +147,8 @@ export async function POST(req: NextRequest) {
     const pdfBuffer = await generateSimplePdf(
       content,
       'Lachs Golden - System Health Report',
-      'Current Status'
+      'Current Status',
+      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
     );
     
     // 12. Return PDF response
