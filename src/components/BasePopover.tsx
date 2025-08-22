@@ -3,6 +3,7 @@ import { useEffect, useId, useState } from 'react';
 import { AnimatePresence, MotionConfig, Transition, motion } from 'framer-motion';
 import { ArrowLeftIcon, Bell, Cross, EyeClosed, Minus } from 'lucide-react';
 import { Button } from './ui/button';
+import { ScrollArea } from './ui/scroll-area';
 
 // Explicitly cast TRANSITION to the correct type
 const TRANSITION: Transition = { type: 'spring', bounce: 0.1, duration: 0.5 };
@@ -89,7 +90,7 @@ export default function BasePopover({
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
-                className="w-[90%] md:w-[50%] bg-sidebar rounded-lg text-gray-800 shadow-lg overflow-hidden relative flex flex-col"
+                className="w-[90%] md:w-[80%] bg-sidebar rounded-lg text-gray-800 shadow-lg overflow-hidden relative flex flex-col"
               >
                 {/* Header */}
                 <div className="flex items-center p-4 border-b border-gray-200">
@@ -107,9 +108,11 @@ export default function BasePopover({
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 bg-sidebar flex flex-col items-center justify-center p-6 overflow-y-auto">
-                  {children}
-                </div>
+                <ScrollArea className="h-[600px] w-full border rounded-md p-2">
+                  <div className="flex-1 min-h-full bg-sidebar flex flex-col items-center justify-center p-6 overflow-y-auto">
+                    {children}
+                  </div>
+                </ScrollArea>
               </motion.div>
             </motion.div>
           )}

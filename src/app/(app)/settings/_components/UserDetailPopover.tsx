@@ -46,7 +46,7 @@ export default function UserDetailPopover({ children, user }: UserDetailPopoverP
       buttonLabel={`${user.firstName} ${user.lastName}`}
       onClose={() => setIsOpen(false)}
     >
-      <div className="flex flex-col w-[800px] max-w-[90vw] min-h-[500px]">
+      <div className="flex flex-col max-w-[90vw] min-h-[500px]">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
           <TabsList className="grid grid-cols-5 mb-4 bg-sidebar-accent/10">
             <TabsTrigger

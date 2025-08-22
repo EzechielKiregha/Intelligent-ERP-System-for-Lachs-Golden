@@ -13,7 +13,7 @@ import { useUserSettings } from '../hooks/useUserSettings';
 import { useUpdateUser } from '../hooks/useUpdateUser';
 import { fullName } from '../hooks/types';
 import { Label } from '@/components/ui/label';
-import { useGetTasks } from '@/features/tasks/api/use-get-tasks';
+import { useGetAllTasks, useGetTasks } from '@/features/tasks/api/use-get-tasks';
 import { TASK_STATUS } from '@/hooks/type';
 import { useGetMembersSwitcher } from '@/features/members/api/use-get-members';
 import { useAuth } from 'contents/authContext';
@@ -24,16 +24,14 @@ export default function ProfileSettings() {
   const { userData } = useUserSettings();
   const { userForm, updateUser, isUpdating } = useUpdateUser(userData);
   const user = useAuth().user;
-  const tasks = new Array();
+  const tsks = new Array()
+  const tasks = new Array()
+  let pendingTasks = 0
+  const { data: allTasks, isLoading, error } = useGetAllTasks()
 
   // 🔹 Fetch user-specific data
   const { data: activities = [] } = useRecentActivities();
   const { data: employees = [] } = useHREmployeesPreview();
-  // const { data: alltasks = [] } = useGetTasks({
-  //   workspaceId: '1b31e4c7-5a41-45bf-8703-64705726dd17', // or from context
-  //   assigneeId: userData?.id,
-  //   status: TASK_STATUS.IN_PROGRESS,
-  // });
 
   // 🔹 Fetch all member records for this user
   const { data: memberRecords = [], isPending: isMembersPending } = useGetMembersSwitcher({
@@ -43,15 +41,18 @@ export default function ProfileSettings() {
   // 🔹 Extract allowed workspace IDs
   const allowedWorkspaceIds = memberRecords.map((m: any) => m.workspaceId);
 
-  allowedWorkspaceIds.forEach((id: string) => {
-    const { data: tsks } = useGetTasks({
-      workspaceId: id, // or from context
-      assigneeId: userData?.id,
-    });
-    if (tsks) {
-      tasks.push(...tsks.filter((t: any) => t.status !== TASK_STATUS.DONE));
-    }
-  });
+  if (!isLoading && !error && allTasks) {
+    const userTasks = allTasks.filter((t: any) =>
+      allowedWorkspaceIds.includes(t.workspaceId) &&
+      t.project &&
+      t.status !== TASK_STATUS.DONE
+    );
+
+    pendingTasks = userTasks.length;
+    tasks.push(...userTasks);
+  }
+
+
 
   if (!userData) return null;
 
@@ -65,8 +66,7 @@ export default function ProfileSettings() {
   const lastLogin = activities.find((a: any) => a.type === 'LOGIN');
   const lastActive = lastLogin ? new Date(lastLogin.timestamp) : new Date();
 
-  // Pending task count
-  const pendingTasks = tasks.filter((t: any) => t.status !== TASK_STATUS.DONE).length;
+
 
   return (
     <Card className="bg-sidebar border-[var(--sidebar-border)] shadow-lg">
@@ -195,12 +195,12 @@ export default function ProfileSettings() {
 
             <div className="space-y-4 text-sm">
               {/* Recent Tasks */}
-              {pendingTasks > 0 && (
+              {!error && pendingTasks > 0 ? (
                 <><div className="p-3 bg-sidebar-primary/70 rounded border border-sidebar-accent/20">
                   <p className="font-medium">You have {pendingTasks} pending task(s)</p>
                   <p className="text-sidebar-foreground/70 mt-1">Complete them to stay on track</p>
                 </div><ul className="space-y-3">
-                    {tasks.slice(0, 3).map((task) => (
+                    {!error && tasks.slice(0, 3).map((task: any) => (
                       <li
                         key={task.id}
                         className="border p-4 rounded-md flex flex-col md:flex-row md:items-center md:justify-between gap-4"
@@ -213,11 +213,11 @@ export default function ProfileSettings() {
                             </Badge>
                           </div>
                           <div className="mt-1 text-muted-foreground text-sm flex items-center gap-x-1">
-                            <span>{task.project.name}</span>
+                            <span>{task.project ? task.project.name : 'No Name'}</span>
                             <Dot />
                             <span className="flex items-center gap-x-1">
                               <Calendar className="size-4" />{" "}
-                              {formatDistanceToNow(task.createdAt || " ")}
+                              {formatDistanceToNow(task.createdAt || new Date())}
                             </span>
                           </div>
                         </div>
@@ -236,6 +236,10 @@ export default function ProfileSettings() {
                       No tasks found
                     </li>
                   </ul></>
+              ) : (
+                <li className="text-center text-base text-muted-foreground">
+                  No tasks found
+                </li>
               )}
 
               {/* Recent Activities */}

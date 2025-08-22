@@ -14,3 +14,13 @@ export const useGetTasks = (filters: { workspaceId: string; projectId?: string; 
     enabled: !!filters.workspaceId,
   });
 };
+
+export const useGetAllTasks = () => {
+  return useQuery({
+    queryKey: ['tasks'],
+    queryFn: async () => {
+      const { data } = await axiosdb.get(`/api/tasks/get-all-tasks`);
+      return data.data;
+    },
+  });
+};

@@ -2,6 +2,10 @@
 import pdfMake from 'pdfmake/build/pdfmake';
 import { vfs } from 'pdfmake/build/vfs_fonts';  // Correct import for 0.2.18
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
+import fs from 'fs';
+
+const logoBase64 = fs.readFileSync('public/images/logo.png').toString('base64');
+const imageDataUrl = `data:image/png;base64,${logoBase64}`;
 
   // Initialize with default fonts ONCE (critical for Vercel)
   pdfMake.vfs = vfs;
@@ -17,6 +21,12 @@ export const generateSimplePdf = (
 
   const docDefinition: TDocumentDefinitions = {
     content: [
+      {
+        image: logoBase64, // Logo at the top
+        width: 120, // Adjust size
+        alignment: 'center',
+        margin: [0, 0, 0, 10] // Spacing below logo
+      },
       { text: title, style: 'header' },
       { text: `Report Period: ${dateRange}\n`, style: 'subheader' },
       ...content,
@@ -28,6 +38,24 @@ export const generateSimplePdf = (
         style: 'notes'
       }
     ],
+    footer: (currentPage: number, pageCount: number) => {
+      return {
+        columns: [
+          {
+            text: 'Toronto, Ontario, Canada\ninfo@lachsgolden.com\n+12362395076',
+            alignment: 'left',
+            margin: [40, 10, 0, 0],
+            fontSize: 9
+          },
+          {
+            text: `Page ${currentPage} of ${pageCount}`,
+            alignment: 'right',
+            margin: [0, 10, 40, 0],
+            fontSize: 9
+          }
+        ]
+      };
+    },
     styles: {
       header: {
         fontSize: 22,
