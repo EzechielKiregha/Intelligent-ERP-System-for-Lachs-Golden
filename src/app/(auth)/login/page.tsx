@@ -65,9 +65,9 @@ export default function LoginPage() {
           toast.success('Login successful!');
           router.push('/dashboard');
         } else {
-          // await axiosdb.post('/api/mail/otp', { toEmail: data.email });
           try {
-            const res = await sendOtpRequest(data.email);
+            const res = await axiosdb.post('/api/mail/otp', { email: data.email });
+            // const res = await sendOtpRequest(data.email);
             toast.success(res.data.message);
             setEmail(data.email || '');
             setOtpPopoverOpen(true);

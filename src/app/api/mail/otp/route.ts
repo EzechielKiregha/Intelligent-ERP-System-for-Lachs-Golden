@@ -1,69 +1,46 @@
-// app/api/mail/otp/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { render } from '@react-email/render';
-import prisma from '@/lib/prisma';
 import OtpEmail from 'emails/OtpEmail';
-import { sendEmailJS } from '@/lib/emailjs';
+import { randomBytes } from 'crypto';
+import prisma from "@/lib/prisma";
+import { NextResponse } from 'next/server';
+import { render } from '@react-email/render';
+import { sendEmail } from '@/lib/sendEmail';
 
-const SERVICE = process.env.EMAILJS_SERVICE_ID!;
-const TEMPLATE = process.env.EMAILJS_TEMPLATE_OTP_ID!;
-const USER_ID = process.env.EMAILJS_USER_ID!;
-const ACCESSTOKEN = process.env.EMAILJS_PRIVATE_KEY!;
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://intelligenterp.dpdns.org';
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const toEmail = body?.toEmail;
-    if (!toEmail) return NextResponse.json({ error: 'Missing toEmail' }, { status: 400 });
+    const { email } = await req.json();
 
-    const user = await prisma.user.findUnique({ where: { email: toEmail }, include: { company: true } });
-    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    if (!email) {
+      return NextResponse.json({ error: 'Email are required' }, { status: 400 });
+    }
 
-    // Generate 6-digit OTP and expiry
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    console.log(`[POST] Generated OTP: ${otp}`);
 
-    // Persist OTP (and optional expiry field)
+    const userExist = await prisma.user.findUnique({
+      where: { email },
+      include: { company: true },
+    });
+  
+    if (!userExist) {
+      return NextResponse.json({ error: 'User not found' }, { status: 400 });
+    }
+  
+    // Update OTP in DB
     await prisma.user.update({
-      where: { email: toEmail },
+      where: { email },
       data: { otpSecret: otp },
     });
 
-    // Render HTML from React Email
-    const html = render(OtpEmail({ verificationCode: otp }));
+    const html = await render(OtpEmail({ verificationCode: otp }));
 
-    // Send via EmailJS
-    await sendEmailJS({
-      service_id: SERVICE,
-      template_id: TEMPLATE,
-      user_id: USER_ID,
-      template_params: {
-        to_name: user.firstName ?? user.name ?? 'User',
-        email: user.email,
-        company: user.company?.name ?? 'Intelligent ERP',
-        company_website: BASE_URL,
-        code: otp,
-        // html, // optional — if your EmailJS template places {{html}}
-      },
-      accessToken : ACCESSTOKEN,
-    });
+    await sendEmail(email, 'Your OTP Code', html);
 
-    console.log("OTP was sent is :", otp)
-
-    return NextResponse.json({ message: 'OTP sent successfully' });
-  } catch (err: any) {
-    console.error('OTP route error:', err);
-    const status = err?.status ?? 500;
-    const details = err?.body ?? err?.message ?? err;
-    return NextResponse.json({ error: 'Failed to send OTP', details }, { status });
+    return NextResponse.json({ message: 'OTP email sent successfully' });
+  } catch (error) {
+    console.error('Error sending OTP email:', error);
+    return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
   }
 }
-
-
-
-
-
 
 
 
@@ -87,24 +64,24 @@ export async function POST(req: NextRequest) {
 //   }
 
 //   // Generate OTP
-//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-//   console.log(`[POST] Generated OTP: ${otp}`);
+  // const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  // console.log(`[POST] Generated OTP: ${otp}`);
 
 //   // Lookup user
-//   const userExist = await prisma.user.findUnique({
-//     where: { email: toEmail },
-//     include: { company: true },
-//   });
+  // const userExist = await prisma.user.findUnique({
+  //   where: { email: toEmail },
+  //   include: { company: true },
+  // });
 
-//   if (!userExist) {
-//     return NextResponse.json({ error: 'User not found' }, { status: 400 });
-//   }
+  // if (!userExist) {
+  //   return NextResponse.json({ error: 'User not found' }, { status: 400 });
+  // }
 
-//   // Update OTP in DB
-//   await prisma.user.update({
-//     where: { email: toEmail },
-//     data: { otpSecret: otp },
-//   });
+  // // Update OTP in DB
+  // await prisma.user.update({
+  //   where: { email: toEmail },
+  //   data: { otpSecret: otp },
+  // });
 
 //   // Render email HTML
 //   const emailHtml = render(OtpEmail({ verificationCode: otp }));

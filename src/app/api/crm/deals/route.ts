@@ -16,6 +16,10 @@ const dealSchema = z.object({
 });
 
 export async function GET(req: NextRequest) {
+
+  const url = new URL(req.url)
+  const userId = url.searchParams.get("userId")
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.currentCompanyId) {
@@ -31,7 +35,7 @@ export async function GET(req: NextRequest) {
           company: { 
             users: { 
               some: { 
-                id: session.user.id 
+                id: userId ? userId : session.user.id 
               } 
             } 
           } 

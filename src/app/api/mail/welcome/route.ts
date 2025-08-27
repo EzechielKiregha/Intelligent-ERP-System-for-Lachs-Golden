@@ -1,55 +1,29 @@
 
-// app/api/mail/welcome/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { render } from '@react-email/render';
-import prisma from '@/lib/prisma';
+import { sendEmail } from '@/lib/sendEmail';
 import WelcomeEmail, { PreviewProps } from 'emails/WelcomeEmail';
-import { sendEmailJS } from '@/lib/emailjs';
+import prisma from "@/lib/prisma";
 
-const SERVICE = process.env.EMAILJS_SERVICE_ID!;
-const TEMPLATE = process.env.EMAILJS_TEMPLATE_WELCOME_ID!;
-const USER_ID = process.env.EMAILJS_USER_ID!;
-const ACCESSTOKEN = process.env.EMAILJS_PRIVATE_KEY!;
-const DOCS_URL = process.env.NEXT_PUBLIC_DOCS_URL ?? 'https://intelligenterp.dpdns.org/docs';
-const SUPPORT_URL = process.env.NEXT_PUBLIC_SUPPORT_URL ?? 'https://intelligenterp.dpdns.org/support';
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { toEmail } = await req.json();
-    if (!toEmail) return NextResponse.json({ error: 'Missing toEmail' }, { status: 400 });
+    const { email } = await req.json();
 
-    const user = await prisma.user.findUnique({ where: { email: toEmail }, include: { company: true } });
-    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    if (!email) {
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+    }
 
-    // Render welcome HTML
-    const html = render(WelcomeEmail(PreviewProps));
+    // You can customize steps and links dynamically if needed
+    const emailHtml = await render(WelcomeEmail(PreviewProps));
 
-    await sendEmailJS({
-      service_id: SERVICE,
-      template_id: TEMPLATE,
-      user_id: USER_ID,
-      template_params: {
-        to_name: user.firstName ?? user.name ?? 'User',
-        email: user.email,
-        company: user.company?.name ?? 'Intelligent ERP',
-        link_docs: DOCS_URL,
-        link_support: SUPPORT_URL,
-        // html,
-      },
-      accessToken: ACCESSTOKEN,
-    });
+    await sendEmail(email, 'Welcome to Intelligent ERP', emailHtml);
 
-    return NextResponse.json({ message: 'Welcome email sent' });
-  } catch (err: any) {
-    console.error('Welcome route error:', err);
-    const status = err?.status ?? 500;
-    const details = err?.body ?? err?.message ?? err;
-    return NextResponse.json({ error: 'Failed to send welcome email', details }, { status });
+    return NextResponse.json({ message: 'Welcome email sent successfully' });
+  } catch (error) {
+    console.error('Error sending welcome email:', error);
+    return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
   }
 }
-
-
-
 
 
 // import { NextRequest, NextResponse } from 'next/server';
@@ -70,14 +44,14 @@ export async function POST(req: NextRequest) {
 //     return NextResponse.json({ error: 'Missing required field: toEmail' }, { status: 400 });
 //   }
 
-//   const userExist = await prisma.user.findUnique({
-//     where: { email: toEmail },
-//     include: { company: true },
-//   });
+  // const userExist = await prisma.user.findUnique({
+  //   where: { email: toEmail },
+  //   include: { company: true },
+  // });
 
-//   if (!userExist) {
-//     return NextResponse.json({ error: 'User not found' }, { status: 400 });
-//   }
+  // if (!userExist) {
+  //   return NextResponse.json({ error: 'User not found' }, { status: 400 });
+  // }
 
 //   try {
 //     const emailHtml = render(WelcomeEmail(PreviewProps));
