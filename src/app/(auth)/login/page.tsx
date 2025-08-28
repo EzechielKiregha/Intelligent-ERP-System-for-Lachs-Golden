@@ -24,6 +24,7 @@ import {
 import { Role } from '@/generated/prisma';
 import { useAuth } from 'contents/authContext';
 import { sendOtpRequest } from '@/lib/emailClients';
+import BasePopoverOTP from '@/components/BasePopoverOTP';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function LoginPage() {
   const [otpPopoverOpen, setOtpPopoverOpen] = useState(false);
   const [otp, setOtp] = useState<string>("");
   const [toEmail, setEmail] = useState<string>("");
+  const [isOTPverifying, setIsOTPverifying] = useState(false)
   const user = useAuth().user;
   const logout = useAuth().logout
 
@@ -86,35 +88,45 @@ export default function LoginPage() {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setIsOTPverifying(true)
       const res = await axiosdb.get(`/api/mail/verify-otp?email=${toEmail}&otp=${otp}`);
       if (res.status === 200) {
         toast.success("OTP verified successfully!");
         setOtpPopoverOpen(false);
         if (isJoinWorkspace && wsId && inviteCode) {
+          setIsOTPverifying(false)
           router.push(`/workspaces/${wsId}/join/${inviteCode}`);
         } else {
           if (user?.role === Role.SUPER_ADMIN) {
+            setIsOTPverifying(false)
             router.push('/dashboard');
           } else if (user?.role === Role.ACCOUNTANT) {
+            setIsOTPverifying(false)
             router.push('/finance');
           } else if (user?.role === Role.HR) {
+            setIsOTPverifying(false)
             router.push('/hr');
           } else if (user?.role === Role.USER) {
+            setIsOTPverifying(false)
             toast.warning("No permission to system. Leave a message in Contact Us section")
             logout()
           } else if (user?.role === Role.MANAGER || user?.role === Role.EMPLOYEE || user?.role === Role.MEMBER) {
+            setIsOTPverifying(false)
             router.push('/inventory');
           } else if (user?.role === Role.CEO) {
+            setIsOTPverifying(false)
             router.push('/dashboard');
           }
         }
       } else {
         console.error("OTP verification failed:", res.data);
+        setIsOTPverifying(false)
         toast.error("Invalid OTP. Please try again.");
         logout()
       }
     } catch (err) {
       console.error("OTP verification error:", err);
+      setIsOTPverifying(false)
       toast.error("OTP verification failed. Please try again.");
       logout()
     }
@@ -188,7 +200,7 @@ export default function LoginPage() {
         </div>
       </div>
       {/* OTP Popover */}
-      <BasePopover
+      <BasePopoverOTP
         title="Two-Factor Authentication"
         buttonLabel=""
         isOpen={otpPopoverOpen}
@@ -218,13 +230,14 @@ export default function LoginPage() {
             </InputOTPGroup>
           </InputOTP>
           <Button
+            disabled={isOTPverifying}
             onClick={handleVerifyOtp}
             className="bg-gradient-to-l cursor-pointer mt-3.5 mx-auto from-[#80410e] to-[#c56a03] hover:bg-[#8C6A1A] dark:from-[#80410e] dark:to-[#b96c13] dark:hover:bg-[#BFA132] text-white rounded-lg py-2 disabled:opacity-50"
           >
-            Verify OTP
+            {isOTPverifying ? "verifying..." : "verify OTP"}
           </Button>
         </div>
-      </BasePopover>
+      </BasePopoverOTP>
     </div>
   );
 }

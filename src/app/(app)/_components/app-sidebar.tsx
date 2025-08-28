@@ -7,6 +7,7 @@ import {
   Bot,
   Command,
   Cpu,
+  FileOutput,
   Frame,
   GalleryVerticalEnd,
   Map,
@@ -49,12 +50,14 @@ const financeLinks = [
   { title: "Transactions", url: "/finance/transactions", icon: SquareTerminal },
   { title: "Budget", url: "/finance/budget", icon: BookOpen },
   { title: "Analytics", url: "/settings", icon: IconAnalyze },
+  { title: "Reports", url: "/finance/reports", icon: FileOutput },
 ]
 
 const inventoryLinks = [
   { title: "Inventory", url: "/inventory", icon: Frame },
   { title: "Stock", url: "/inventory/manage", icon: SquareTerminal },
   { title: "Low Stock Alerts", url: "/inventory/alerts", icon: Bot },
+  { title: "Inventory Reports", url: "/inventory/reports", icon: FileOutput },
 ]
 
 const hrLinks = [
@@ -63,6 +66,7 @@ const hrLinks = [
   { title: "Departments", url: "/hr/departments", icon: Settings2 },
   { title: "Payroll", url: "/hr/payroll", icon: Cpu },
   { title: "Performance Review", url: "/hr/reviews", icon: AudioWaveform },
+  { title: "HR Reports", url: "/hr/reports", icon: FileOutput },
 
 ]
 
@@ -71,6 +75,7 @@ const crmLinks = [
   { title: "Lead/Customer", url: "/crm/contacts", icon: Command },
   { title: "Deals", url: "/crm/deals", icon: Bot },
   { title: "Reports", url: "/crm/reports", icon: Bot },
+  { title: "CRM Reports", url: "/crm/reports", icon: FileOutput },
 ]
 
 export const navMainItems = [

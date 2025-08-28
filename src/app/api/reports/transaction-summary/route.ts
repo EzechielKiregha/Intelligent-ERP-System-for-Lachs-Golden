@@ -1,98 +1,72 @@
-// app/api/reports/transaction-summary/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { Role } from '@/generated/prisma';
-import { generateSimplePdf } from '@/lib/pdf/simplePdfGenerator';
+import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
 import { format } from 'date-fns';
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Authentication check
     const session = await getServerSession(authOptions);
-    if (!session?.user?.currentCompanyId ){
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const companyId = session.user.currentCompanyId;
     
-    // 2. Get date range (simplified for demo)
+    // Date range
     const end = new Date();
     const start = new Date(end);
     start.setMonth(end.getMonth() - 1);
     
-    // 3. Fetch real data from database
+    // Fetch transactions
     const transactions = await prisma.transaction.findMany({
       where: {
         companyId,
         date: { gte: start, lte: end }
-      }
+      },
+      orderBy: { date: 'desc' }
     });
     
-    // 4. Calculate summary metrics
+    // Calculate metrics
     const totalTransactions = transactions.length;
     const totalAmount = transactions.reduce((sum, t) => sum + t.amount, 0);
     const averageAmount = totalTransactions > 0 ? totalAmount / totalTransactions : 0;
     
-    // 5. Format data for PDF
-    const summaryContent = [
-      { text: 'Transaction Summary', style: 'subheader', margin: [0, 0, 0, 10] },
+    // Transaction rows for table
+    const transactionRows = transactions.slice(0, 20).map(t => [
+      format(new Date(t.date), 'MMM dd, yyyy'),
+      t.description || 'No Description',
+      t.type,
+      `$${t.amount.toFixed(2)}`
+    ]);
+    
+    const sections: ContentSection[] = [
       {
-        table: {
-          widths: ['*', 'auto'],
-          body: [
-            ['Total Transactions:', totalTransactions.toString()],
-            ['Total Amount:', `$${totalAmount.toFixed(2)}`],
-            ['Average Amount:', `$${averageAmount.toFixed(2)}`]
-          ]
-        },
-        layout: 'noBorders'
-      }
-    ];
-    
-    // 6. Create transaction table
-    const transactionTable = {
-      text: 'Recent Transactions',
-      style: 'subheader',
-      margin: [0, 20, 0, 10]
-    };
-    
-    const transactionBody = [
-      ['Date', 'Description', 'Type', 'Amount']
-    ];
-    
-    transactions.slice(0, 20).forEach(t => {
-      transactionBody.push([
-        format(new Date(t.date), 'MMM dd'),
-        t.description || "No Description Found",
-        t.type,
-        `$${t.amount.toFixed(2)}`
-      ]);
-    });
-    
-    // 7. Create PDF content
-    const content = [
-      summaryContent,
-      transactionTable,
+        title: 'Transaction Summary',
+        type: 'keyValue',
+        data: {
+          'Total Transactions:': totalTransactions.toString(),
+          'Total Amount:': `$${totalAmount.toFixed(2)}`,
+          'Average Amount:': `$${averageAmount.toFixed(2)}`
+        }
+      },
       {
-        table: {
-          headerRows: 1,
-          widths: ['auto', '*', 'auto', 'auto'],
-          body: transactionBody
+        title: 'Recent Transactions',
+        type: 'table',
+        data: {
+          headers: ['Date', 'Description', 'Type', 'Amount'],
+          rows: transactionRows
         }
       }
     ];
     
-    // 8. Generate PDF
-    const pdfBuffer = await generateSimplePdf(
-      content,
+    const pdfBuffer = await generateReportPdf(
+      sections,
       'Lachs Golden - Transaction Summary Report',
       `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`,
-      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
     );
     
-    // 9. Return PDF response
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {

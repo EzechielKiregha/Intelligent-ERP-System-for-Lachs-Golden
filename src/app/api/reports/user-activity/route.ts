@@ -1,28 +1,26 @@
-// app/api/reports/user-activity/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { Role } from '@/generated/prisma';
+import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
 import { format } from 'date-fns';
-import { generateSimplePdf } from '@/lib/pdf/simplePdfGenerator';
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Authentication check
     const session = await getServerSession(authOptions);
-    if (!session?.user?.currentCompanyId ){
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const companyId = session.user.currentCompanyId;
     
-    // 2. Get date range from request (simplified)
-    const { startDate, endDate } = await req.json();
+    // Get date range from request
+    const body = await req.json().catch(() => ({}));
+    const { startDate, endDate } = body;
     const start = startDate ? new Date(startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const end = endDate ? new Date(endDate) : new Date();
     
-    // 3. Fetch real data from database
+    // Fetch audit logs
     const activities = await prisma.auditLog.findMany({
       where: { 
         companyId,
@@ -32,50 +30,64 @@ export async function POST(req: NextRequest) {
       take: 100
     });
     
-    // 4. Format data for PDF
-    const tableBody = [
-      ['Timestamp', 'Action', 'User', 'Entity'],
-      ...activities.map(activity => [
-        format(new Date(activity.timestamp), 'MMM dd, yyyy HH:mm'),
-        activity.action,
-        activity.userId ? 'System User' : 'System',
-        activity.entity
-      ])
-    ];
+    // Activity summary
+    const totalActivities = activities.length;
+    const actionCounts = activities.reduce((acc, activity) => {
+      acc[activity.action ? activity.action : 0] = (acc[activity.action ? activity.action : 0] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
     
-    // 5. Create PDF content
-    const content = [
+    const topActions = Object.entries(actionCounts)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 5);
+    
+    // Activity rows for table
+    const activityRows = activities.slice(0, 50).map(activity => [
+      format(new Date(activity.timestamp), 'MMM dd, HH:mm'),
+      activity.action || "No Action",
+      activity.userId || 'System',
+      activity.entity || "System"
+    ]);
+    
+    const sections: ContentSection[] = [
       {
-        text: 'User Activity Report',
-        style: 'header'
+        title: 'Activity Summary',
+        type: 'keyValue',
+        data: {
+          'Total Activities:': totalActivities.toString(),
+          'Date Range:': `${format(start, 'MMM dd')} to ${format(end, 'MMM dd')}`,
+          'Most Common Action:': topActions[0] ? `${topActions[0][0]} (${topActions[0][1]})` : 'None'
+        }
       },
       {
-        text: `Showing ${activities.length} activities from ${format(start, 'MMM dd, yyyy')} to ${format(end, 'MMM dd, yyyy')}`,
-        margin: [0, 0, 0, 10]
+        title: 'Top Actions',
+        type: 'table',
+        data: {
+          headers: ['Action', 'Count'],
+          rows: topActions.map(([action, count]) => [action, count.toString()])
+        }
       },
       {
-        table: {
-          headerRows: 1,
-          widths: ['auto', '*', 'auto', 'auto'],
-          body: tableBody
+        title: 'Recent Activity',
+        type: 'table',
+        data: {
+          headers: ['Time', 'Action', 'User', 'Entity'],
+          rows: activityRows
         }
       }
     ];
     
-    // 6. Generate PDF
-    const pdfBuffer = await generateSimplePdf(
-      content,
+    const pdfBuffer = await generateReportPdf(
+      sections,
       'Lachs Golden - User Activity Report',
       `${format(start, 'MMM dd')} to ${format(end, 'MMM dd, yyyy')}`,
-      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
     );
     
-    // 7. Return PDF response
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="user-activity-report-${format(new Date(), 'yyyy-MM-dd')}.pdf"`,
+        'Content-Disposition': `attachment; filename="user-activity-${format(new Date(), 'yyyy-MM-dd')}.pdf"`,
       },
     });
   } catch (error) {
