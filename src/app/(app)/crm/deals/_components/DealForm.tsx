@@ -164,7 +164,11 @@ export default function DealForm({
             id="expectedCloseDate"
             name="expectedCloseDate"
             type="date"
-            value={formData.expectedCloseDate.toISOString().split('T')[0]}
+            value={
+              formData.expectedCloseDate
+                ? new Date(formData.expectedCloseDate).toISOString().split("T")[0]
+                : ""
+            }
             onChange={handleDateChange}
             required
           />

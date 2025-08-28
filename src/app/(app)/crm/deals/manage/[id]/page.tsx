@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 import DealForm from '../../_components/DealForm';
 import { useSingleDeal } from '@/lib/hooks/crm';
 import { toast } from 'sonner';
-import { DealStage } from '@/generated/prisma';
 
 export default function ManageDealPage() {
   const router = useRouter();
