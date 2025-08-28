@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
 export const transporter = nodemailer.createTransport({
   service: 'Gmail',
