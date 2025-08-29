@@ -91,24 +91,116 @@ export async function POST(req: NextRequest) {
     const conversionRate = totalDeals > 0 ? (wonDeals / totalDeals) * 100 : 0;
     const averageDealValue = wonDeals > 0 ? totalRevenue / wonDeals : 0;
     
-    // 4. Format data for the new PDF generator
+    // 4. Fetch additional real data from database
     
-    // Prepare top sales reps data
-    const topRepsRows = [
-      ['John Smith', '15', '$150,000', '35%'],
-      ['Sarah Johnson', '12', '$125,000', '32%'],
-      ['Michael Brown', '10', '$95,000', '28%']
-    ];
+    // Get sales reps performance data
+    const salesReps = await prisma.user.findMany({
+      where: { 
+        currentCompanyId: companyId,
+        role: 'SALES_REP'
+      },
+      include: {
+        deals: {
+          where: {
+            createdAt: { gte: start, lte: end }
+          }
+        }
+      }
+    });
+
+    // Calculate performance metrics for each sales rep
+    const topRepsRows = salesReps
+      .map(rep => {
+        const repDeals = rep.deals || [];
+        const totalRepDeals = repDeals.length;
+        const wonRepDeals = repDeals.filter(d => d.stage === 'WON').length;
+        const repRevenue = repDeals
+          .filter(d => d.stage === 'WON')
+          .reduce((sum, deal) => sum + deal.amount, 0);
+        const repConversionRate = totalRepDeals > 0 ? (wonRepDeals / totalRepDeals) * 100 : 0;
+        
+        return [
+          `${rep.firstName} ${rep.lastName}`,
+          wonRepDeals.toString(),
+          `$${repRevenue.toFixed(2)}`,
+          `${repConversionRate.toFixed(1)}%`
+        ];
+      })
+      .sort((a, b) => parseFloat(b[2].replace('$', '')) - parseFloat(a[2].replace('$', '')))
+      .slice(0, 5); // Get top 5 reps by revenue
     
-    // Prepare deal stage analysis data
-    const stageAnalysisRows = [
-      ['NEW', '25', '$5,000', 'N/A'],
-      ['QUALIFIED', '20', '$7,500', 'N/A'],
-      ['PROPOSAL', '15', '$10,000', 'N/A'],
-      ['NEGOTIATION', '10', '$15,000', 'N/A'],
-      ['WON', wonDeals.toString(), `$${averageDealValue.toFixed(2)}`, '100%'],
-      ['LOST', lostDeals.toString(), '$0', '0%']
-    ];
+    // If no sales reps data, add a placeholder row
+    if (topRepsRows.length === 0) {
+      topRepsRows.push(['No sales representatives data available', '0', '$0.00', '0%']);
+    }
+    
+    // Get deal stage analysis data
+    const stages = ['NEW', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'WON', 'LOST'];
+    
+    const stagePromises = stages.map(async (stage) => {
+      const stageDeals = await prisma.deal.findMany({
+        where: { 
+          contact: { 
+            company: { 
+              users: { 
+                some: { 
+                  id: session.user.id 
+                } 
+              } 
+            } 
+          },
+          stage,
+          createdAt: { gte: start, lte: end }
+        },
+        select: { amount: true }
+      });
+      
+      const stageDealCount = stageDeals.length;
+      const stageValue = stageDeals.reduce((sum, deal) => sum + deal.amount, 0);
+      const stageAvgValue = stageDealCount > 0 ? stageValue / stageDealCount : 0;
+      
+      // Calculate conversion rate based on next stage
+      let conversionRate = 'N/A';
+      if (stage !== 'WON' && stage !== 'LOST') {
+        const nextStageIndex = stages.indexOf(stage) + 1;
+        if (nextStageIndex < stages.length - 1) { // Exclude LOST from next stage calculation
+          const nextStage = stages[nextStageIndex];
+          const nextStageCount = await prisma.deal.count({
+            where: { 
+              contact: { 
+                company: { 
+                  users: { 
+                    some: { 
+                      id: session.user.id 
+                    } 
+                  } 
+                } 
+              },
+              stage: nextStage,
+              createdAt: { gte: start, lte: end }
+            }
+          });
+          
+          if (stageDealCount > 0) {
+            const rate = (nextStageCount / stageDealCount) * 100;
+            conversionRate = `${rate.toFixed(1)}%`;
+          }
+        }
+      } else if (stage === 'WON') {
+        conversionRate = '100%';
+      } else if (stage === 'LOST') {
+        conversionRate = '0%';
+      }
+      
+      return [
+        stage,
+        stageDealCount.toString(),
+        `$${stageAvgValue.toFixed(2)}`,
+        conversionRate
+      ];
+    });
+    
+    const stageAnalysisRows = await Promise.all(stagePromises);
     
     // 7. Create sections for the new PDF generator
     const sections: ContentSection[] = [

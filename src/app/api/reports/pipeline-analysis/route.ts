@@ -74,21 +74,96 @@ export async function POST(req: NextRequest) {
       `$${stage.avgValue.toFixed(2)}`
     ]);
     
-    // Prepare deal aging analysis data (simplified)
-    const agingAnalysisRows = [
-      ['NEW', '8', '12', '5'],
-      ['QUALIFIED', '5', '10', '5'],
-      ['PROPOSAL', '3', '8', '4'],
-      ['NEGOTIATION', '2', '5', '3']
-    ];
+    // Get all deals with creation dates for aging analysis
+    const dealsWithDates = await prisma.deal.findMany({
+      where: { 
+        contact: { 
+          company: { 
+            users: { 
+              some: { 
+                id: session.user.id 
+              } 
+            } 
+          } 
+        },
+        stage: {
+          in: ['NEW', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION'] // Only active deals
+        }
+      },
+      select: {
+        stage: true,
+        createdAt: true
+      }
+    });
     
-    // Prepare conversion rates data
-    const conversionRatesRows = [
-      ['NEW', 'QUALIFIED', '20', '80%'],
-      ['QUALIFIED', 'PROPOSAL', '15', '75%'],
-      ['PROPOSAL', 'NEGOTIATION', '10', '67%'],
-      ['NEGOTIATION', 'WON', '5', '50%']
-    ];
+    // Calculate deal aging
+    const now = new Date();
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(now.getDate() - 7);
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+    
+    // Initialize aging data structure
+    const agingData = {
+      'NEW': { lessThan7: 0, between7And30: 0, moreThan30: 0 },
+      'QUALIFIED': { lessThan7: 0, between7And30: 0, moreThan30: 0 },
+      'PROPOSAL': { lessThan7: 0, between7And30: 0, moreThan30: 0 },
+      'NEGOTIATION': { lessThan7: 0, between7And30: 0, moreThan30: 0 }
+    };
+    
+    // Populate aging data
+    dealsWithDates.forEach(deal => {
+      // Type guard to ensure the stage exists in agingData
+      if (deal.stage in agingData) {
+        const createdAt = new Date(deal.createdAt);
+        if (createdAt > sevenDaysAgo) {
+          agingData[deal.stage as keyof typeof agingData].lessThan7++;
+        } else if (createdAt > thirtyDaysAgo) {
+          agingData[deal.stage as keyof typeof agingData].between7And30++;
+        } else {
+          agingData[deal.stage as keyof typeof agingData].moreThan30++;
+        }
+      }
+    });
+    
+    // Format aging data for display
+    const agingAnalysisRows = Object.entries(agingData).map(([stage, data]) => [
+      stage,
+      data.lessThan7.toString(),
+      data.between7And30.toString(),
+      data.moreThan30.toString()
+    ]);
+    
+    // Calculate conversion rates between stages
+    const conversionRates = [];
+    
+    // For each stage pair, calculate conversion rate
+    for (let i = 0; i < stages.length - 2; i++) { // Exclude LOST
+      const fromStage = stages[i];
+      const toStage = stages[i + 1];
+      
+      // Count deals in each stage
+      const fromStageCount = stageData.find(d => d.stage === fromStage)?.count || 0;
+      const toStageCount = stageData.find(d => d.stage === toStage)?.count || 0;
+      
+      // Calculate conversion rate
+      const conversionRate = fromStageCount > 0 ? (toStageCount / fromStageCount) * 100 : 0;
+      
+      conversionRates.push({
+        fromStage,
+        toStage,
+        count: toStageCount,
+        rate: conversionRate
+      });
+    }
+    
+    // Format conversion rates for display
+    const conversionRatesRows = conversionRates.map(cr => [
+      cr.fromStage,
+      cr.toStage,
+      cr.count.toString(),
+      `${cr.rate.toFixed(1)}%`
+    ]);
     
     // 8. Create sections for the new PDF generator
     const sections: ContentSection[] = [

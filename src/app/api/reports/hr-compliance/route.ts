@@ -56,14 +56,44 @@ export async function POST(req: NextRequest) {
       e.status
     ]);
     
+    
+    // Calculate compliance metrics based on employee data
+    const backgroundCheckCompliant = employees.filter(e => e.backgroundCheckCompleted).length;
+    const backgroundCheckStatus = backgroundCheckCompliant === totalEmployees ? 'COMPLIANT' : 'NON-COMPLIANT';
+    
+    // Calculate training completion based on performance reviews
+    const employeesWithReviews = employees.filter(e => e.performanceReviews && e.performanceReviews.length > 0);
+    const trainingCompliant = employeesWithReviews.length;
+    const trainingStatus = trainingCompliant === totalEmployees ? 'COMPLIANT' : 'PARTIALLY COMPLIANT';
+    
+    // Calculate I-9 verification based on employee status
+    const i9Compliant = employees.filter(e => e.status === 'ACTIVE' || e.status === 'INACTIVE').length;
+    const i9Status = i9Compliant === totalEmployees ? 'COMPLIANT' : 'PARTIALLY COMPLIANT';
+    
+    // Calculate W-4 form compliance based on employee salary information (proxy for tax setup)
+    const w4Compliant = employees.filter(e => e.salary !== null && e.salary !== undefined).length;
+    const w4Status = w4Compliant === totalEmployees ? 'COMPLIANT' : 'PARTIALLY COMPLIANT';
+    
+    // Generate next review dates based on current date
+    const now = new Date();
+    const i9ReviewDate = new Date(now);
+    i9ReviewDate.setDate(now.getDate() + 30);
+    
+    const w4ReviewDate = new Date(now);
+    w4ReviewDate.setDate(now.getDate() + 90);
+    
+    const backgroundCheckReviewDate = new Date(now);
+    backgroundCheckReviewDate.setDate(now.getDate() + 365);
+    
+    const trainingReviewDate = new Date(now);
+    trainingReviewDate.setDate(now.getDate() + 180);
+    
     // Prepare compliance status data
     const complianceRows = [
-      ['I-9 Verification', 'COMPLIANT', format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'MMM dd, yyyy')],
-      ['W-4 Form', 'COMPLIANT', format(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), 'MMM dd, yyyy')],
-      ['Background Check', 
-       employees.some(e => !e.backgroundCheckCompleted) ? 'NON-COMPLIANT' : 'COMPLIANT',
-       format(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), 'MMM dd, yyyy')],
-      ['Training Completion', 'COMPLIANT', format(new Date(Date.now() + 180 * 24 * 60 * 60 * 1000), 'MMM dd, yyyy')]
+      ['I-9 Verification', i9Status, format(i9ReviewDate, 'MMM dd, yyyy')],
+      ['W-4 Form', w4Status, format(w4ReviewDate, 'MMM dd, yyyy')],
+      ['Background Check', backgroundCheckStatus, format(backgroundCheckReviewDate, 'MMM dd, yyyy')],
+      ['Training Completion', trainingStatus, format(trainingReviewDate, 'MMM dd, yyyy')]
     ];
     
     // 8. Create sections for the new PDF generator

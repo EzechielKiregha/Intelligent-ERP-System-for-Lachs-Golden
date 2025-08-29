@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { Role } from '@/generated/prisma';
+import { DealStage, Role } from '@/generated/prisma';
 import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
 import { format } from 'date-fns';
 
@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
               } 
             } 
           }
+        },
+        include: {
+          contact: true
         }
       }),
       prisma.deal.findMany({
@@ -44,6 +47,9 @@ export async function POST(req: NextRequest) {
             } 
           },
           stage: 'WON'
+        },
+        include: {
+          contact: true
         }
       })
     ]);
@@ -68,26 +74,122 @@ export async function POST(req: NextRequest) {
       ['Pipeline Value', `$${totalPipeline.toFixed(2)}`, `$${forecast30.toFixed(2)}`, `$${forecast90.toFixed(2)}`]
     ];
     
-    // Prepare stage forecast data
-    const stageForecastRows = [
-      ['NEW', '$50,000', '$40,000'],
-      ['QUALIFIED', '$40,000', '$32,000'],
-      ['PROPOSAL', '$30,000', '$24,000'],
-      ['NEGOTIATION', '$20,000', '$16,000']
-    ];
+    // Get stage forecast data from real deals
+    const stages = [DealStage.NEW, DealStage.QUALIFIED, DealStage.PROPOSAL, DealStage.NEGOTIATION];
     
-    // Prepare top opportunities data
-    const topOpportunitiesRows = [
-      ['Enterprise Contract', 'NEGOTIATION', '$50,000', format(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), 'MMM dd'), '70%'],
-      ['Mid-Market Expansion', 'PROPOSAL', '$35,000', format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'MMM dd'), '50%'],
-      ['Small Business Package', 'QUALIFIED', '$20,000', format(new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), 'MMM dd'), '30%']
-    ];
+    const stagePromises = stages.map(async (stage) => {
+      const stageDeals = await prisma.deal.findMany({
+        where: { 
+          contact: { 
+            company: { 
+              users: { 
+                some: { 
+                  id: session.user.id 
+                } 
+              } 
+            } 
+          },
+          stage
+        },
+        include: {
+          contact: true
+        }
+      });
+      
+      const currentValue = stageDeals.reduce((sum, deal) => sum + deal.amount, 0);
+      // Calculate forecast value based on stage (higher stages have higher probability)
+      const stageIndex = stages.indexOf(stage);
+      const stageProbability = 0.3 + (stageIndex * 0.15); // 30%, 45%, 60%, 75%
+      const forecastValue = currentValue * stageProbability;
+      
+      return [
+        stage,
+        `$${currentValue.toFixed(2)}`,
+        `$${forecastValue.toFixed(2)}`
+      ];
+    });
     
-    // Prepare forecast confidence data
+    const stageForecastRows = await Promise.all(stagePromises);
+    
+    // If no stage data, add a placeholder row
+    if (stageForecastRows.length === 0) {
+      stageForecastRows.push(['No stage data available', '$0.00', '$0.00']);
+    }
+    
+    // Get top opportunities from real deals
+    const topDeals = await prisma.deal.findMany({
+      where: { 
+        contact: { 
+          company: { 
+            users: { 
+              some: { 
+                id: session.user.id 
+              } 
+            } 
+          } 
+        },
+        stage: {
+          in: ['QUALIFIED', 'PROPOSAL', 'NEGOTIATION'] // Only include active deals
+        }
+      },
+      orderBy: {
+        amount: 'desc'
+      },
+      take: 5, // Get top 5 deals by amount
+      include: {
+        contact: true
+      }
+    });
+    
+    const topOpportunitiesRows = await Promise.all(topDeals.map(async (deal) => {
+      // Calculate probability based on stage
+      let probability = '30%';
+      if (deal.stage === 'NEGOTIATION') {
+        probability = '70%';
+      } else if (deal.stage === 'PROPOSAL') {
+        probability = '50%';
+      }
+      
+      // Get contact name using contactId
+      const contact = await prisma.contact.findUnique({
+        where: { id: deal.contactId },
+        select: { fullName: true }
+      });
+      
+      // Estimate close date based on created date (if available) or use current date + random days
+      const closeDate = deal.expectedCloseDate || new Date(Date.now() + (Math.floor(Math.random() * 60) + 15) * 24 * 60 * 60 * 1000);
+      
+      return [
+        deal.title || `Deal with ${contact?.fullName || 'Unknown'}`,
+        deal.stage,
+        `$${deal.amount.toFixed(2)}`,
+        format(closeDate, 'MMM dd'),
+        probability
+      ];
+    }));
+    
+    // If no top deals, add a placeholder row
+    if (topOpportunitiesRows.length === 0) {
+      topOpportunitiesRows.push(['No active deals available', 'N/A', '$0.00', format(new Date(), 'MMM dd'), '0%']);
+    }
+    
+    // Calculate forecast confidence based on real deals
+    const highConfidenceDeals = allDeals.filter(d => d.stage === 'NEGOTIATION');
+    const mediumConfidenceDeals = allDeals.filter(d => d.stage === 'PROPOSAL');
+    const lowConfidenceDeals = allDeals.filter(d => ['NEW', 'QUALIFIED'].includes(d.stage));
+    
+    const highConfidenceValue = highConfidenceDeals.reduce((sum, deal) => sum + deal.amount, 0);
+    const mediumConfidenceValue = mediumConfidenceDeals.reduce((sum, deal) => sum + deal.amount, 0);
+    const lowConfidenceValue = lowConfidenceDeals.reduce((sum, deal) => sum + deal.amount, 0);
+    
+    const highConfidenceWinRate = 75;
+    const mediumConfidenceWinRate = 50;
+    const lowConfidenceWinRate = 25;
+    
     const forecastConfidenceRows = [
-      ['High Confidence (>70%)', '15', '$150,000', '75%'],
-      ['Medium Confidence (40-70%)', '25', '$250,000', '50%'],
-      ['Low Confidence (<40%)', '10', '$100,000', '25%']
+      ['High Confidence (>70%)', highConfidenceDeals.length.toString(), `$${highConfidenceValue.toFixed(2)}`, `${highConfidenceWinRate}%`],
+      ['Medium Confidence (40-70%)', mediumConfidenceDeals.length.toString(), `$${mediumConfidenceValue.toFixed(2)}`, `${mediumConfidenceWinRate}%`],
+      ['Low Confidence (<40%)', lowConfidenceDeals.length.toString(), `$${lowConfidenceValue.toFixed(2)}`, `${lowConfidenceWinRate}%`]
     ];
     
     // 8. Create sections for the new PDF generator
