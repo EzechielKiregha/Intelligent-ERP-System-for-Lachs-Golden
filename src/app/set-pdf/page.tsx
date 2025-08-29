@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PdfGeneratorToggle from '@/components/settings/PdfGeneratorToggle';
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: 'Settings | Lachs Golden ERP',
   description: 'Configure system settings and preferences',
 };
