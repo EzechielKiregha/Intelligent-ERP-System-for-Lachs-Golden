@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { Role } from '@/generated/prisma';
-import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
+import { generateReportPdf, ContentSection } from '@/lib/pdf/pdfGenerator';
 import { format } from 'date-fns';
 
 export async function POST(req: NextRequest) {
