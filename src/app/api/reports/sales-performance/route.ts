@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { Role } from '@/generated/prisma';
+import { DealStage, Role } from '@/generated/prisma';
 import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
 import { format } from 'date-fns';
 
@@ -97,7 +97,9 @@ export async function POST(req: NextRequest) {
     const salesReps = await prisma.user.findMany({
       where: { 
         currentCompanyId: companyId,
-        role: 'SALES_REP'
+        role: {in:[Role.SUPER_ADMIN, Role.ADMIN, Role.ACCOUNTANT, Role.EMPLOYEE, Role.HR,
+          Role.MANAGER, Role.MEMBER
+        ]}
       },
       include: {
         deals: {
@@ -135,7 +137,9 @@ export async function POST(req: NextRequest) {
     }
     
     // Get deal stage analysis data
-    const stages = ['NEW', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'WON', 'LOST'];
+    const stages = [DealStage.NEW, DealStage.NEGOTIATION, DealStage.PROPOSAL, DealStage.QUALIFIED,
+      DealStage.LOST, DealStage.WON
+     ]
     
     const stagePromises = stages.map(async (stage) => {
       const stageDeals = await prisma.deal.findMany({
