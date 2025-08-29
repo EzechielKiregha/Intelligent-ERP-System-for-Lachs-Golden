@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { Role } from '@/generated/prisma';
-import { generateSimplePdf } from '@/lib/pdf/simplePdfGenerator';
+import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
 import { format } from 'date-fns';
 
 export async function POST(req: NextRequest) {
@@ -30,57 +30,22 @@ export async function POST(req: NextRequest) {
     
     const totalValue = products.reduce((sum, p) => sum + (p.unitPrice * p.quantity), 0);
     
-    // 4. Format data for PDF
-    const summaryContent = [
-      { text: 'Inventory Status Report', style: 'subheader', margin: [0, 0, 0, 10] },
-      {
-        table: {
-          widths: ['*', 'auto'],
-          body: [
-            ['Total Items:', totalItems.toString()],
-            ['In Stock:', inStock.toString()],
-            ['Low Stock Items:', lowStock.toString()],
-            ['Out of Stock:', outOfStock.toString()],
-            ['Total Value:', `$${totalValue.toFixed(2)}`]
-          ]
-        },
-        layout: 'noBorders'
-      }
-    ];
+    // 4. Format data for the new PDF generator
     
-    // 5. Create low stock items table
-    const lowStockTable = {
-      text: 'Low Stock Items',
-      style: 'subheader',
-      margin: [0, 20, 0, 10]
-    };
-    
-    const lowStockBody = [
-      ['SKU', 'Name', 'Current', 'Threshold']
-    ];
-    
-    products
+    // Prepare low stock items data
+    const lowStockRows = products
       .filter(p => p.quantity <= (p.threshold || 10))
       .slice(0, 20)
-      .forEach(p => {
-        lowStockBody.push([
-          p.sku,
-          p.name,
-          p.quantity.toString(),
-          (p.threshold || 10).toString()
-        ]);
-      });
-    
-    // 6. Create inventory by category table
-    const categoryTable = {
-      text: 'Inventory by Category',
-      style: 'subheader',
-      margin: [0, 20, 0, 10]
-    };
+      .map(p => [
+        p.sku,
+        p.name,
+        p.quantity.toString(),
+        (p.threshold || 10).toString()
+      ]);
     
     // Group products by category
     const productsByCategory = products.reduce((acc, p) => {
-      const category = "INVENTORY" ;
+      const category = "INVENTORY";
       if (!acc[category]) {
         acc[category] = {
           count: 0,
@@ -96,50 +61,58 @@ export async function POST(req: NextRequest) {
       return acc;
     }, {} as Record<string, { count: number; value: number; lowStock: number }>);
     
-    const categoryBody = [
-      ['Category', 'Items', 'Value', 'Low Stock']
-    ];
-    
-    for (const [categoryId, data] of Object.entries(productsByCategory)) {
-      const category = categoryId === 'Uncategorized' ? 
-        'Uncategorized' : 
-        (await prisma.category.findUnique({ where: { id: categoryId } }))?.name || 'Uncategorized';
+    // Prepare category data
+    const categoryRows = await Promise.all(
+      Object.entries(productsByCategory).map(async ([categoryId, data]) => {
+        const categoryName = categoryId === 'Uncategorized' 
+          ? 'Uncategorized' 
+          : (await prisma.category.findUnique({ where: { id: categoryId } }))?.name || 'Uncategorized';
         
-      categoryBody.push([
-        category,
-        data.count.toString(),
-        `$${data.value.toFixed(2)}`,
-        data.lowStock.toString()
-      ]);
-    }
+        return [
+          categoryName,
+          data.count.toString(),
+          `$${data.value.toFixed(2)}`,
+          data.lowStock.toString()
+        ];
+      })
+    );
     
-    // 7. Create PDF content
-    const content = [
-      summaryContent,
-      lowStockTable,
+    // 7. Create sections for the new PDF generator
+    const sections: ContentSection[] = [
       {
-        table: {
-          headerRows: 1,
-          widths: ['auto', '*', 'auto', 'auto'],
-          body: lowStockBody
+        title: 'Inventory Summary',
+        type: 'keyValue',
+        data: {
+          'Total Items:': totalItems.toString(),
+          'In Stock:': inStock.toString(),
+          'Low Stock Items:': lowStock.toString(),
+          'Out of Stock:': outOfStock.toString(),
+          'Total Value:': `$${totalValue.toFixed(2)}`
         }
       },
-      categoryTable,
       {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto', 'auto', 'auto'],
-          body: categoryBody
+        title: 'Low Stock Items',
+        type: 'table',
+        data: {
+          headers: ['SKU', 'Name', 'Current', 'Threshold'],
+          rows: lowStockRows
+        }
+      },
+      {
+        title: 'Inventory by Category',
+        type: 'table',
+        data: {
+          headers: ['Category', 'Items', 'Value', 'Low Stock'],
+          rows: categoryRows
         }
       }
     ];
     
-    // 8. Generate PDF
-    const pdfBuffer = await generateSimplePdf(
-      content,
+    // 8. Generate PDF with the new generator
+    const pdfBuffer = await generateReportPdf(
+      sections,
       'Lachs Golden - Inventory Status Report',
-      'Current Status',
-      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
+      'Current Status'
     );
     
     // 9. Return PDF response

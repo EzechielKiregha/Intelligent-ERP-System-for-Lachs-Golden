@@ -4,16 +4,17 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { Role } from '@/generated/prisma';
-import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
+import { generateSimplePdf } from '@/lib/pdf/simplePdfGenerator';
 import { format } from 'date-fns';
 
 export async function POST(req: NextRequest) {
   try {
     // 1. Authentication check
     const session = await getServerSession(authOptions);
-    if (!session?.user?.currentCompanyId) {
+    if (!session?.user?.currentCompanyId ){
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
     const companyId = session.user.currentCompanyId;
     
     // 2. Get date range (simplified for demo)
@@ -36,42 +37,68 @@ export async function POST(req: NextRequest) {
     const totalRevenue = transactions
       .filter(t => t.category.type === 'INCOME')
       .reduce((sum, t) => sum + t.amount, 0);
+      
     const totalExpenses = transactions
       .filter(t => t.category.type === 'EXPENSE')
       .reduce((sum, t) => sum + t.amount, 0);
+      
     const netProfit = totalRevenue - totalExpenses;
     
-    // 5. Format data for PDF - CONVERTED TO NEW FORMAT
-    const sections: ContentSection[] = [
+    // 5. Format data for PDF
+    const summaryContent = [
+      { text: 'Financial Summary', style: 'subheader', margin: [0, 0, 0, 10] },
       {
-        title: 'Financial Summary',
-        type: 'keyValue',
-        data: {
-          'Total Revenue:': `$${totalRevenue.toFixed(2)}`,
-          'Total Expenses:': `$${totalExpenses.toFixed(2)}`,
-          'Net Profit:': `$${netProfit.toFixed(2)}`
-        }
-      },
+        table: {
+          widths: ['*', 'auto'],
+          body: [
+            ['Total Revenue:', `$${totalRevenue.toFixed(2)}`],
+            ['Total Expenses:', `$${totalExpenses.toFixed(2)}`],
+            ['Net Profit:', `$${netProfit.toFixed(2)}`]
+          ]
+        },
+        layout: 'noBorders'
+      }
+    ];
+    
+    // 6. Create transaction table
+    const transactionTable = {
+      text: 'Recent Transactions',
+      style: 'subheader',
+      margin: [0, 20, 0, 10]
+    };
+    
+    const transactionBody = [
+      ['Date', 'Description', 'Type', 'Amount']
+    ];
+    
+    transactions.slice(0, 20).forEach(t => {
+      transactionBody.push([
+        format(new Date(t.date), 'MMM dd'),
+        t.description || "No Description Found",
+        t.type,
+        `$${t.amount.toFixed(2)}`
+      ]);
+    });
+    
+    // 7. Create PDF content
+    const content = [
+      summaryContent,
+      transactionTable,
       {
-        title: 'Recent Transactions',
-        type: 'table',
-        data: {
-          headers: ['Date', 'Description', 'Type', 'Amount'],
-          rows: transactions.slice(0, 20).map(t => [
-            format(new Date(t.date), 'MMM dd, yyyy'),
-            t.description || "No Description Found",
-            t.type,
-            `$${t.amount.toFixed(2)}`
-          ])
+        table: {
+          headerRows: 1,
+          widths: ['auto', '*', 'auto', 'auto'],
+          body: transactionBody
         }
       }
     ];
     
     // 8. Generate PDF
-    const pdfBuffer = await generateReportPdf(
-      sections,
+    const pdfBuffer = await generateSimplePdf(
+      content,
       'Lachs Golden - Financial Summary Report',
       `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`,
+      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
     );
     
     // 9. Return PDF response

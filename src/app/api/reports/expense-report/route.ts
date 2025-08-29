@@ -4,17 +4,16 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { Role } from '@/generated/prisma';
-import { generateSimplePdf } from '@/lib/pdf/simplePdfGenerator';
+import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
 import { format } from 'date-fns';
 
 export async function POST(req: NextRequest) {
   try {
     // 1. Authentication check
     const session = await getServerSession(authOptions);
-    if (!session?.user?.currentCompanyId ){
+    if (!session?.user?.currentCompanyId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
     const companyId = session.user.currentCompanyId;
     
     // 2. Get date range (simplified for demo)
@@ -33,93 +32,83 @@ export async function POST(req: NextRequest) {
     
     // 4. Calculate expense metrics
     const totalExpenses = expenses.reduce((sum, t) => sum + t.amount, 0);
+    
+    // 5. Format data for PDF - CONVERTED TO NEW FORMAT
+    const sections: ContentSection[] = [
+      {
+        title: 'Expense Report',
+        type: 'keyValue',
+        data: {
+          'Total Expenses:': `$${totalExpenses.toFixed(2)}`,
+          'Number of Expenses:': expenses.length.toString()
+        }
+      }
+    ];
+    
+    // 6. Create category breakdown (with proper async handling)
     const expenseByCategory = expenses.reduce((acc, expense) => {
       const category = expense.categoryId || 'Uncategorized';
       acc[category] = (acc[category] || 0) + expense.amount;
       return acc;
     }, {} as Record<string, number>);
     
-    // 5. Format data for PDF
-    const summaryContent = [
-      { text: 'Expense Report', style: 'subheader', margin: [0, 0, 0, 10] },
-      {
-        table: {
-          widths: ['*', 'auto'],
-          body: [
-            ['Total Expenses:', `$${totalExpenses.toFixed(2)}`],
-            ['Number of Expenses:', expenses.length.toString()]
-          ]
-        },
-        layout: 'noBorders'
-      }
-    ];
+    // Get category names synchronously in one query
+    const categoryIds = Object.keys(expenseByCategory).filter(id => id !== 'Uncategorized');
+    const categories = categoryIds.length > 0 
+      ? await prisma.category.findMany({
+          where: { id: { in: categoryIds } }
+        })
+      : [];
     
-    // 6. Create category breakdown
-    const categoryBreakdown = [
-      { text: 'Expense Breakdown by Category', style: 'subheader', margin: [0, 20, 0, 10] },
-      {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto'],
-          body: [
-            ['Category', 'Amount'],
-            ...Object.entries(expenseByCategory).map(async ([category, amount]) => [
-              category === 'Uncategorized' ? 'Uncategorized' : 
-                (await prisma.category.findUnique({ where: { id: category } }))?.name || category,
-              `$${amount.toFixed(2)}`
-            ])
-          ]
-        }
-      }
-    ];
+    const categoryMap = new Map(categories.map(c => [c.id, c.name]));
     
-    // 7. Create expense table
-    const expenseTable = {
-      text: 'Recent Expenses',
-      style: 'subheader',
-      margin: [0, 20, 0, 10]
-    };
-    
-    const expenseBody = [
-      ['Date', 'Description', 'Category', 'Amount']
-    ];
-    
-    expenses.slice(0, 20).forEach(async (expense) => {
-      const category = expense.categoryId ? 
-        (await prisma.category.findUnique({ where: { id: expense.categoryId } }))?.name || 'Uncategorized' :
-        'Uncategorized';
-        
-      expenseBody.push([
-        format(new Date(expense.date), 'MMM dd'),
-        expense.description || "No Description Found",
-        category,
-        `$${expense.amount.toFixed(2)}`
-      ]);
+    const categoryRows = Object.entries(expenseByCategory).map(([categoryId, amount]) => {
+      const categoryName = categoryId === 'Uncategorized' 
+        ? 'Uncategorized' 
+        : categoryMap.get(categoryId) || categoryId;
+      return [categoryName, `$${amount.toFixed(2)}`];
     });
     
-    // 8. Create PDF content
-    const content = [
-      summaryContent,
-      categoryBreakdown,
-      expenseTable,
-      {
-        table: {
-          headerRows: 1,
-          widths: ['auto', '*', 'auto', 'auto'],
-          body: expenseBody
-        }
+    sections.push({
+      title: 'Expense Breakdown by Category',
+      type: 'table',
+      data: {
+        headers: ['Category', 'Amount'],
+        rows: categoryRows
       }
-    ];
+    });
     
-    // 9. Generate PDF
-    const pdfBuffer = await generateSimplePdf(
-      content,
+    // 7. Create expense table
+    const expenseRows = expenses.slice(0, 20).map(expense => {
+      const categoryName = expense.categoryId 
+        ? categoryMap.get(expense.categoryId) || 'Uncategorized'
+        : 'Uncategorized';
+      
+      return [
+        format(new Date(expense.date), 'MMM dd, yyyy'),
+        expense.description || "No Description Found",
+        categoryName,
+        `$${expense.amount.toFixed(2)}`
+      ];
+    });
+    
+    sections.push({
+      title: 'Recent Expenses',
+      type: 'table',
+      data: {
+        headers: ['Date', 'Description', 'Category', 'Amount'],
+        rows: expenseRows
+      }
+    });
+    
+    // 8. Generate PDF
+    const pdfBuffer = await generateReportPdf(
+      sections,
       'Lachs Golden - Expense Report',
       `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`,
-      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
     );
     
-    // 10. Return PDF response
+    // 9. Return PDF response
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {

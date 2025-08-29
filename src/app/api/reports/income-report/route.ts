@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { Role } from '@/generated/prisma';
-import { generateSimplePdf } from '@/lib/pdf/simplePdfGenerator';
+import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
 import { format } from 'date-fns';
 
 export async function POST(req: NextRequest) {
@@ -39,84 +39,68 @@ export async function POST(req: NextRequest) {
       return acc;
     }, {} as Record<string, number>);
     
-    // 5. Format data for PDF
-    const summaryContent = [
-      { text: 'Income Report', style: 'subheader', margin: [0, 0, 0, 10] },
-      {
-        table: {
-          widths: ['*', 'auto'],
-          body: [
-            ['Total Income:', `$${totalIncome.toFixed(2)}`],
-            ['Number of Income Entries:', income.length.toString()]
-          ]
-        },
-        layout: 'noBorders'
-      }
-    ];
+    // 5. Format data for the new PDF generator
     
-    // 6. Create category breakdown
-    const categoryBreakdown = [
-      { text: 'Income Breakdown by Category', style: 'subheader', margin: [0, 20, 0, 10] },
-      {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto'],
-          body: [
-            ['Category', 'Amount'],
-            ...Object.entries(incomeByCategory).map(async ([category, amount]) => [
-              category === 'Uncategorized' ? 'Uncategorized' : 
-                (await prisma.category.findUnique({ where: { id: category } }))?.name || category,
-              `$${amount.toFixed(2)}`
-            ])
-          ]
-        }
-      }
-    ];
-    
-    // 7. Create income table
-    const incomeTable = {
-      text: 'Recent Income',
-      style: 'subheader',
-      margin: [0, 20, 0, 10]
-    };
-    
-    const incomeBody = [
-      ['Date', 'Description', 'Category', 'Amount']
-    ];
-    
-    income.slice(0, 20).forEach(async (inc) => {
-      const category = inc.categoryId ? 
-        (await prisma.category.findUnique({ where: { id: inc.categoryId } }))?.name || 'Uncategorized' :
-        'Uncategorized';
+    // Prepare category data
+    const categoryRows = await Promise.all(
+      Object.entries(incomeByCategory).map(async ([categoryId, amount]) => {
+        const categoryName = categoryId === 'Uncategorized' 
+          ? 'Uncategorized' 
+          : (await prisma.category.findUnique({ where: { id: categoryId } }))?.name || categoryId;
         
-      incomeBody.push([
-        format(new Date(inc.date), 'MMM dd'),
-        inc.description || "No Description Found",
-        category,
-        `$${inc.amount.toFixed(2)}`
-      ]);
-    });
+        return [categoryName, `$${amount.toFixed(2)}`];
+      })
+    );
     
-    // 8. Create PDF content
-    const content = [
-      summaryContent,
-      categoryBreakdown,
-      incomeTable,
+    // Prepare income transaction data
+    const incomeRows = await Promise.all(
+      income.slice(0, 20).map(async (inc) => {
+        const categoryName = inc.categoryId 
+          ? (await prisma.category.findUnique({ where: { id: inc.categoryId } }))?.name || 'Uncategorized'
+          : 'Uncategorized';
+          
+        return [
+          format(new Date(inc.date), 'MMM dd, yyyy'),
+          inc.description || "No Description Found",
+          categoryName,
+          `$${inc.amount.toFixed(2)}`
+        ];
+      })
+    );
+    
+    // 8. Create sections for the new PDF generator
+    const sections: ContentSection[] = [
       {
-        table: {
-          headerRows: 1,
-          widths: ['auto', '*', 'auto', 'auto'],
-          body: incomeBody
+        title: 'Income Summary',
+        type: 'keyValue',
+        data: {
+          'Total Income:': `$${totalIncome.toFixed(2)}`,
+          'Number of Income Entries:': income.length.toString()
+        }
+      },
+      {
+        title: 'Income Breakdown by Category',
+        type: 'table',
+        data: {
+          headers: ['Category', 'Amount'],
+          rows: categoryRows
+        }
+      },
+      {
+        title: 'Recent Income Transactions',
+        type: 'table',
+        data: {
+          headers: ['Date', 'Description', 'Category', 'Amount'],
+          rows: incomeRows
         }
       }
     ];
     
-    // 9. Generate PDF
-    const pdfBuffer = await generateSimplePdf(
-      content,
+    // 9. Generate PDF with the new generator
+    const pdfBuffer = await generateReportPdf(
+      sections,
       'Lachs Golden - Income Report',
-      `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`,
-      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
+      `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`
     );
     
     // 10. Return PDF response

@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { Role } from '@/generated/prisma';
-import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
+import { generateSimplePdf } from '@/lib/pdf/simplePdfGenerator';
 import { format } from 'date-fns';
 
 export async function POST(req: NextRequest) {
@@ -91,62 +91,75 @@ export async function POST(req: NextRequest) {
     const conversionRate = totalDeals > 0 ? (wonDeals / totalDeals) * 100 : 0;
     const averageDealValue = wonDeals > 0 ? totalRevenue / wonDeals : 0;
     
-    // 4. Format data for the new PDF generator
-    
-    // Prepare top sales reps data
-    const topRepsRows = [
-      ['John Smith', '15', '$150,000', '35%'],
-      ['Sarah Johnson', '12', '$125,000', '32%'],
-      ['Michael Brown', '10', '$95,000', '28%']
+    // 4. Format data for PDF
+    const performanceSummary = [
+      { text: 'Sales Performance', style: 'subheader', margin: [0, 0, 0, 10] },
+      {
+        table: {
+          widths: ['*', 'auto'],
+          body: [
+            ['Total Deals:', totalDeals.toString()],
+            ['Won Deals:', wonDeals.toString()],
+            ['Lost Deals:', lostDeals.toString()],
+            ['Conversion Rate:', `${conversionRate.toFixed(1)}%`],
+            ['Total Revenue:', `$${totalRevenue.toFixed(2)}`],
+            ['Average Deal Value:', `$${averageDealValue.toFixed(2)}`]
+          ]
+        },
+        layout: 'noBorders'
+      }
     ];
     
-    // Prepare deal stage analysis data
-    const stageAnalysisRows = [
-      ['NEW', '25', '$5,000', 'N/A'],
-      ['QUALIFIED', '20', '$7,500', 'N/A'],
-      ['PROPOSAL', '15', '$10,000', 'N/A'],
-      ['NEGOTIATION', '10', '$15,000', 'N/A'],
-      ['WON', wonDeals.toString(), `$${averageDealValue.toFixed(2)}`, '100%'],
-      ['LOST', lostDeals.toString(), '$0', '0%']
-    ];
-    
-    // 7. Create sections for the new PDF generator
-    const sections: ContentSection[] = [
+    // 5. Create top sales reps
+    const topReps = [
+      { text: 'Top Performing Sales Representatives', style: 'subheader', margin: [0, 20, 0, 10] },
       {
-        title: 'Sales Performance Summary',
-        type: 'keyValue',
-        data: {
-          'Total Deals:': totalDeals.toString(),
-          'Won Deals:': wonDeals.toString(),
-          'Lost Deals:': lostDeals.toString(),
-          'Conversion Rate:': `${conversionRate.toFixed(1)}%`,
-          'Total Revenue:': `$${totalRevenue.toFixed(2)}`,
-          'Average Deal Value:': `$${averageDealValue.toFixed(2)}`
-        }
-      },
-      {
-        title: 'Top Performing Sales Representatives',
-        type: 'table',
-        data: {
-          headers: ['Sales Rep', 'Deals Won', 'Revenue', 'Conversion Rate'],
-          rows: topRepsRows
-        }
-      },
-      {
-        title: 'Deal Stage Analysis',
-        type: 'table',
-        data: {
-          headers: ['Stage', 'Deals', 'Avg. Value', 'Conversion Rate'],
-          rows: stageAnalysisRows
+        table: {
+          headerRows: 1,
+          widths: ['*', 'auto', 'auto', 'auto'],
+          body: [
+            ['Sales Rep', 'Deals Won', 'Revenue', 'Conversion Rate'],
+            ['John Smith', '15', '$150,000', '35%'],
+            ['Sarah Johnson', '12', '$125,000', '32%'],
+            ['Michael Brown', '10', '$95,000', '28%']
+          ]
         }
       }
     ];
     
-    // 8. Generate PDF with the new generator
-    const pdfBuffer = await generateReportPdf(
-      sections,
+    // 6. Create deal stage analysis
+    const stageAnalysis = [
+      { text: 'Deal Stage Analysis', style: 'subheader', margin: [0, 20, 0, 10] },
+      {
+        table: {
+          headerRows: 1,
+          widths: ['*', 'auto', 'auto', 'auto'],
+          body: [
+            ['Stage', 'Deals', 'Avg. Value', 'Conversion Rate'],
+            ['NEW', '25', '$5,000', 'N/A'],
+            ['QUALIFIED', '20', '$7,500', 'N/A'],
+            ['PROPOSAL', '15', '$10,000', 'N/A'],
+            ['NEGOTIATION', '10', '$15,000', 'N/A'],
+            ['WON', wonDeals.toString(), `$${averageDealValue.toFixed(2)}`, '100%'],
+            ['LOST', lostDeals.toString(), '$0', '0%']
+          ]
+        }
+      }
+    ];
+    
+    // 7. Create PDF content
+    const content = [
+      performanceSummary,
+      topReps,
+      stageAnalysis
+    ];
+    
+    // 8. Generate PDF
+    const pdfBuffer = await generateSimplePdf(
+      content,
       'Lachs Golden - Sales Performance Report',
-      `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`
+      `Last 30 Days (${format(start, 'MMM dd')} to ${format(end, 'MMM dd')})`,
+      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
     );
     
     // 9. Return PDF response

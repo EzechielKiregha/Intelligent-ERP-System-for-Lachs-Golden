@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { Role } from '@/generated/prisma';
-import { generateSimplePdf } from '@/lib/pdf/simplePdfGenerator';
+import { ContentSection, generateReportPdf } from '@/lib/pdf/puppeteerPdfGenerator';
 import { format } from 'date-fns';
 
 export async function POST(req: NextRequest) {
@@ -59,88 +59,78 @@ export async function POST(req: NextRequest) {
     const expectedRevenue90 = expectedRevenue * 1.3;
     const forecastWinRate = Math.min(winRate * 1.05, 100);
     
-    // 4. Format data for PDF
-    const forecastSummary = [
-      { text: 'Sales Forecast', style: 'subheader', margin: [0, 0, 0, 10] },
+    // 4. Format data for the new PDF generator
+    
+    // Prepare forecast summary data
+    const forecastSummaryRows = [
+      ['Win Rate', `${winRate.toFixed(1)}%`, `${forecastWinRate.toFixed(1)}%`, `${forecastWinRate.toFixed(1)}%`],
+      ['Expected Revenue', `$${expectedRevenue.toFixed(2)}`, `$${expectedRevenue30.toFixed(2)}`, `$${expectedRevenue90.toFixed(2)}`],
+      ['Pipeline Value', `$${totalPipeline.toFixed(2)}`, `$${forecast30.toFixed(2)}`, `$${forecast90.toFixed(2)}`]
+    ];
+    
+    // Prepare stage forecast data
+    const stageForecastRows = [
+      ['NEW', '$50,000', '$40,000'],
+      ['QUALIFIED', '$40,000', '$32,000'],
+      ['PROPOSAL', '$30,000', '$24,000'],
+      ['NEGOTIATION', '$20,000', '$16,000']
+    ];
+    
+    // Prepare top opportunities data
+    const topOpportunitiesRows = [
+      ['Enterprise Contract', 'NEGOTIATION', '$50,000', format(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), 'MMM dd'), '70%'],
+      ['Mid-Market Expansion', 'PROPOSAL', '$35,000', format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'MMM dd'), '50%'],
+      ['Small Business Package', 'QUALIFIED', '$20,000', format(new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), 'MMM dd'), '30%']
+    ];
+    
+    // Prepare forecast confidence data
+    const forecastConfidenceRows = [
+      ['High Confidence (>70%)', '15', '$150,000', '75%'],
+      ['Medium Confidence (40-70%)', '25', '$250,000', '50%'],
+      ['Low Confidence (<40%)', '10', '$100,000', '25%']
+    ];
+    
+    // 8. Create sections for the new PDF generator
+    const sections: ContentSection[] = [
       {
-        table: {
-          widths: ['*', 'auto', 'auto', 'auto'],
-          body: [
-            ['', 'Current', '30-Day', '90-Day'],
-            ['Win Rate', `${winRate.toFixed(1)}%`, `${forecastWinRate.toFixed(1)}%`, `${forecastWinRate.toFixed(1)}%`],
-            ['Expected Revenue', `$${expectedRevenue.toFixed(2)}`, `$${expectedRevenue30.toFixed(2)}`, `$${expectedRevenue90.toFixed(2)}`],
-            ['Pipeline Value', `$${totalPipeline.toFixed(2)}`, `$${forecast30.toFixed(2)}`, `$${forecast90.toFixed(2)}`]
-          ]
+        title: 'Sales Forecast',
+        type: 'table',
+        data: {
+          headers: ['', 'Current', '30-Day', '90-Day'],
+          rows: forecastSummaryRows
+        }
+      },
+      {
+        title: 'Deal Stage Forecast',
+        type: 'table',
+        data: {
+          headers: ['Stage', 'Current Value', 'Forecast Value'],
+          rows: stageForecastRows
+        }
+      },
+      {
+        title: 'Top Opportunities',
+        type: 'table',
+        data: {
+          headers: ['Deal', 'Stage', 'Value', 'Close Date', 'Probability'],
+          rows: topOpportunitiesRows
+        }
+      },
+      {
+        title: 'Forecast Confidence',
+        type: 'table',
+        data: {
+          headers: ['Confidence Level', 'Deals', 'Value', 'Win Rate'],
+          rows: forecastConfidenceRows
         }
       }
     ];
     
-    // 5. Create stage forecast
-    const stageForecast = [
-      { text: 'Deal Stage Forecast', style: 'subheader', margin: [0, 20, 0, 10] },
-      {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto', 'auto'],
-          body: [
-            ['Stage', 'Current Value', 'Forecast Value'],
-            ['NEW', '$50,000', '$40,000'],
-            ['QUALIFIED', '$40,000', '$32,000'],
-            ['PROPOSAL', '$30,000', '$24,000'],
-            ['NEGOTIATION', '$20,000', '$16,000']
-          ]
-        }
-      }
-    ];
-    
-    // 6. Create top opportunities
-    const topOpportunities = [
-      { text: 'Top Opportunities', style: 'subheader', margin: [0, 20, 0, 10] },
-      {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto', 'auto', 'auto', 'auto'],
-          body: [
-            ['Deal', 'Stage', 'Value', 'Close Date', 'Probability'],
-            ['Enterprise Contract', 'NEGOTIATION', '$50,000', format(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), 'MMM dd'), '70%'],
-            ['Mid-Market Expansion', 'PROPOSAL', '$35,000', format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'MMM dd'), '50%'],
-            ['Small Business Package', 'QUALIFIED', '$20,000', format(new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), 'MMM dd'), '30%']
-          ]
-        }
-      }
-    ];
-    
-    // 7. Create forecast confidence
-    const forecastConfidence = [
-      { text: 'Forecast Confidence', style: 'subheader', margin: [0, 20, 0, 10] },
-      {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto', 'auto', 'auto'],
-          body: [
-            ['Confidence Level', 'Deals', 'Value', 'Win Rate'],
-            ['High Confidence (>70%)', '15', '$150,000', '75%'],
-            ['Medium Confidence (40-70%)', '25', '$250,000', '50%'],
-            ['Low Confidence (<40%)', '10', '$100,000', '25%']
-          ]
-        }
-      }
-    ];
-    
-    // 8. Create PDF content
-    const content = [
-      forecastSummary,
-      stageForecast,
-      topOpportunities,
-      forecastConfidence
-    ];
-    
-    // 9. Generate PDF
-    const pdfBuffer = await generateSimplePdf(
-      content,
+    // 9. Generate PDF with the new generator
+    const pdfBuffer = await generateReportPdf(
+      sections,
       'Lachs Golden - Sales Forecast Report',
-      'Current Status',
-      'https://lachsgolden.com/wp-content/uploads/2024/01/LACHS-logo-02-2048x1006-removebg-preview-e1735063006450.png'
+      'Current Status'
     );
     
     // 10. Return PDF response

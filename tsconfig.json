@@ -36,7 +36,7 @@
     "next-env.d.ts",
     "seed/seed.ts",
     "C:\\next-build-cache\\.next/types/**/*.ts"
-  ],
+, "src/app/api/reports/system-health/route.tx", "src/app/api/reports/contact-engagement/route.tXT"  ],
   "exclude": [
     "node_modules"
   ]
