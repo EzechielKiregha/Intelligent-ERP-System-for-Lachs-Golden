@@ -7,16 +7,11 @@ import { redirect } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PdfGeneratorToggle from '@/components/settings/PdfGeneratorToggle';
 
-const metadata: Metadata = {
-  title: 'Settings | Lachs Golden ERP',
-  description: 'Configure system settings and preferences',
-};
-
 export default async function SettingPage() {
   // Check authentication
   const session = await getServerSession(authOptions);
   if (!session?.user) {
-    redirect('/auth/signin');
+    redirect('/login');
   }
 
   return (
